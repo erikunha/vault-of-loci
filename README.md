@@ -11,9 +11,9 @@ Plain Markdown. MIT licensed.
 ## Why
 
 - **Notes you can study from**, not just an index: each concept, paper and guide carries a study layer and its own flashcards.
-- **Built on learning science**: retrieval practice and spaced review, with a protocol for using AI without losing the learning (see `40_References/Guides/Studying_with_AI.md`).
+- **Built on learning science**: retrieval practice and spaced review, with a tutor-mode protocol for using AI without losing the learning: you attempt first, hints come in steps, you rate confidence before the reveal, and the agent never writes your study layer (see `40_References/Guides/Studying_with_AI.md`).
 - **Agent-ready**: one rules file, project skills, a log of what each agent did, and a hook that formats every note an agent writes.
-- **Checked on every push**: formatting, broken links (including `obsidian://` links to a sibling vault, `README.md` and `llms.txt`), the study layer, file names and tests.
+- **Checked on every push**: formatting, broken links (including `obsidian://` links, `README.md` and `llms.txt`), the study layer, file names, flashcards (a source link on each card, no repeated question) and tests.
 
 ## How the material flows
 
@@ -47,8 +47,8 @@ flowchart LR
 | `20_Concepts/` | One note per concept, shared across courses |
 | `30_Maps/` | Canvases |
 | `40_References/` | `Papers/`, `Books/`, `Repositories/`, `Web/`, `Guides/` (verified sources only) |
-| `50_Review/` | Flashcard decks and glossaries |
-| `90_System/` | `Templates/`, `Bases/`, `Specs/`, `Scripts/`, `Agent_Log/` |
+| `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log) |
+| `90_System/` | `Templates/` (including `Checkpoint.md`), `Bases/` (including `Weakest.base` and `Interleave.base`), `Specs/`, `Scripts/`, `Agent_Log/` |
 
 ## Naming standard
 
@@ -66,10 +66,12 @@ python3 -I 90_System/Scripts/format_notes.py --check                  # note spa
 python3 -I 90_System/Scripts/validation/check_links.py                # wikilinks, Markdown, obsidian://, llms.txt
 python3 -I 90_System/Scripts/validation/check_study_layer.py          # study layer present and in order
 python3 -I 90_System/Scripts/validation/check_names.py                # no spaces in names
+python3 -I 90_System/Scripts/validation/check_cards.py                # card source link, no repeated question
 python3 -I 90_System/Scripts/validation/test_format_notes.py
 python3 -I 90_System/Scripts/validation/test_normalize_names.py
 python3 -I 90_System/Scripts/validation/test_check_links.py
 python3 -I 90_System/Scripts/validation/test_check_study_layer.py
+python3 -I 90_System/Scripts/validation/test_check_cards.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only.
@@ -101,7 +103,7 @@ flowchart TB
 | `CLAUDE.md`, `GEMINI.md` | Import `@AGENTS.md` only |
 | `.github/copilot-instructions.md` | Copilot; points to `AGENTS.md` |
 | `llms.txt` | Any LLM, as an index |
-| `.agents/skills/` | Own: `new-course`, `new-concept-note`, `process-paper`, `run-checks`. From kepano/obsidian-skills: `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle` |
+| `.agents/skills/` | Own: `new-course`, `new-concept-note`, `process-paper`, `run-checks`, tutor mode: `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `mistake-review`, `review-queue`. From kepano/obsidian-skills: `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle` |
 | `.claude/settings.json` | Blocks reading `.env` and plugin `data.json`; formats every note an agent edits |
 
 ## Community

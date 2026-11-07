@@ -14,8 +14,12 @@
 - [Example course](10_Courses/01_Example_Course/Example_Course.md): a course with one lesson
 
 ## Guides
-- [Studying with AI](40_References/Guides/Studying_with_AI.md): evidence and protocol
+- [Studying with AI](40_References/Guides/Studying_with_AI.md): evidence, tutor-mode protocol and FSRS
 - [Repository and documentation patterns for AI](40_References/Guides/Repository_and_Documentation_Patterns_for_AI.md)
 
 ## Optional
+- [Mistakes log](50_Review/Mistakes.md): wrong answers and their corrected cards
+- [Checkpoint template](90_System/Templates/Checkpoint.md): closed-book session sheet
+- [Weakest concepts base](90_System/Bases/Weakest.base)
+- [Interleave base](90_System/Bases/Interleave.base)
 - [Study layer spec](90_System/Specs/Study_layer.md)

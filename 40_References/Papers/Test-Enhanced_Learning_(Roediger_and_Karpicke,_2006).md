@@ -49,6 +49,11 @@ The paper connects to two other notes. [[Retrieval_Practice|Retrieval practice]]
 - Prose passages and free recall; one week is the longest delay measured here.
 - Undergraduate participants in a lab setting.
 
+## Related
+
+- [[Retrieval_Practice|Retrieval practice]]
+- [[Studying_with_AI|Studying with AI]]
+
 ## Flashcards
 
 What did Roediger and Karpicke (2006) compare?::Rereading a passage versus taking free-recall tests on it, without feedback.

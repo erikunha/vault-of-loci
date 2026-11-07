@@ -17,7 +17,9 @@ jobs:
       - run: python3 -I 90_System/Scripts/validation/check_links.py
       - run: python3 -I 90_System/Scripts/validation/check_study_layer.py
       - run: python3 -I 90_System/Scripts/validation/check_names.py
+      - run: python3 -I 90_System/Scripts/validation/check_cards.py
       - run: python3 -I 90_System/Scripts/validation/test_format_notes.py
       - run: python3 -I 90_System/Scripts/validation/test_normalize_names.py
       - run: python3 -I 90_System/Scripts/validation/test_check_links.py
       - run: python3 -I 90_System/Scripts/validation/test_check_study_layer.py
+      - run: python3 -I 90_System/Scripts/validation/test_check_cards.py

@@ -4,6 +4,9 @@ category: foundations
 courses: ["[[Example_Course|Example Course]]"]
 lessons: ["[[lesson-01-how-memory-works|Lesson 01]]"]
 aliases: [Retrieval practice, Testing effect, Active recall]
+last_tested:
+score:
+confidence:
 tags: [type/concept, cat/foundations, flashcards]
 ---
 
@@ -40,6 +43,7 @@ Retrieval practice connects to two other ideas in this vault. Spacing: retrievin
 
 - [[Studying_with_AI|Studying with AI]]
 - [[How_to_Study_with_this_Vault|How to study with this vault]]
+- [[Test-Enhanced_Learning_(Roediger_and_Karpicke,_2006)|Roediger and Karpicke (2006)]]
 
 ## Flashcards
 
@@ -47,4 +51,5 @@ What is retrieval practice?::Pulling information out of memory before looking at
 In Roediger and Karpicke (2006), who remembered more after one week?::The group that tested itself: 61% against 40% for rereading.
 Why does rereading fool you?::It builds familiarity, which feels like knowing but is not recall.
 What should you do with the gaps a retrieval attempt reveals?::Turn them into flashcards and review them with spacing.
+A test is in two weeks. Plan one study session that follows this note.::Close the material, write what you remember, check it against the source, turn each gap into a card, and repeat on a later day.
 Retrieval practice is a way to ==produce== learning, not only to measure it.

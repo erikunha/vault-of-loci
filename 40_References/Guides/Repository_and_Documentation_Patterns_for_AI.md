@@ -44,7 +44,7 @@ This guide connects to two other notes. [[Studying_with_AI|Studying with AI]] ma
 | `llms.txt` | Curated index for LLMs: required H1, a blockquote summary, link lists under H2, an "Optional" section [F4] |
 | `.agents/skills/*/SKILL.md` | Skills in the open Agent Skills format: only name and description load at startup [F5] |
 | `.gitattributes`, `.editorconfig` | LF line endings, binaries marked, UTF-8 |
-| `.github/workflows/checks.yml` | Formatting, links, study layer, names and tests on every push |
+| `.github/workflows/checks.yml` | Formatting, links, study layer, names, flashcards and tests on every push |
 
 In a public template, `CONTRIBUTING.md`, `CODEOWNERS`, issue templates and `SECURITY.md` tell visitors how to help, who reviews and where to report a problem. A private notes vault can leave them out.
 

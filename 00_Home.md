@@ -16,11 +16,21 @@ tags: [type/home]
 ## Today
 
 - Flashcards: command palette, "Spaced Repetition: Review flashcards from all notes".
+- Closed-book checkpoint: ask for the `no-ai-checkpoint` skill on concepts older than 14 days.
+- Mistakes: turn open entries in [[Mistakes|the mistakes log]] into corrected cards.
 - Inbox: everything in `00_Inbox` gets a home during the weekly review.
 
 ## Concepts
 
 ![[Concepts.base]]
+
+## Weakest concepts
+
+![[Weakest.base]]
+
+## Mixed review
+
+![[Interleave.base]]
 
 ## References
 

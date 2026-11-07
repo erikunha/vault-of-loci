@@ -28,10 +28,12 @@ Thanks for helping. This template should stay small, plain Markdown and easy to 
    python3 -I 90_System/Scripts/validation/check_links.py
    python3 -I 90_System/Scripts/validation/check_study_layer.py
    python3 -I 90_System/Scripts/validation/check_names.py
+   python3 -I 90_System/Scripts/validation/check_cards.py
    python3 -I 90_System/Scripts/validation/test_format_notes.py
    python3 -I 90_System/Scripts/validation/test_normalize_names.py
    python3 -I 90_System/Scripts/validation/test_check_links.py
    python3 -I 90_System/Scripts/validation/test_check_study_layer.py
+   python3 -I 90_System/Scripts/validation/test_check_cards.py
    ```
 
 5. A change to a script ships with a test that fails without the change and passes with it.

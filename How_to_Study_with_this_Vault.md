@@ -31,18 +31,27 @@ Maps (Home, course notes, canvases) only organize and link. They do not hold new
 
 ## 2. Routine per lesson (30 to 45 minutes)
 
-1. Right after the lesson, write from memory for 5 minutes.
-2. Fill the lesson summary from the template, linking every concept.
-3. Create or extend concept notes with the `new-concept-note` skill or by hand.
-4. Write 3 to 5 flashcards in your own words.
+1. Before the lesson, fill the `Pretest` section: 3 to 5 questions, your guess for each, confidence from 1 to 5. The `pretest` skill can write the questions; the guesses are yours.
+2. Right after the lesson, write from memory for 5 minutes.
+3. Fill the lesson summary from the template, linking every concept.
+4. Create or extend concept notes with the `new-concept-note` skill or by hand.
+5. Write 3 to 5 flashcards in your own words. Make at least one an apply card: a new situation, not the definition. Each card links its source.
+6. Explain the concept to an agent with `teach-the-agent` and fix only the gaps it lists.
 
 ## 3. Spaced review
 
-Every day: run "Spaced Repetition: Review flashcards from all notes". Every week: the weekly review template empties the inbox and checks what you remember without looking.
+Every day: run "Spaced Repetition: Review flashcards from all notes". Every week: the weekly review template empties the inbox and checks what you remember without looking. Every two weeks, or when the Home page shows concepts not tested for 14 days, run a closed-book `no-ai-checkpoint`. It logs `last_tested`, `score` and `confidence` on each concept. The Home bases `Weakest` and `Interleave` show what to review and mix topics. Wrong answers go to `50_Review/Mistakes.md`, and `mistake-review` turns them into corrected cards.
 
 ## 4. Using AI without losing the learning
 
-The AI asks, hints and corrects; you recall, solve and explain. The evidence is in [[Studying_with_AI|Studying with AI]].
+The AI asks, hints and corrects; you recall, solve and explain. This is tutor mode, and every skill here follows it:
+
+- You attempt first, before the AI says anything about the content.
+- Hints come in steps, only after an attempt: hint, strong hint, partial example, answer.
+- You rate your confidence from 1 to 5 before the reveal.
+- The AI never writes your study layer or your answers.
+
+The evidence and the protocol are in [[Studying_with_AI|Studying with AI]].
 
 ## 5. Plugins this vault uses
 

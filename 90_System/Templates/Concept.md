@@ -4,6 +4,9 @@ category:
 courses: []
 lessons: []
 aliases: []
+last_tested:
+score:
+confidence:
 tags: [type/concept, cat/<category>, flashcards]
 ---
 
@@ -29,3 +32,5 @@ tags: [type/concept, cat/<category>, flashcards]
 ## Flashcards
 
 question::answer
+
+Apply card, a new situation instead of the definition (replace it): A friend rereads a summary three times and feels ready. What do you tell them to do, and why?::Close the notes, write what they remember, then check. Recall beats rereading after a delay ([[Retrieval_Practice|source]]).

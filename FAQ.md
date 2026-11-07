@@ -10,7 +10,7 @@ Only for the checks and the naming tool (Python 3.10 or later, standard library 
 
 ## Which Obsidian version?
 
-Obsidian 1.9 or later, because the dashboards use Bases.
+Obsidian 1.9 or later, because the dashboards use Bases. The optional `review-queue` skill uses the Obsidian CLI and needs Obsidian 1.12.7 or later with the app running; without it, the skill reads the files.
 
 ## The community plugin is listed but not installed. Is that a bug?
 
@@ -30,7 +30,7 @@ Remembering by answering a question (retrieval practice) and spreading reviews o
 
 ## Will an agent just answer for me instead of teaching me?
 
-The rules in `AGENTS.md` and the study guide ask agents to quiz you, explain your mistakes and cite sources. You stay in charge: ask for questions before asking for answers.
+Not if it follows tutor mode, which `AGENTS.md` and the skills require: you attempt first, hints come in steps (hint, strong hint, partial example, answer) only after an attempt, you rate confidence from 1 to 5 before the reveal, and the agent never writes your study layer or your answers. You stay in charge: ask for questions before asking for answers.
 
 ## Where do agents record what they did?
 
@@ -47,3 +47,15 @@ A copy made with "Use this template" has no link to this repository. Read `CHANG
 ## Can I keep my vault private?
 
 Yes. Create your copy as a private repository, or keep it only on your machine. Never commit `.env` files or plugin `data.json` files; `.gitignore` and `.claude/settings.json` already guard against both.
+
+## What are the checkpoint, pretest and mistake skills?
+
+Skills for agents that follow tutor mode. `pretest` writes questions you guess before a lesson. `no-ai-checkpoint` quizzes you closed book on concepts older than 14 days and logs `last_tested` and `score`. `teach-the-agent` lists the gaps in your explanation. `mistake-review` turns logged mistakes into corrected cards with a source. `review-queue` lists what to study next. The guide `40_References/Guides/Studying_with_AI.md` has the protocol and the evidence.
+
+## Should I switch the Spaced Repetition plugin to FSRS?
+
+It is optional. The plugin offers FSRS since version 1.15.0. Back up the vault and the plugin's `data.json` first, then pick FSRS in the plugin settings. The FSRS benchmark measures how well an algorithm predicts recall, not how much you learn. The guide has the steps.
+
+## Does the vault ship an MCP server configuration for Obsidian?
+
+No. An Obsidian MCP server usually needs an API key from a community plugin, and a key must never be committed to a shared repository. It would also repeat what the Obsidian CLI (1.12.7 or later) and plain file access already give an agent, and it adds a tool that reads note text, which is a place for injected instructions to enter. The vault must work without community plugins. If you want one, add a configuration in your own copy with the key in an environment variable that stays out of Git, and keep it out of the shared template.

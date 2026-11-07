@@ -1,0 +1,18 @@
+filters:
+  and:
+    - type == "concept"
+views:
+  - type: table
+    name: Weakest first
+    limit: 15
+    order:
+      - file.name
+      - category
+      - score
+      - confidence
+      - last_tested
+    sort:
+      - property: score
+        direction: ASC
+      - property: last_tested
+        direction: ASC

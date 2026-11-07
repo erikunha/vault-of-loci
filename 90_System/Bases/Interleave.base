@@ -1,0 +1,17 @@
+filters:
+  and:
+    - type == "concept"
+views:
+  - type: table
+    name: Mixed review
+    order:
+      - file.name
+      - category
+      - last_tested
+      - score
+    groupBy:
+      property: category
+      direction: ASC
+    sort:
+      - property: last_tested
+        direction: ASC

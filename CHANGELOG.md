@@ -4,6 +4,14 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+- Tutor mode: learner attempts first, hint ladder (hint, strong hint, partial example, answer) after an attempt, confidence from 1 to 5 before the reveal, and agents never write the study layer or the learner's answers.
+- Skills `no-ai-checkpoint`, `pretest`, `teach-the-agent`, `mistake-review` and `review-queue`.
+- The lesson template has a `Pretest` section; the concept template has `last_tested`, `score` and `confidence` and an apply-type flashcard example. New `Checkpoint` template and `50_Review/Mistakes.md`.
+- Bases `Weakest` and `Interleave`, embedded in `00_Home.md`.
+- `check_cards.py` fails a flashcard without a source link and a question that appears twice, with `test_check_cards.py`; added to CI, the pull request template and `run-checks`.
+- `Studying_with_AI` rewritten around tutor mode and new evidence, with an FSRS section.
+- Property types for `last_tested`, `score` and `confidence`.
+- The FAQ explains why the template ships no MCP configuration.
 - The naming tool now renames folders with spaces too (deepest first), rewrites links that contain folder paths, skips `.vendored` folders and renames untracked files without git.
 - The naming tool and the link check accept parentheses in Markdown link targets.
 - The link check also scans `llms.txt`.

@@ -24,6 +24,9 @@
     "year": "number",
     "lesson": "number",
     "order": "number",
-    "week": "text"
+    "week": "text",
+    "last_tested": "date",
+    "score": "number",
+    "confidence": "number"
   }
 }
