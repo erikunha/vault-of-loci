@@ -10,7 +10,13 @@ Vault of Loci is an Obsidian vault template for learning anything with AI agents
 
 [Learn how to study with this vault](How_to_Study_with_this_Vault.md).
 
+## Screenshots
+
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
+
+![A track note next to Home: its kind, goal, done criterion, deadline and if-then plan as properties](90_System/Attachments/track-note.png)
+
+![A concept note next to Home: its tracks, sessions and test score as properties, then the three-line summary and the study explanation](90_System/Attachments/concept-note.png)
 
 ## Installation
 
