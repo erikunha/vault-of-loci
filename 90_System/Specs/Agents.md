@@ -25,6 +25,8 @@ flowchart LR
 | After reading | "I'll explain retrieval practice; list only my gaps" | `teach-the-agent` |
 | After a quiz | "Turn today's mistakes into cards" | `mistake-review` |
 | Any day | "What should I review today?" | `review-queue` |
+| To test yourself | "Quiz me on the book track" | `quiz` |
+| Looking for a source | "Where in my notes is spacing explained?" | `vault-search` |
 | Before an interview, oral exam or conversation | "Run a 30-minute observed mock" | `spoken-mock` |
 | Every two weeks | "Closed-book checkpoint on what I studied before the 1st" | `no-ai-checkpoint` |
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |

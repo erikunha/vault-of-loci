@@ -38,6 +38,10 @@
     "weight": "number",
     "source": "text",
     "minutes": "number",
-    "cards": "number"
+    "cards": "number",
+    "month": "text",
+    "role": "text",
+    "clipped": "date",
+    "processed": "checkbox"
   }
 }

@@ -105,6 +105,10 @@ Only partly, and the strength depends on the agent.
 
 Whatever it reads. When an agent opens a note, or `INDEX.md` with its summaries, that text goes to the provider of the model it runs on. Private notes and exam material belong in a vault you only open with a local model, or without an agent. The deny rules and ignore files keep secrets out, not note text. Read your provider's data terms before you point an agent at notes you cannot share.
 
+## Can I switch agents or models without losing my progress?
+
+Yes. Everything the tutor relies on is in your files: the rules in `AGENTS.md`, your notes, cards, mistakes, scores and review queue. Start with Codex on an OpenAI plan, move to Claude Code, then to OpenCode with another model: the next agent reads the same files and picks up where you stopped. Z.ai documents its GLM Coding Plan in Claude Code and in OpenCode (https://docs.z.ai/devpack/tool/claude, https://docs.z.ai/devpack/tool/opencode), and local models work as the next section shows. The ChatGPT, Claude and Gemini websites do not read a folder on your computer, so use a coding agent for the vault and the chat apps for conversations.
+
 ## Studying privately with a local model
 
 A local model keeps your notes on your machine. Two ways to run Claude Code against one:
