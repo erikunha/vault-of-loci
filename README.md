@@ -38,7 +38,7 @@ flowchart LR
 3. Read `How_to_Study_with_this_Vault.md`, then `00_Home.md`.
 4. Create your first track with the `new-track` skill in Claude Code or Codex (it asks for the kind and the horizon), or copy `90_System/Templates/Track.md` into `10_Tracks/<NN>_<Name>/`.
 5. Delete or keep the example tracks, concept and paper. They show the full note format.
-6. Run the checks below. All of them should pass before you write your first note.
+6. Run `python3 -I 90_System/Scripts/run_checks.py`. Every check should pass before you write your first note.
 
 ## Structure
 
@@ -54,78 +54,20 @@ flowchart LR
 | `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base`, `Interleave.base`, `Blueprint.base` and `Progress.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Evals/` (a hand-run tutor-mode test), `Scripts/`, `Agent_Log/`, `index.json` |
 | `INDEX.md` | Generated reading index for agents: one line per note |
 
-## Naming standard
+## Tools
 
-File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):
+Python scripts, standard library only, in `90_System/Scripts/`. Each one has a test. Commands and options are in [`90_System/Specs/Tools.md`](90_System/Specs/Tools.md).
 
-```bash
-python3 90_System/Scripts/normalize_names.py          # dry run
-python3 90_System/Scripts/normalize_names.py --write  # rename (git mv when tracked) and rewrite every link
-```
+| Need | Script |
+|---|---|
+| Run every check | `run_checks.py` |
+| Fix file names with spaces | `normalize_names.py` |
+| Turn subtitles into a transcript note read by section | `vtt_to_note.py`, `transcript_sections.py` |
+| Draw a canvas per track | `build_canvas.py` |
+| Review the cards in Anki | `export_anki_tsv.py` |
+| Cite the references in Zotero, Pandoc or LaTeX | `export_bibtex.py` |
 
-## Transcripts
-
-A lecture, talk or video with subtitles becomes a note an agent can read by section:
-
-```bash
-python3 -I 90_System/Scripts/vtt_to_note.py talk.vtt --track 01_Example_Course --write   # WebVTT or SRT to 10_Tracks/<track>/transcripts/
-python3 -I 90_System/Scripts/transcript_sections.py --write   # add a ## HH:MM:SS heading about every 10 minutes to existing transcripts
-python3 -I 90_System/Scripts/transcript_sections.py --report  # list notes over 300 lines with no heading
-```
-
-## Maps
-
-```bash
-python3 -I 90_System/Scripts/build_canvas.py --write   # 30_Maps/<Track>.canvas: track, practice files, sessions and the concepts they link
-```
-
-## Export
-
-Both scripts print a dry run unless you give them an output file.
-
-```bash
-python3 -I 90_System/Scripts/export_anki_tsv.py --out cards.tsv   # cards and clozes for Anki (File > Import), one deck per track
-python3 -I 90_System/Scripts/export_bibtex.py --out refs.bib --csl-out refs.json   # reference notes for Zotero, Pandoc or LaTeX
-```
-
-## Checks
-
-```bash
-python3 -I 90_System/Scripts/format_notes.py --check                  # note spacing
-python3 -I 90_System/Scripts/validation/check_links.py                # wikilinks, Markdown, obsidian://, llms.txt
-python3 -I 90_System/Scripts/validation/check_study_layer.py          # study layer present and in order
-python3 -I 90_System/Scripts/validation/check_names.py                # no spaces in names
-python3 -I 90_System/Scripts/validation/check_cards.py                # card source link, no repeated question
-python3 -I 90_System/Scripts/validation/check_skills.py               # skill files follow the Agent Skills spec
-python3 -I 90_System/Scripts/validation/check_bases.py                # bases never list the templates
-python3 -I 90_System/Scripts/validation/check_study_layer_translations.py   # translations keep the same keys
-python3 -I 90_System/Scripts/validation/check_alt_text.py             # every image has alt text
-python3 -I 90_System/Scripts/validation/check_index.py                # INDEX.md and index.json are current
-python3 -I 90_System/Scripts/validation/test_format_notes.py
-python3 -I 90_System/Scripts/validation/test_normalize_names.py
-python3 -I 90_System/Scripts/validation/test_check_links.py
-python3 -I 90_System/Scripts/validation/test_check_study_layer.py
-python3 -I 90_System/Scripts/validation/test_check_cards.py
-python3 -I 90_System/Scripts/validation/test_check_skills.py
-python3 -I 90_System/Scripts/validation/test_check_bases.py
-python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py
-python3 -I 90_System/Scripts/validation/test_check_index.py
-python3 -I 90_System/Scripts/validation/test_check_alt_text.py
-python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
-python3 -I 90_System/Scripts/validation/test_export_bibtex.py
-python3 -I 90_System/Scripts/validation/test_transcripts.py
-python3 -I 90_System/Scripts/validation/test_build_canvas.py
-```
-
-The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only. If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`; the Claude Code hook does it after each note edit.
-
-## Customize
-
-- **Language.** The study layer headings are set in one file, `90_System/Specs/study_layer.json`, which `check_study_layer.py` reads. A Portuguese version ships as `study_layer.pt-BR.json`: copy it over `study_layer.json` to switch. Change them there, then in the `Concept` and `Reference` templates, in `90_System/Specs/Study_layer.md` and in the existing notes. Note text can be in any language.
-- **Track kinds.** Recipes live in `90_System/Specs/Track_kinds.md`; the `new-track` skill reads them. Edit a recipe or add a kind there.
-- **Concept categories.** Each category is a `cat/<name>` tag with a color in `.obsidian/graph.json` and `.obsidian/snippets/study-vault.css`. Add or rename them in both places.
-- **Folders.** The numbered top folders are referenced by `llms.txt`, the skills and the checks (the bases filter by the `type` property, not by folder). Rename one and run the checks to find what still points to the old name.
-- **Agents.** Add rules to `AGENTS.md` only. `CLAUDE.md` and `GEMINI.md` stay as one import line. Add other secret paths to `.cursorignore`, `.geminiignore` and `.claude/settings.json`.
+Language, track kinds, concept categories, folders and agent rules can all be changed; [`Tools.md`](90_System/Specs/Tools.md#customize) says where.
 
 ## Studying with an AI agent
 
@@ -195,18 +137,25 @@ Where each agent looks for its files. A dash means the vault does not use that f
 
 Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see `FAQ.md`).
 
+## Contributing
+
+Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Start with the "Content proposal" issue form, or a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue). [`CONTRIBUTING.md`](CONTRIBUTING.md) says what fits and walks through a first contribution, even one made entirely in the GitHub web editor.
+
 ## Community
 
-- [`CONTRIBUTING.md`](CONTRIBUTING.md): what fits, how to propose a change, the checks to run.
+- [`SUPPORT.md`](SUPPORT.md): where to ask a question.
 - [`FAQ.md`](FAQ.md): common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
 - [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
-- Content is welcome: concept notes, references, guides, track recipes, example tracks, translations and skills. Use the "Content proposal" issue form.
-- Help and maintainer: open an issue on GitHub. The maintainer is [@erikunha](https://github.com/erikunha).
+- The maintainer is [@erikunha](https://github.com/erikunha).
 
 ## Contributors
 
-- [@erikunha](https://github.com/erikunha): maintainer.
+Everyone whose change was merged appears below. Contributions that are not commits (ideas, reviews, content proposals) are thanked in the release notes.
+
+<a href="https://github.com/erikunha/vault-of-loci/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=erikunha/vault-of-loci" alt="Avatars of the people who contributed to Vault of Loci" />
+</a>
 
 ## Credits
 

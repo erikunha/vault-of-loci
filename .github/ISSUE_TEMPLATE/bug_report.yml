@@ -28,5 +28,5 @@ body:
     attributes:
       label: Before opening
       options:
-        - label: I ran every check in the README on a fresh copy of the template.
+        - label: I ran `run_checks.py` on a fresh copy of the template.
         - label: The issue contains no secrets or personal notes.

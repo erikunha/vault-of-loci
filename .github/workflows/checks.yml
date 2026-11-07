@@ -13,27 +13,4 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
-      - run: python3 -I 90_System/Scripts/format_notes.py --check
-      - run: python3 -I 90_System/Scripts/validation/check_links.py
-      - run: python3 -I 90_System/Scripts/validation/check_study_layer.py
-      - run: python3 -I 90_System/Scripts/validation/check_names.py
-      - run: python3 -I 90_System/Scripts/validation/check_cards.py
-      - run: python3 -I 90_System/Scripts/validation/check_skills.py
-      - run: python3 -I 90_System/Scripts/validation/check_bases.py
-      - run: python3 -I 90_System/Scripts/validation/check_study_layer_translations.py
-      - run: python3 -I 90_System/Scripts/validation/check_alt_text.py
-      - run: python3 -I 90_System/Scripts/validation/check_index.py
-      - run: python3 -I 90_System/Scripts/validation/test_format_notes.py
-      - run: python3 -I 90_System/Scripts/validation/test_normalize_names.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_links.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_study_layer.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_cards.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_skills.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_bases.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_index.py
-      - run: python3 -I 90_System/Scripts/validation/test_check_alt_text.py
-      - run: python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
-      - run: python3 -I 90_System/Scripts/validation/test_export_bibtex.py
-      - run: python3 -I 90_System/Scripts/validation/test_transcripts.py
-      - run: python3 -I 90_System/Scripts/validation/test_build_canvas.py
+      - run: python3 -I 90_System/Scripts/run_checks.py

@@ -38,39 +38,30 @@ Reusable content teaches without your history: nothing in it identifies you, you
 - Dependencies outside the Python standard library.
 - Lists of links to other projects.
 
+## Your first contribution
+
+You can contribute a note without installing anything, from the GitHub website:
+
+1. Pick an issue labeled [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue), or open a "Content proposal" and wait for a yes.
+2. Open the file you want to change on GitHub and click the pencil icon. GitHub makes a copy (a fork) for you. To add a note, open the folder and choose **Add file**.
+3. Copy the shape from a template in `90_System/Templates/`, or from the example concept `20_Concepts/Retrieval_Practice.md`.
+4. Click **Commit changes**, then **Create pull request**. Say what you changed and which sources you opened.
+5. The checks run on your pull request. If one fails, the log names the file and the line; fix it in the same pull request, or ask in it for help.
+
+For anything bigger, the steps below use a local copy.
+
 ## How to propose a change
 
 1. Open an issue first for anything bigger than a typo, so we agree on the shape before you write it. For content, use the "Content proposal" form; comment on an open issue to claim it.
 2. Fork the repository and make the change on a branch.
 3. Follow `AGENTS.md`. The same rules apply to people and to agents: underscores in file names, the study layer order, verified references, no em dash or en dash.
-4. Run every check and make sure all of them pass (`check_index.py` fails after a note edit until you run `python3 -I 90_System/Scripts/build_index.py`):
+4. Run every check and make sure all of them pass:
 
    ```bash
-   python3 -I 90_System/Scripts/format_notes.py --check
-   python3 -I 90_System/Scripts/validation/check_links.py
-   python3 -I 90_System/Scripts/validation/check_study_layer.py
-   python3 -I 90_System/Scripts/validation/check_names.py
-   python3 -I 90_System/Scripts/validation/check_cards.py
-   python3 -I 90_System/Scripts/validation/check_skills.py
-   python3 -I 90_System/Scripts/validation/check_bases.py
-   python3 -I 90_System/Scripts/validation/check_study_layer_translations.py
-   python3 -I 90_System/Scripts/validation/check_alt_text.py
-   python3 -I 90_System/Scripts/validation/check_index.py
-   python3 -I 90_System/Scripts/validation/test_format_notes.py
-   python3 -I 90_System/Scripts/validation/test_normalize_names.py
-   python3 -I 90_System/Scripts/validation/test_check_links.py
-   python3 -I 90_System/Scripts/validation/test_check_study_layer.py
-   python3 -I 90_System/Scripts/validation/test_check_cards.py
-   python3 -I 90_System/Scripts/validation/test_check_skills.py
-   python3 -I 90_System/Scripts/validation/test_check_bases.py
-   python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py
-   python3 -I 90_System/Scripts/validation/test_check_index.py
-   python3 -I 90_System/Scripts/validation/test_check_alt_text.py
-   python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
-   python3 -I 90_System/Scripts/validation/test_export_bibtex.py
-   python3 -I 90_System/Scripts/validation/test_transcripts.py
-   python3 -I 90_System/Scripts/validation/test_build_canvas.py
+   python3 -I 90_System/Scripts/run_checks.py
    ```
+
+   If `check_index.py` fails after a note edit, run `python3 -I 90_System/Scripts/build_index.py` and run the checks again.
 
 5. A change to a script ships with a test that fails without the change and passes with it.
 6. Add a line under `Unreleased` in `CHANGELOG.md`.
@@ -86,7 +77,7 @@ Folders with a `.vendored` file are copies of another project. Do not edit them 
 
 ## Recognition
 
-Every merged contribution is credited in the Contributors section of `README.md`.
+Everyone whose change is merged appears in the Contributors grid of `README.md`, which updates by itself. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker) are thanked by name in the release notes.
 
 ## License
 

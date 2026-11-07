@@ -4,6 +4,17 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+### Added
+
+- `run_checks.py` runs every check and test in one command and finds new ones by file name; CI, `CONTRIBUTING.md`, the PR template and the `run-checks` skill use it instead of four hand-kept lists. Tested.
+- `SUPPORT.md` and a "Question" issue form, so a question has a place to go.
+- `CONTRIBUTING.md` walks through a first contribution made entirely in the GitHub web editor.
+- The README shows a contributors grid that updates by itself.
+
+### Changed
+
+- The README is shorter: script commands and customization moved to `90_System/Specs/Tools.md`, which also says what each check guards.
+
 ### Fixed
 
 - `check_alt_text.py` skips inline and fenced code and reads `\|` inside table cells, so an example in code no longer fails and an empty alt in a table no longer passes.

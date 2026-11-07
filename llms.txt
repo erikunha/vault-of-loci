@@ -22,6 +22,7 @@
 - [Repository and documentation patterns for AI](40_References/Guides/Repository_and_Documentation_Patterns_for_AI.md)
 
 ## Optional
+- [Tools and customization](90_System/Specs/Tools.md): every script, what each check guards, and how to customize
 - [Track kinds](90_System/Specs/Track_kinds.md): one recipe per kind of learning project, and the rituals every track shares
 - [Study layer spec](90_System/Specs/Study_layer.md)
 - [Mistakes log](50_Review/Mistakes.md): wrong answers and their corrected cards
