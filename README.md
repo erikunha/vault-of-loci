@@ -1,5 +1,7 @@
 # Vault of Loci
 
+[![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 > The method of loci stores memories in places you know. This vault stores what you study in notes you return to, with AI agents that quiz you instead of answering for you.
 
 An Obsidian vault template for studying courses with AI agents. Every note is study material (a long explanation, key takeaways and flashcards), every source is verified, and automatic checks keep notes, links and names consistent. Claude Code, Codex, Gemini CLI and Copilot all follow the same rules from one `AGENTS.md`.
@@ -33,6 +35,7 @@ flowchart LR
 3. Read `How_to_Study_with_this_Vault.md`, then `00_Home.md`.
 4. Create your first course with the `new-course` skill in Claude Code or Codex, or copy `90_System/Templates/Course.md` into `10_Courses/01_<Course_Name>/`.
 5. Delete or keep the example course, concept and paper. They show the full note format.
+6. Run the checks below. All of them should pass before you write your first note.
 
 ## Structure
 
@@ -68,6 +71,13 @@ python3 -I 90_System/Scripts/validation/test_normalize_names.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only.
+
+## Customize
+
+- **Language.** The study layer headings (`## Study explanation`, `## Key takeaways`) are matched by `90_System/Scripts/validation/check_study_layer.py`. Change them there, in `90_System/Specs/Study_layer.md`, in the `Concept` and `Reference` templates and in `AGENTS.md`, then rename the headings in existing notes. Note text can be in any language.
+- **Concept categories.** Each category is a `cat/<name>` tag with a color in `.obsidian/graph.json` and `.obsidian/snippets/study-vault.css`. Add or rename them in both places.
+- **Folders.** The numbered top folders are referenced by `AGENTS.md`, `llms.txt` and the checks (the bases filter by the `type` property, not by folder). Rename one and run the checks to find what still points to the old name.
+- **Agents.** Add rules to `AGENTS.md` only. `CLAUDE.md` and `GEMINI.md` stay as one import line.
 
 ## Working with AI agents
 
