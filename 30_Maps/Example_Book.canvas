@@ -1,0 +1,66 @@
+{
+  "nodes": [
+    {
+      "id": "0668d17d685e6d1d",
+      "type": "file",
+      "file": "10_Tracks/02_Example_Book/Example_Book.md",
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "4"
+    },
+    {
+      "id": "9080b09873dcd6dc",
+      "type": "file",
+      "file": "10_Tracks/02_Example_Book/practice/Checkpoints.md",
+      "x": 0,
+      "y": 120,
+      "width": 320,
+      "height": 80,
+      "color": "3"
+    },
+    {
+      "id": "63197b3e0cb4cf16",
+      "type": "file",
+      "file": "10_Tracks/02_Example_Book/practice/Concept_Map.md",
+      "x": 0,
+      "y": 240,
+      "width": 320,
+      "height": 80,
+      "color": "3"
+    },
+    {
+      "id": "f5b1d7488b565629",
+      "type": "file",
+      "file": "10_Tracks/02_Example_Book/sessions/session-01-chapter-1.md",
+      "x": 440,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "5"
+    },
+    {
+      "id": "e48c0b1827765a35",
+      "type": "file",
+      "file": "20_Concepts/Retrieval_Practice.md",
+      "x": 880,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "f41842549e5e3f3d",
+      "fromNode": "0668d17d685e6d1d",
+      "toNode": "f5b1d7488b565629"
+    },
+    {
+      "id": "ca7f20d20cb0e35f",
+      "fromNode": "f5b1d7488b565629",
+      "toNode": "e48c0b1827765a35"
+    }
+  ]
+}

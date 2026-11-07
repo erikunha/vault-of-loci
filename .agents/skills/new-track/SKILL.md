@@ -17,6 +17,7 @@ Tutor mode: the goal, the done criterion and the if-then plan are the learner's 
    - `research`: `Synthesis_Matrix.md`.
    - `skill`: `Attempt_Log.md`.
    - `course`, `book`, `other`: `Checkpoints.md`.
+   Every kind also gets `Concept_Map.md`: the learner orders the concepts by necessity; you point out missing prerequisites.
    When the track has a deadline, also copy `Checkpoints.md` and `Plan_48h.md`.
 6. The track appears in `00_Home.md` through `Tracks.base`; nothing to add by hand.
 7. Run the `run-checks` skill and report each check as passed, failed or not run.

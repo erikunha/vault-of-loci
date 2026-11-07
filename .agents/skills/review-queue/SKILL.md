@@ -13,6 +13,7 @@ Needs the app running and Obsidian 1.12.7 or later. Check with `obsidian help`; 
 ```bash
 obsidian base:query path="90_System/Bases/Weakest.base" format=json
 obsidian base:query path="90_System/Bases/Interleave.base" format=json
+obsidian base:query path="90_System/Bases/Progress.base" view="Review next" format=json
 obsidian unresolved
 ```
 
@@ -26,7 +27,7 @@ Parameter names can change between releases: `obsidian help base:query` is the r
 
 ## From files
 
-Read the frontmatter of each note in `20_Concepts` (never `.env` or plugin `data.json`). Sort by `score` ascending, then `last_tested` ascending; empty values come first. For one track, keep the concepts whose `tracks` property links to it. Find unresolved links with `check_links.py`.
+Read the frontmatter of each note in `20_Concepts` (never `.env` or plugin `data.json`). Sort by `score` ascending, then `last_tested` ascending; empty values come first. The "Review next" view of `Progress.base` ranks by (5 - confidence) x (days since last test + 1), so a weak concept not seen for a while comes first; an untested concept counts as 30 days. For one track, keep the concepts whose `tracks` property links to it. Find unresolved links with `check_links.py`.
 
 ## Daily cap and backlog
 

@@ -36,3 +36,4 @@ jobs:
       - run: python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
       - run: python3 -I 90_System/Scripts/validation/test_export_bibtex.py
       - run: python3 -I 90_System/Scripts/validation/test_transcripts.py
+      - run: python3 -I 90_System/Scripts/validation/test_build_canvas.py

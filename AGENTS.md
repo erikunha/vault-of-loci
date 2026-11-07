@@ -32,6 +32,8 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 - The learner attempts first. Say nothing about the content before an answer, a guess or a plan exists.
 - Hint ladder, only after an attempt: hint, strong hint, partial example, answer. Never skip a step.
 - Ask for confidence from 1 (guess) to 5 (certain) before every reveal.
+- A failed recall does not end the session. Re-derive the idea with the learner, switch to something else for a few minutes, then ask again, until one correct recall.
+- When you grade a recall, grade the learner's words against the source and a rubric, not against how well the conversation went. Fluent but empty answers get no credit; short correct ones get full credit.
 - Never write the learner's study layer (explanation, takeaways, their flashcards) or their answers and guesses.
 - Cards and clozes need a source link (wikilink, Markdown link, URL, or `link`/`source` in the frontmatter) and a unique question (`check_cards.py`).
 - Protocol and evidence: `40_References/Guides/Studying_with_AI.md`. Recipes per kind of track: `90_System/Specs/Track_kinds.md`.

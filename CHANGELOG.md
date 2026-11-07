@@ -4,6 +4,8 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+## 0.3.0 (2026-11-07)
+
 ### Added
 
 - Contributions of reusable content are welcome: a content-type table, the line between reusable and personal, a quality bar, a "Content proposal" issue form and a Contributors section.
@@ -13,6 +15,11 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 - `export_anki_tsv.py` (cards and clozes to an Anki import file, one deck per track) and `export_bibtex.py` (reference notes to BibTeX and CSL JSON for Zotero, Pandoc or LaTeX), both dry run by default, with tests.
 - `vtt_to_note.py` turns WebVTT or SRT subtitles into a `type: transcript` note, and `transcript_sections.py` adds a `## HH:MM:SS` heading about every 10 minutes so agents read one range at a time, with tests.
 - `Blueprint.base` ranks concepts by exam weight x (5 - confidence) from a new `weight` property; `Progress.base` groups sessions by track and lists concepts by last test.
+- Guides `Research_Reading_Pipeline` (read a paper in three passes, then a verified reference note) and `Reading_and_Highlights` (what to do instead of highlighting and rereading), with verified sources.
+- `90_System/Evals/Tutor_mode.md`: twelve hand-run scenarios and a rubric, including grading traps (fluent but empty, short and correct, confident and wrong, right answer with the wrong reason).
+- `Concept_Map` practice kit for every kind: concepts ordered by what must be understood first, threshold concepts marked, and a definition of learned (two correct recalls on different days and one use in a new task). Both example tracks show one.
+- `build_canvas.py` draws a canvas per track in `30_Maps`, with a test.
+- Tutor mode: a failed recall does not end the session, and grading looks at the learner's words, not at how the conversation went. The mistakes log records the kind of error (knowledge, reasoning, execution, careless). `Progress.base` has a "Review next" view that ranks by (5 - confidence) x (days since last test + 1).
 - `check_alt_text.py`: every embedded image needs alt text.
 - `CITATION.cff`, so GitHub shows "Cite this repository".
 - `study_layer.pt-BR.json` and `check_study_layer_translations.py`.

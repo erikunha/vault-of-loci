@@ -1,0 +1,66 @@
+{
+  "nodes": [
+    {
+      "id": "8c9e00e05379084c",
+      "type": "file",
+      "file": "10_Tracks/01_Example_Course/Example_Course.md",
+      "x": 0,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "4"
+    },
+    {
+      "id": "a38ab923f571b25f",
+      "type": "file",
+      "file": "10_Tracks/01_Example_Course/practice/Checkpoints.md",
+      "x": 0,
+      "y": 120,
+      "width": 320,
+      "height": 80,
+      "color": "3"
+    },
+    {
+      "id": "8a9c96a9ac475de0",
+      "type": "file",
+      "file": "10_Tracks/01_Example_Course/practice/Concept_Map.md",
+      "x": 0,
+      "y": 240,
+      "width": 320,
+      "height": 80,
+      "color": "3"
+    },
+    {
+      "id": "0d198bd4a37113c4",
+      "type": "file",
+      "file": "10_Tracks/01_Example_Course/sessions/session-01-how-memory-works.md",
+      "x": 440,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "5"
+    },
+    {
+      "id": "e48c0b1827765a35",
+      "type": "file",
+      "file": "20_Concepts/Retrieval_Practice.md",
+      "x": 880,
+      "y": 0,
+      "width": 320,
+      "height": 80,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "4bbf5e6f74bece00",
+      "fromNode": "8c9e00e05379084c",
+      "toNode": "0d198bd4a37113c4"
+    },
+    {
+      "id": "72f2a23393970129",
+      "fromNode": "0d198bd4a37113c4",
+      "toNode": "e48c0b1827765a35"
+    }
+  ]
+}

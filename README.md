@@ -48,10 +48,10 @@ flowchart LR
 | `00_Inbox/` | Quick captures, emptied in the weekly review |
 | `10_Tracks/` | One folder per learning project: track note, `sessions/`, `practice/` |
 | `20_Concepts/` | One note per concept, shared across tracks |
-| `30_Maps/` | Canvases |
+| `30_Maps/` | Canvases, one per track, drawn by `build_canvas.py` from the track's sessions and the concepts they link |
 | `40_References/` | `Papers/`, `Books/`, `Repositories/`, `Web/`, `Guides/` (verified sources only) |
 | `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log, with how AI was involved in each mistake) |
-| `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base`, `Interleave.base`, `Blueprint.base` and `Progress.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
+| `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base`, `Interleave.base`, `Blueprint.base` and `Progress.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Evals/` (a hand-run tutor-mode test), `Scripts/`, `Agent_Log/`, `index.json` |
 | `INDEX.md` | Generated reading index for agents: one line per note |
 
 ## Naming standard
@@ -71,6 +71,12 @@ A lecture, talk or video with subtitles becomes a note an agent can read by sect
 python3 -I 90_System/Scripts/vtt_to_note.py talk.vtt --track 01_Example_Course --write   # WebVTT or SRT to 10_Tracks/<track>/transcripts/
 python3 -I 90_System/Scripts/transcript_sections.py --write   # add a ## HH:MM:SS heading about every 10 minutes to existing transcripts
 python3 -I 90_System/Scripts/transcript_sections.py --report  # list notes over 300 lines with no heading
+```
+
+## Maps
+
+```bash
+python3 -I 90_System/Scripts/build_canvas.py --write   # 30_Maps/<Track>.canvas: track, practice files, sessions and the concepts they link
 ```
 
 ## Export
@@ -108,6 +114,7 @@ python3 -I 90_System/Scripts/validation/test_check_alt_text.py
 python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
 python3 -I 90_System/Scripts/validation/test_export_bibtex.py
 python3 -I 90_System/Scripts/validation/test_transcripts.py
+python3 -I 90_System/Scripts/validation/test_build_canvas.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only. If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`; the Claude Code hook does it after each note edit.

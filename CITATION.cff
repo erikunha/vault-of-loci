@@ -5,4 +5,5 @@ authors:
   - alias: erikunha
 license: MIT
 repository-code: "https://github.com/erikunha/vault-of-loci"
-version: 0.2.0
+version: 0.3.0
+date-released: 2026-11-07

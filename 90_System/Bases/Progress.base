@@ -6,7 +6,22 @@ filters:
         - type == "concept"
 formulas:
   days_since_test: 'if(last_tested, (today() - date(last_tested)).days, "")'
+  review_priority: 'if(confidence, 5 - confidence, 5) * (if(last_tested, (today() - date(last_tested)).days, 30) + 1)'
 views:
+  - type: table
+    name: Review next
+    filters:
+      and:
+        - type == "concept"
+    order:
+      - file.name
+      - confidence
+      - last_tested
+      - formula.review_priority
+    sort:
+      - property: formula.review_priority
+        direction: DESC
+    limit: 15
   - type: table
     name: Sessions by track
     filters:
