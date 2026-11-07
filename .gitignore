@@ -17,3 +17,6 @@ __pycache__/
 *.pyc
 node_modules/
 .DS_Store
+# keep specs even when a global ignore drops them
+!90_System/Specs/
+!90_System/Specs/**

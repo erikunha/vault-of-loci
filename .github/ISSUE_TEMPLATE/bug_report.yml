@@ -1,0 +1,32 @@
+name: Bug report
+description: A check, script, hook, template or doc does not work as described.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what you got. Paste the exact error.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Create a note named ...
+        2. Run python3 -I 90_System/Scripts/validation/check_links.py
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: Obsidian 1.12, Python 3.12, macOS 15
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before opening
+      options:
+        - label: I ran every check in the README on a fresh copy of the template.
+        - label: The issue contains no secrets or personal notes.

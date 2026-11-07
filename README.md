@@ -102,6 +102,13 @@ flowchart TB
 | `.agents/skills/` | Own: `new-course`, `new-concept-note`, `process-paper`, `run-checks`. From kepano/obsidian-skills: `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle` |
 | `.claude/settings.json` | Blocks reading `.env` and plugin `data.json`; formats every note an agent edits |
 
+## Community
+
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): what fits, how to propose a change, the checks to run.
+- [`FAQ.md`](FAQ.md): common questions about setup, plugins, language and agents.
+- [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
+
 ## Credits
 
 - Agent skills in folders marked `.vendored` come from [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) (MIT, copyright Steph Ango). Each folder keeps its `LICENSE`.
