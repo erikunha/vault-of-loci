@@ -1,4 +1,4 @@
-name: Bug report
+name: 🐛 Bug report
 description: A check, script, hook, template or doc does not work as described.
 labels: [bug]
 body:
