@@ -70,4 +70,4 @@ Where each agent looks for its files. A dash means the vault does not use that f
 | `.claude/settings.json` | Claude Code only: denies reading `.env` and plugin `data.json`, asks you before any edit in your own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`), formats every note an agent edits and rebuilds the index. Other agents rely on the rule in `AGENTS.md` and on `run-checks` |
 | `.cursorignore`, `.geminiignore` | Keep `.env` files and plugin `data.json` out of Cursor and Gemini CLI context. A terminal command or a tool can still read them, so they lower the risk but do not remove it |
 
-Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see [FAQ](../../.github/FAQ.md)).
+Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see [FAQ](FAQ.md)).
