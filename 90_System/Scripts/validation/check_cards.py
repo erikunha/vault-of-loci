@@ -1,9 +1,11 @@
-"""Flashcards: every `question::answer` card has a source link and no question repeats.
+"""Flashcards: every `question::answer` card and every cloze has a source link, and no question repeats.
 
-A card has a source when a wikilink sits on the card line, or in the section the card is in, or in a
-`## Related`, `## Concepts introduced` or `## Sources` section of the same note. A question that
+A source is a wikilink, a Markdown link or a URL. A card has one when a link sits on the card line, or in
+the section the card is in, or in a `## Related`, `## Concepts introduced` or `## Sources` section of the
+same note, or when the note's frontmatter fills `link` or `source`. A cloze is a line with `==hidden==` text
+in a note tagged `flashcards`. A question that
 appears twice anywhere in the vault (ignoring case, punctuation and spacing) is a duplicate.
-Skipped: frontmatter, code (fenced and inline), `90_System/Templates`, `90_System/Specs`,
+Skipped: frontmatter, code (fenced and inline), tables, quotes, `90_System/Templates`, `90_System/Specs`,
 `90_System/Agent_Log`, folders with a `.vendored` file and tool folders.
 
 Usage: python3 -I 90_System/Scripts/validation/check_cards.py [root]   (exits 1 on any problem)
@@ -16,7 +18,8 @@ root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().pare
 SKIP_DIRS = {".obsidian", "node_modules", ".git", ".trash", ".venv", ".smart-env", ".claude", ".agents"}
 SKIP_PREFIXES = ("90_System/Templates/", "90_System/Specs/", "90_System/Agent_Log/")
 SOURCE_SECTIONS = {"related", "concepts introduced", "sources"}
-WIKILINK = re.compile(r"\[\[[^\]]+\]\]")
+WIKILINK = re.compile(r"\[\[[^\]]+\]\]|\[[^\]]*\]\([^)\s]+\)|https?://\S+")
+CLOZE = re.compile(r"==[^=\s][^=]*==")
 CARD = re.compile(r"^(?:[-*+]\s+|\d+[.)]\s+)?(?P<q>[^:#>|`][^:]*?(?::(?!:)[^:]*?)*?)::(?P<a>.*\S.*)$")
 
 
@@ -41,6 +44,8 @@ def parse(text):
     """Return (cards, sections): cards are (line number, question, line); sections map a heading
     index to its text, so a card knows the text of its own section."""
     front = re.match(r"---\n.*?\n---\n?", text, flags=re.DOTALL)
+    head = front.group(0) if front else ""
+    deck = bool(re.search(r"^tags:.*\bflashcards\b", head, flags=re.M))
     skipped = text[: front.end()].count("\n") if front else 0
     lines = text.splitlines()[skipped:]
     sections, cards, fence = [{"title": "", "lines": []}], [], None
@@ -58,16 +63,20 @@ def parse(text):
             sections.append({"title": heading.group(1).strip().casefold(), "lines": []})
             continue
         sections[-1]["lines"].append(line)
+        if line.lstrip().startswith((">", "|")):
+            continue
         card = CARD.match(line.strip())
         if card:
             cards.append((number, card.group("q").strip(), line, len(sections) - 1))
-    return cards, sections
+        elif deck and CLOZE.search(line):
+            cards.append((number, line.strip(), line, len(sections) - 1))
+    return cards, sections, re.search(r"^(link|source):[ \t]*\S", head, flags=re.M) is not None
 
 
 problems, seen = [], {}
 for path, rel in notes():
-    cards, sections = parse(path.read_text(encoding="utf-8", errors="ignore"))
-    shared = any(WIKILINK.search("\n".join(s["lines"])) for s in sections if s["title"] in SOURCE_SECTIONS)
+    cards, sections, noted = parse(path.read_text(encoding="utf-8", errors="ignore"))
+    shared = noted or any(WIKILINK.search("\n".join(s["lines"])) for s in sections if s["title"] in SOURCE_SECTIONS)
     for number, question, line, index in cards:
         where = f"{rel}:{number}"
         if not (WIKILINK.search(line) or shared or WIKILINK.search("\n".join(sections[index]["lines"]))):

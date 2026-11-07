@@ -19,6 +19,7 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ### Fixed
 
+- `check_cards.py` accepts a Markdown link, a URL or a filled `link`/`source` property as a card's source, checks clozes in notes tagged `flashcards`, and skips tables and quotes.
 - Bases no longer list the note templates as tracks, sessions, concepts or references. `check_bases.py` guards it.
 - `new-track`, `new-concept-note`, `process-paper` and `process-web` had no explicit-use setting; they now run only when asked.
 

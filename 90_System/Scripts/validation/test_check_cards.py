@@ -75,4 +75,19 @@ check(code == 0, f"vendored folder skipped: {out}")
 code, out = run({"20_Concepts/A.md": "---\nstatus:: draft\n---\n\n# T\n\nWhat?::\n"})
 check(code == 0, f"frontmatter and empty answers are not cards: {out}")
 
+code, out = run({"20_Concepts/A.md": note("## Flashcards\n\nWhat is X?::A thing, see [the paper](https://doi.org/10.1/x).\n")})
+check(code == 0, f"a Markdown link or URL is a source: {out}")
+
+code, out = run({"40_References/P.md": "---\ntype: reference\nlink: https://example.org/p\n---\n\n# P\n\nWhat does P show?::That Y.\n"})
+check(code == 0, f"a filled link property is the source of the whole note: {out}")
+
+code, out = run({"20_Concepts/A.md": "---\ntype: concept\ntags: [flashcards]\n---\n\n# T\n\n## Flashcards\n\nSpacing beats ==massed== practice.\n"})
+check(code == 1 and "no source link" in out, f"a cloze needs a source too: {out}")
+
+code, out = run({"20_Concepts/A.md": "---\ntype: concept\n---\n\n# T\n\nThis is ==important== prose.\n"})
+check(code == 0, f"highlights outside a flashcards note are not clozes: {out}")
+
+code, out = run({"20_Concepts/A.md": note("| What?::table | x |\n\n> What?::quote\n")})
+check(code == 0, f"tables and quotes are not cards: {out}")
+
 print("ok:", checks, "checks")

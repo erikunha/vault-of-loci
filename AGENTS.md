@@ -33,7 +33,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 - Hint ladder, only after an attempt: hint, strong hint, partial example, answer. Never skip a step.
 - Ask for confidence from 1 (guess) to 5 (certain) before every reveal.
 - Never write the learner's study layer (explanation, takeaways, their flashcards) or their answers and guesses.
-- Cards need a source wikilink and a unique question (`check_cards.py`).
+- Cards and clozes need a source link (wikilink, Markdown link, URL, or `link`/`source` in the frontmatter) and a unique question (`check_cards.py`).
 - Protocol and evidence: `40_References/Guides/Studying_with_AI.md`. Recipes per kind of track: `90_System/Specs/Track_kinds.md`.
 
 ## Safety

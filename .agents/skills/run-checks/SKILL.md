@@ -7,7 +7,7 @@ description: Run every check of this vault (formatting, links, study layer, name
 2. Links: `python3 -I 90_System/Scripts/validation/check_links.py`
 3. Study layer: `python3 -I 90_System/Scripts/validation/check_study_layer.py` (headings come from `90_System/Specs/study_layer.json`).
 4. Names: `python3 -I 90_System/Scripts/validation/check_names.py` (to fix, `python3 90_System/Scripts/normalize_names.py --write`).
-5. Flashcards: `python3 -I 90_System/Scripts/validation/check_cards.py` (every `question::answer` card needs a source wikilink; no question may repeat).
+5. Flashcards: `python3 -I 90_System/Scripts/validation/check_cards.py` (every `question::answer` card and cloze needs a source link; no question may repeat).
 6. Skills: `python3 -I 90_System/Scripts/validation/check_skills.py`
 7. Bases: `python3 -I 90_System/Scripts/validation/check_bases.py`
 8. Study layer translations: `python3 -I 90_System/Scripts/validation/check_study_layer_translations.py`
