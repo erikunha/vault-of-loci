@@ -4,6 +4,13 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+### Added
+
+- Contributions of reusable content are welcome: a content-type table, the line between reusable and personal, a quality bar, a "Content proposal" issue form and a Contributors section.
+- `spoken-mock` skill (timed spoken mock, coached or observed) and a `Debrief` template.
+- The mistakes log records how AI was involved (scaffold, substitute, none) and closes a mistake only after an unaided correct retry.
+- `study_layer.pt-BR.json` and `check_study_layer_translations.py`.
+
 ### Fixed
 
 - Bases no longer list the note templates as tracks, sessions, concepts or references. `check_bases.py` guards it.

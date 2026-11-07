@@ -22,7 +22,7 @@ No. Plugin code is not committed, so each copy installs its own. Spaced Repetiti
 
 ## Can I write my notes in another language?
 
-Yes. Note text can be in any language. The study layer headings are set in `90_System/Specs/study_layer.json`; the README section "Customize" lists what to change if you rename them.
+Yes. Note text can be in any language. The study layer headings are set in `90_System/Specs/study_layer.json`; the README section "Customize" lists what to change if you rename them. A Portuguese version ships ready: copy `study_layer.pt-BR.json` over `study_layer.json`. To add another language, create `study_layer.<language>.json` with the same keys; `check_study_layer_translations.py` checks them.
 
 ## Why underscores in file names?
 

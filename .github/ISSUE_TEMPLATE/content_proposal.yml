@@ -1,0 +1,70 @@
+name: Content proposal
+description: Propose reusable study material (concept, reference, guide, track recipe, example track, translation, skill, scenario).
+labels: [content]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Content type
+      options:
+        - Concept note
+        - Reference note
+        - Guide
+        - Track recipe and practice kit
+        - Example track
+        - Study layer translation
+        - Skill
+        - Tutor-mode scenario
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Track kind, if any
+      options:
+        - none
+        - course
+        - book
+        - certification
+        - interview
+        - research
+        - skill
+        - language
+        - other
+  - type: input
+    id: title
+    attributes:
+      label: Title
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Learner problem it solves
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources with DOI, arXiv ID or official URL
+    validations:
+      required: true
+  - type: textarea
+    id: reusable
+    attributes:
+      label: Why it is reusable and not personal
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before opening
+      options:
+        - label: It contains no personal data.
+          required: true
+        - label: I opened every source I listed.
+          required: true
+        - label: I can license it under the MIT license.
+          required: true
+        - label: I will run every check before the pull request.
+          required: true

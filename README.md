@@ -50,8 +50,8 @@ flowchart LR
 | `20_Concepts/` | One note per concept, shared across tracks |
 | `30_Maps/` | Canvases |
 | `40_References/` | `Papers/`, `Books/`, `Repositories/`, `Web/`, `Guides/` (verified sources only) |
-| `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log) |
-| `90_System/` | `Templates/` (including `Checkpoint.md`), `Bases/` (including `Tracks.base`, `Weakest.base` and `Interleave.base`), `Specs/` (including `Track_kinds.md`), `Scripts/`, `Agent_Log/`, `index.json` |
+| `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log, with how AI was involved in each mistake) |
+| `90_System/` | `Templates/` (including `Checkpoint.md` and `Debrief.md`), `Bases/` (including `Tracks.base`, `Weakest.base` and `Interleave.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
 | `INDEX.md` | Generated reading index for agents: one line per note |
 
 ## Naming standard
@@ -73,6 +73,7 @@ python3 -I 90_System/Scripts/validation/check_names.py                # no space
 python3 -I 90_System/Scripts/validation/check_cards.py                # card source link, no repeated question
 python3 -I 90_System/Scripts/validation/check_skills.py               # skill files follow the Agent Skills spec
 python3 -I 90_System/Scripts/validation/check_bases.py                # bases never list the templates
+python3 -I 90_System/Scripts/validation/check_study_layer_translations.py   # translations keep the same keys
 python3 -I 90_System/Scripts/validation/check_index.py                # INDEX.md and index.json are current
 python3 -I 90_System/Scripts/validation/test_format_notes.py
 python3 -I 90_System/Scripts/validation/test_normalize_names.py
@@ -81,6 +82,7 @@ python3 -I 90_System/Scripts/validation/test_check_study_layer.py
 python3 -I 90_System/Scripts/validation/test_check_cards.py
 python3 -I 90_System/Scripts/validation/test_check_skills.py
 python3 -I 90_System/Scripts/validation/test_check_bases.py
+python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py
 python3 -I 90_System/Scripts/validation/test_check_index.py
 ```
 
@@ -88,7 +90,7 @@ The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard libra
 
 ## Customize
 
-- **Language.** The study layer headings are set in one file, `90_System/Specs/study_layer.json`, which `check_study_layer.py` reads. Change them there, then in the `Concept` and `Reference` templates, in `90_System/Specs/Study_layer.md` and in the existing notes. Note text can be in any language.
+- **Language.** The study layer headings are set in one file, `90_System/Specs/study_layer.json`, which `check_study_layer.py` reads. A Portuguese version ships as `study_layer.pt-BR.json`: copy it over `study_layer.json` to switch. Change them there, then in the `Concept` and `Reference` templates, in `90_System/Specs/Study_layer.md` and in the existing notes. Note text can be in any language.
 - **Track kinds.** Recipes live in `90_System/Specs/Track_kinds.md`; the `new-track` skill reads them. Edit a recipe or add a kind there.
 - **Concept categories.** Each category is a `cat/<name>` tag with a color in `.obsidian/graph.json` and `.obsidian/snippets/study-vault.css`. Add or rename them in both places.
 - **Folders.** The numbered top folders are referenced by `llms.txt`, the skills and the checks (the bases filter by the `type` property, not by folder). Rename one and run the checks to find what still points to the old name.
@@ -115,6 +117,7 @@ flowchart LR
 | After reading | "I'll explain retrieval practice; list only my gaps" | `teach-the-agent` |
 | After a quiz | "Turn today's mistakes into cards" | `mistake-review` |
 | Any day | "What should I review today?" | `review-queue` |
+| Before an interview, oral exam or conversation | "Run a 30-minute observed mock" | `spoken-mock` |
 | Every two weeks | "Closed-book checkpoint on what I studied before the 1st" | `no-ai-checkpoint` |
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
 | Before committing | "Run the checks" | `run-checks` |
@@ -167,7 +170,12 @@ Agents send the notes they read to their provider. Keep private material out of 
 - [`FAQ.md`](FAQ.md): common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
 - [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
+- Content is welcome: concept notes, references, guides, track recipes, example tracks, translations and skills. Use the "Content proposal" issue form.
 - Help and maintainer: open an issue on GitHub. The maintainer is [@erikunha](https://github.com/erikunha).
+
+## Contributors
+
+- [@erikunha](https://github.com/erikunha): maintainer.
 
 ## Credits
 
