@@ -11,6 +11,8 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 - The mistakes log records how AI was involved (scaffold, substitute, none) and closes a mistake only after an unaided correct retry.
 - Practice kits per kind in `90_System/Templates/Practice/` (blueprint map, problem log, input log, output sample, synthesis matrix, attempt log, checkpoints, 48-hour plan); `new-track` copies the right kit, and both example tracks show a filled checkpoint.
 - `export_anki_tsv.py` (cards and clozes to an Anki import file, one deck per track) and `export_bibtex.py` (reference notes to BibTeX and CSL JSON for Zotero, Pandoc or LaTeX), both dry run by default, with tests.
+- `vtt_to_note.py` turns WebVTT or SRT subtitles into a `type: transcript` note, and `transcript_sections.py` adds a `## HH:MM:SS` heading about every 10 minutes so agents read one range at a time, with tests.
+- `Blueprint.base` ranks concepts by exam weight x (5 - confidence) from a new `weight` property; `Progress.base` groups sessions by track and lists concepts by last test.
 - `check_alt_text.py`: every embedded image needs alt text.
 - `CITATION.cff`, so GitHub shows "Cite this repository".
 - `study_layer.pt-BR.json` and `check_study_layer_translations.py`.

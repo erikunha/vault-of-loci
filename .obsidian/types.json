@@ -34,6 +34,8 @@
     "week": "text",
     "last_tested": "date",
     "score": "number",
-    "confidence": "number"
+    "confidence": "number",
+    "weight": "number",
+    "source": "text"
   }
 }

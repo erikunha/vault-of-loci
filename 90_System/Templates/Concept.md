@@ -7,6 +7,7 @@ aliases: []
 last_tested:
 score:
 confidence:
+weight:
 tags: [type/concept, cat/<category>, flashcards]
 ---
 

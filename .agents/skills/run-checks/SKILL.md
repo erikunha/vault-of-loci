@@ -26,5 +26,6 @@ description: Run every check of this vault (formatting, links, study layer, name
    - `python3 -I 90_System/Scripts/validation/test_check_alt_text.py`
    - `python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py`
    - `python3 -I 90_System/Scripts/validation/test_export_bibtex.py`
+   - `python3 -I 90_System/Scripts/validation/test_transcripts.py`
 
 Report each step as passed, failed or not run. Not run is never passed.

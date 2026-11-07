@@ -51,7 +51,7 @@ flowchart LR
 | `30_Maps/` | Canvases |
 | `40_References/` | `Papers/`, `Books/`, `Repositories/`, `Web/`, `Guides/` (verified sources only) |
 | `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log, with how AI was involved in each mistake) |
-| `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base` and `Interleave.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
+| `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base`, `Interleave.base`, `Blueprint.base` and `Progress.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
 | `INDEX.md` | Generated reading index for agents: one line per note |
 
 ## Naming standard
@@ -61,6 +61,16 @@ File and folder names use underscores instead of spaces (`Retrieval_Practice.md`
 ```bash
 python3 90_System/Scripts/normalize_names.py          # dry run
 python3 90_System/Scripts/normalize_names.py --write  # rename (git mv when tracked) and rewrite every link
+```
+
+## Transcripts
+
+A lecture, talk or video with subtitles becomes a note an agent can read by section:
+
+```bash
+python3 -I 90_System/Scripts/vtt_to_note.py talk.vtt --track 01_Example_Course --write   # WebVTT or SRT to 10_Tracks/<track>/transcripts/
+python3 -I 90_System/Scripts/transcript_sections.py --write   # add a ## HH:MM:SS heading about every 10 minutes to existing transcripts
+python3 -I 90_System/Scripts/transcript_sections.py --report  # list notes over 300 lines with no heading
 ```
 
 ## Export
@@ -97,6 +107,7 @@ python3 -I 90_System/Scripts/validation/test_check_index.py
 python3 -I 90_System/Scripts/validation/test_check_alt_text.py
 python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
 python3 -I 90_System/Scripts/validation/test_export_bibtex.py
+python3 -I 90_System/Scripts/validation/test_transcripts.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only. If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`; the Claude Code hook does it after each note edit.

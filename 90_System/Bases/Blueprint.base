@@ -1,0 +1,25 @@
+filters:
+  and:
+    - type == "concept"
+    - '!file.inFolder("90_System/Templates")'
+    - "weight > 0"
+formulas:
+  priority: 'weight * (5 - if(confidence, confidence, 0))'
+properties:
+  weight:
+    displayName: "Weight %"
+  formula.priority:
+    displayName: Priority
+views:
+  - type: table
+    name: Study first
+    order:
+      - file.name
+      - tracks
+      - weight
+      - confidence
+      - score
+      - formula.priority
+    sort:
+      - property: formula.priority
+        direction: DESC

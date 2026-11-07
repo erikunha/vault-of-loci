@@ -68,6 +68,7 @@ Reusable content teaches without your history: nothing in it identifies you, you
    python3 -I 90_System/Scripts/validation/test_check_alt_text.py
    python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
    python3 -I 90_System/Scripts/validation/test_export_bibtex.py
+   python3 -I 90_System/Scripts/validation/test_transcripts.py
    ```
 
 5. A change to a script ships with a test that fails without the change and passes with it.

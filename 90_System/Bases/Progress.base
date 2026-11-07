@@ -1,0 +1,39 @@
+filters:
+  and:
+    - '!file.inFolder("90_System/Templates")'
+    - or:
+        - type == "session"
+        - type == "concept"
+formulas:
+  days_since_test: 'if(last_tested, (today() - date(last_tested)).days, "")'
+views:
+  - type: table
+    name: Sessions by track
+    filters:
+      and:
+        - type == "session"
+    order:
+      - file.name
+      - status
+      - date
+      - ai_use
+    groupBy:
+      property: track
+      direction: ASC
+    summaries:
+      file.name: Filled
+  - type: table
+    name: Concepts by last test
+    filters:
+      and:
+        - type == "concept"
+    order:
+      - file.name
+      - tracks
+      - score
+      - confidence
+      - last_tested
+      - formula.days_since_test
+    sort:
+      - property: last_tested
+        direction: ASC

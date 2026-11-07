@@ -43,7 +43,7 @@ Each recipe gives notes, practice, review cadence and checkpoint.
 
 ### course
 
-- **Notes:** one session per lesson, in the lesson's order, with concepts linked.
+- **Notes:** one session per lesson, in the lesson's order, with concepts linked. A recorded lesson with subtitles goes to `transcripts/` through `vtt_to_note.py`, and the session cites its timestamps.
 - **Practice:** the course project in `practice/`. A question that comes up while building becomes a concept note.
 - **Review:** flashcards daily within the cap, weekly review on a fixed day.
 - **Checkpoint:** closed-book `no-ai-checkpoint` every two weeks on concepts older than 14 days.
@@ -57,7 +57,7 @@ Each recipe gives notes, practice, review cadence and checkpoint.
 
 ### certification
 
-- **Notes:** a blueprint map in `practice/`: one row per exam domain with its weight, your confidence (1 to 5) and your last practice score. Study the heavy, weak domains first. Mark every rule that is a practitioner convention and not in the official blueprint, so field habits and exam answers stay apart.
+- **Notes:** a blueprint map in `practice/`: one row per exam domain with its weight, your confidence (1 to 5) and your last practice score. Study the heavy, weak domains first. When a domain maps to concept notes, set `weight` on them and `Blueprint.base` ranks them by weight x (5 - confidence). Mark every rule that is a practitioner convention and not in the official blueprint, so field habits and exam answers stay apart.
 - **Practice:** timed practice exams under exam conditions. Keep an error log: question, why you missed it, the rule, the retry date.
 - **Review:** error-log retries weekly, cards daily within the cap.
 - **Checkpoint:** a full timed exam before the deadline, with your predicted score written first.
