@@ -4,6 +4,10 @@
 
 Anything you can set a goal for: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a kind, a goal and a done criterion, and `90_System/Specs/Track_kinds.md` has one recipe per kind. Ask for the `new-track` skill, or copy `90_System/Templates/Track.md`. A kind that is missing can start as `other` with a done criterion you can fail.
 
+## Where can I ask a question or show what I built?
+
+In [GitHub Discussions](https://github.com/erikunha/vault-of-loci/discussions): Q&A for questions, Ideas for proposals you want to talk through, Show and tell for your own vault. Bugs go in an issue. [`SUPPORT.md`](SUPPORT.md) says what to include. You can write in Portuguese or English.
+
 ## Do I need AI agents to use this vault?
 
 No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use an agent such as Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor or OpenCode. The README table "Supported agents" lists what each one reads.
