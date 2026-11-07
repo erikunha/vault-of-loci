@@ -14,6 +14,7 @@ Reusable material is welcome: anything that helps another learner and stays corr
 | Example track | a folder in `10_Tracks/` with a track note, at least one session and a practice file, marked as an example |
 | Guide | `40_References/Guides/`, study layer format |
 | Study layer translation | `90_System/Specs/study_layer.<language>.json` with the same keys as `study_layer.json` |
+| README translation | `README.<language>.md`; a change to `README.md` updates every translation in the same pull request (`check_readme_translations.py` fails otherwise) |
 | Skill | `.agents/skills/<name>/SKILL.md` following the Agent Skills spec, tutor mode, `disable-model-invocation` and `agents/openai.yaml` if it writes files |
 | Tutor-mode scenario | a row in `90_System/Evals/Tutor_mode.md` with the expected agent behavior |
 | Tooling | fixes and new checks in `90_System/Scripts`, standard library only, with a test |

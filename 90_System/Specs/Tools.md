@@ -29,6 +29,7 @@ It runs `format_notes.py --check`, then every `validation/check_*.py`, then ever
 | `check_bases.py` | Bases never list the note templates |
 | `check_study_layer_translations.py` | Translations keep the same keys |
 | `check_alt_text.py` | Every image has alt text |
+| `check_readme_translations.py` | Each translated README keeps the same headings and file names as `README.md` |
 | `check_index.py` | `INDEX.md` and `index.json` are current |
 | `test_*.py` | Each script above and below has a test |
 

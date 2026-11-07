@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Question
+    url: https://github.com/erikunha/vault-of-loci/discussions/categories/q-a
+    about: Ask how to use or adapt the vault in Discussions, after checking FAQ.md.
+  - name: Idea to discuss
+    url: https://github.com/erikunha/vault-of-loci/discussions/categories/ideas
+    about: Talk through an idea before it becomes an Improvement or Content proposal.
   - name: Security problem
     url: https://github.com/erikunha/vault-of-loci/security/advisories/new
     about: Report security problems privately, not in a public issue.

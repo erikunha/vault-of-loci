@@ -7,9 +7,11 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 ### Added
 
 - `run_checks.py` runs every check and test in one command and finds new ones by file name; CI, `CONTRIBUTING.md`, the PR template and the `run-checks` skill use it instead of four hand-kept lists. Tested.
-- `SUPPORT.md` and a "Question" issue form, so a question has a place to go.
+- `SUPPORT.md` and GitHub Discussions (Q&A, Ideas, Show and tell), linked from the issue chooser, so a question has a place to go.
 - `CONTRIBUTING.md` walks through a first contribution made entirely in the GitHub web editor.
 - The README shows a contributors grid that updates by itself.
+- `README.pt-BR.md`, a Portuguese README, kept in step by `check_readme_translations.py` (same headings and file names as `README.md`). Tested.
+- Four good first issues: a Spanish study layer, concept notes on spacing and interleaving, and an example language track.
 
 ### Changed
 

@@ -1,5 +1,7 @@
 # Vault of Loci
 
+**English** · [Português](README.pt-BR.md)
+
 [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
@@ -143,7 +145,7 @@ Content is welcome, and you do not need to write code: concept notes, verified r
 
 ## Community
 
-- [`SUPPORT.md`](SUPPORT.md): where to ask a question.
+- [`SUPPORT.md`](SUPPORT.md) and [Discussions](https://github.com/erikunha/vault-of-loci/discussions): questions, ideas and what you built with the vault.
 - [`FAQ.md`](FAQ.md): common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
 - [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
