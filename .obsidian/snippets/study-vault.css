@@ -1,0 +1,80 @@
+/* Category palette (same as graph, canvas and bases) */
+body {
+  --cat-foundations: 139, 92, 246;
+  --cat-methods: 59, 130, 246;
+  --cat-patterns: 6, 182, 212;
+  --cat-tools: 245, 158, 11;
+  --cat-memory: 236, 72, 153;
+  --cat-retrieval: 16, 185, 129;
+  --cat-evaluation: 239, 68, 68;
+  --cat-interface: 100, 116, 139;
+  --cat-architecture: 249, 115, 22;
+}
+
+/* Headings */
+.markdown-rendered h1, .cm-header-1 { font-weight: 800; letter-spacing: -0.02em; border-bottom: 2px solid var(--interactive-accent); padding-bottom: .25em; }
+.markdown-rendered h2 { font-weight: 700; margin-top: 2em; padding-left: .6em; border-left: 4px solid var(--interactive-accent); }
+.markdown-rendered h3 { font-weight: 650; color: var(--text-accent); }
+/* h6 = notebook cell anchors: subtle */
+.markdown-rendered h6 { font-size: .72em; font-family: var(--font-monospace); color: var(--text-faint); text-transform: none; margin: 1.4em 0 .2em; }
+
+/* Mermaid centered with breathing room */
+.markdown-rendered .mermaid { display: flex; justify-content: center; padding: 1em; margin: 1em 0; border-radius: 12px; background: var(--background-secondary); }
+
+/* Tables */
+.markdown-rendered table { border-radius: 8px; overflow: hidden; }
+.markdown-rendered th { background: rgba(var(--cat-foundations), .15); }
+
+/* Custom callouts */
+.callout[data-callout="teacher"] { --callout-color: var(--cat-tools); --callout-icon: lucide-graduation-cap; }
+.callout[data-callout="project"]   { --callout-color: var(--cat-evaluation);  --callout-icon: lucide-target; }
+.callout[data-callout="code"]    { --callout-color: var(--cat-patterns);     --callout-icon: lucide-code-2; }
+.callout[data-callout="concept"]  { --callout-color: var(--cat-foundations); --callout-icon: lucide-brain; }
+.callout[data-callout="tldr"]      { --callout-color: var(--cat-retrieval);        --callout-icon: lucide-zap; }
+.callout[data-callout="pitfall"] { --callout-color: var(--cat-memory);    --callout-icon: lucide-alert-triangle; }
+
+/* Tags colored by category */
+a.tag[href^="#cat/foundations"] { background: rgba(var(--cat-foundations), .18); color: rgb(var(--cat-foundations)); }
+a.tag[href^="#cat/methods"]     { background: rgba(var(--cat-methods), .18);     color: rgb(var(--cat-methods)); }
+a.tag[href^="#cat/patterns"]      { background: rgba(var(--cat-patterns), .18);      color: rgb(var(--cat-patterns)); }
+a.tag[href^="#cat/tools"] { background: rgba(var(--cat-tools), .18); color: rgb(var(--cat-tools)); }
+a.tag[href^="#cat/memory"]     { background: rgba(var(--cat-memory), .18);     color: rgb(var(--cat-memory)); }
+a.tag[href^="#cat/retrieval"]         { background: rgba(var(--cat-retrieval), .18);         color: rgb(var(--cat-retrieval)); }
+a.tag[href^="#cat/evaluation"]   { background: rgba(var(--cat-evaluation), .18);   color: rgb(var(--cat-evaluation)); }
+a.tag[href^="#cat/interface"]   { background: rgba(var(--cat-interface), .18);   color: rgb(var(--cat-interface)); }
+a.tag[href^="#cat/architecture"] { background: rgba(var(--cat-architecture), .18); color: rgb(var(--cat-architecture)); }
+
+/* Numbered folders in the file explorer */
+.nav-folder-title[data-path="10_Courses"] .nav-folder-title-content::before { content: "🎓 "; }
+.nav-folder-title[data-path="20_Concepts"] .nav-folder-title-content::before { content: "🧠 "; }
+.nav-folder-title[data-path="30_Maps"] .nav-folder-title-content::before { content: "🗺️ "; }
+.nav-folder-title[data-path="00_Inbox"] .nav-folder-title-content::before { content: "📥 "; }
+.nav-folder-title[data-path="90_System"] .nav-folder-title-content::before { content: "⚙️ "; }
+.nav-folder-title[data-path="40_References"] .nav-folder-title-content::before { content: "📚 "; }
+.nav-folder-title[data-path="50_Review"] .nav-folder-title-content::before { content: "🃏 "; }
+.callout[data-callout="question"] { --callout-color: var(--cat-methods); --callout-icon: lucide-pencil-line; }
+progress { accent-color: rgb(var(--cat-foundations)); height: 14px; }
+
+/* Spacing: text, headings, lists, callouts and tables */
+.markdown-rendered, .markdown-source-view.mod-cm6 .cm-content { line-height: 1.75; }
+.markdown-rendered p { margin: 0 0 1.1em; }
+.markdown-rendered h2 { margin: 2.4em 0 .9em; }
+.markdown-rendered h3 { margin: 1.9em 0 .7em; }
+.markdown-rendered h4 { margin: 1.5em 0 .6em; }
+.markdown-rendered li { margin: .35em 0; }
+.markdown-rendered ul, .markdown-rendered ol { margin: .6em 0 1.2em; }
+.markdown-rendered .callout { margin: 1.6em 0; padding: 14px 20px; }
+.markdown-rendered .callout-content { padding-top: .4em; }
+.markdown-rendered table { margin: 1.4em 0; }
+.markdown-rendered th, .markdown-rendered td { padding: 8px 14px; }
+.markdown-rendered pre { margin: 1.2em 0; padding: 14px 16px; }
+.markdown-rendered hr { margin: 2.4em 0; }
+.markdown-source-view.mod-cm6 .HyperMD-header-2 { padding-top: 1.2em; }
+.markdown-source-view.mod-cm6 .HyperMD-header-3 { padding-top: .8em; }
+
+/* Canvas cards: inner padding and looser text */
+.canvas-node-content .markdown-preview-view { padding: 16px 22px; line-height: 1.6; }
+.canvas-node-content .markdown-preview-view h3 { margin: 0 0 .45em; }
+.canvas-node-content .markdown-preview-view h2 { margin: 0 0 .6em; border-left: none; padding-left: 0; }
+.canvas-node-content .markdown-preview-view p { margin: 0 0 .5em; }
+.canvas-node-content .markdown-preview-view li { margin: .2em 0; }

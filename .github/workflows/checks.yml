@@ -1,0 +1,21 @@
+name: checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  vault:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 -I 90_System/Scripts/format_notes.py --check
+      - run: python3 -I 90_System/Scripts/validation/check_links.py
+      - run: python3 -I 90_System/Scripts/validation/check_study_layer.py
+      - run: python3 -I 90_System/Scripts/validation/check_names.py
+      - run: python3 -I 90_System/Scripts/validation/test_format_notes.py
+      - run: python3 -I 90_System/Scripts/validation/test_normalize_names.py

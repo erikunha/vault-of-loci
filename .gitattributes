@@ -1,0 +1,10 @@
+* text=auto eol=lf
+*.md text diff=markdown
+*.py text diff=python
+*.canvas text linguist-language=JSON
+*.base text linguist-language=YAML
+*.png binary
+*.jpg binary
+*.pdf binary
+*.pptx binary
+*.ipynb text linguist-documentation

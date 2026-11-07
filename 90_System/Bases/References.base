@@ -1,0 +1,16 @@
+filters:
+  and:
+    - type == "reference"
+formulas:
+  state: 'if(verified == true, "verified", "to check")'
+views:
+  - type: table
+    name: References
+    order:
+      - file.name
+      - subtype
+      - year
+      - formula.state
+    sort:
+      - property: year
+        direction: DESC

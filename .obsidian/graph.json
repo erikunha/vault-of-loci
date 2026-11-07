@@ -1,0 +1,100 @@
+{
+  "collapse-filter": true,
+  "search": "-path:90_System -path:.agents",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "tag:#type/course",
+      "color": {
+        "a": 1,
+        "rgb": 16436245
+      }
+    },
+    {
+      "query": "tag:#type/lesson",
+      "color": {
+        "a": 1,
+        "rgb": 14870768
+      }
+    },
+    {
+      "query": "tag:#cat/foundations",
+      "color": {
+        "a": 1,
+        "rgb": 9133302
+      }
+    },
+    {
+      "query": "tag:#cat/methods",
+      "color": {
+        "a": 1,
+        "rgb": 3900150
+      }
+    },
+    {
+      "query": "tag:#cat/patterns",
+      "color": {
+        "a": 1,
+        "rgb": 440020
+      }
+    },
+    {
+      "query": "tag:#cat/tools",
+      "color": {
+        "a": 1,
+        "rgb": 16096779
+      }
+    },
+    {
+      "query": "tag:#cat/memory",
+      "color": {
+        "a": 1,
+        "rgb": 15485081
+      }
+    },
+    {
+      "query": "tag:#cat/retrieval",
+      "color": {
+        "a": 1,
+        "rgb": 1096065
+      }
+    },
+    {
+      "query": "tag:#cat/evaluation",
+      "color": {
+        "a": 1,
+        "rgb": 15680580
+      }
+    },
+    {
+      "query": "tag:#cat/interface",
+      "color": {
+        "a": 1,
+        "rgb": 6583435
+      }
+    },
+    {
+      "query": "tag:#cat/architecture",
+      "color": {
+        "a": 1,
+        "rgb": 16347926
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": true,
+  "textFadeMultiplier": -0.6,
+  "nodeSizeMultiplier": 1.3,
+  "lineSizeMultiplier": 0.8,
+  "collapse-forces": true,
+  "centerStrength": 0.45,
+  "repelStrength": 14,
+  "linkStrength": 1,
+  "linkDistance": 180,
+  "scale": 0.3,
+  "close": false
+}

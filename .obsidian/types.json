@@ -1,0 +1,29 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "tags": "tags",
+    "type": "text",
+    "subtype": "text",
+    "category": "text",
+    "topic": "text",
+    "status": "text",
+    "course": "text",
+    "period": "text",
+    "courses": "multitext",
+    "lessons": "multitext",
+    "concepts": "multitext",
+    "authors": "text",
+    "link": "text",
+    "venue": "text",
+    "arxiv": "text",
+    "doi": "text",
+    "verified": "checkbox",
+    "checked": "date",
+    "date": "date",
+    "updated": "date",
+    "year": "number",
+    "lesson": "number",
+    "order": "number",
+    "week": "text"
+  }
+}

@@ -1,0 +1,21 @@
+# Vault of Loci
+
+> An Obsidian vault template for studying courses with AI agents: courses, lessons, concept notes, verified references, flashcards and automatic checks. Rules for agents are in AGENTS.md.
+
+## Start here
+- [README.md](README.md): what it is and how to start
+- [AGENTS.md](AGENTS.md): structure, frontmatter, writing rules, safety
+- [How_to_Study_with_this_Vault.md](How_to_Study_with_this_Vault.md): the study method
+- [00_Home.md](00_Home.md): dashboard
+
+## Examples
+- [Retrieval practice](20_Concepts/Retrieval_Practice.md): a concept note with the full study layer
+- [Test-enhanced learning](40_References/Papers/Test-Enhanced_Learning_(Roediger_and_Karpicke,_2006).md): a verified paper note
+- [Example course](10_Courses/01_Example_Course/Example_Course.md): a course with one lesson
+
+## Guides
+- [Studying with AI](40_References/Guides/Studying_with_AI.md): evidence and protocol
+- [Repository and documentation patterns for AI](40_References/Guides/Repository_and_Documentation_Patterns_for_AI.md)
+
+## Optional
+- [Study layer spec](90_System/Specs/Study_layer.md)

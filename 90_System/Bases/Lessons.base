@@ -1,0 +1,15 @@
+filters:
+  and:
+    - type == "lesson"
+views:
+  - type: table
+    name: Lessons
+    order:
+      - lesson
+      - file.name
+      - topic
+      - date
+      - status
+    sort:
+      - property: date
+        direction: ASC

@@ -1,0 +1,13 @@
+filters:
+  and:
+    - type == "concept"
+views:
+  - type: table
+    name: Concepts
+    order:
+      - file.name
+      - category
+      - courses
+    sort:
+      - property: category
+        direction: ASC
