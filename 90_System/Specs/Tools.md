@@ -33,7 +33,7 @@ It runs `format_notes.py --check`, then every `validation/check_*.py`, then ever
 | `check_index.py` | `INDEX.md` and `index.json` are current |
 | `test_*.py` | Each script above and below has a test |
 
-If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`. The Claude Code hook does it after each note edit.
+If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`. The Claude Code hook does it after each note edit. To catch a stale index before it reaches a commit, enable the pre-commit hook once per clone: `git config core.hooksPath .githooks`.
 
 ## Contributors table
 

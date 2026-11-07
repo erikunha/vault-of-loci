@@ -1,0 +1,6 @@
+#!/bin/sh
+# Refuse a commit whose INDEX.md or index.json is behind the notes. Enable once per clone:
+#   git config core.hooksPath .githooks
+python3 -I 90_System/Scripts/validation/check_index.py >/dev/null 2>&1 && exit 0
+echo "pre-commit: INDEX.md is out of date. Run: python3 -I 90_System/Scripts/build_index.py, then stage INDEX.md and 90_System/index.json." >&2
+exit 1
