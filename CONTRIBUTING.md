@@ -30,6 +30,7 @@ Thanks for helping. This template should stay small, plain Markdown and easy to 
    python3 -I 90_System/Scripts/validation/check_names.py
    python3 -I 90_System/Scripts/validation/check_cards.py
    python3 -I 90_System/Scripts/validation/check_skills.py
+   python3 -I 90_System/Scripts/validation/check_bases.py
    python3 -I 90_System/Scripts/validation/check_index.py
    python3 -I 90_System/Scripts/validation/test_format_notes.py
    python3 -I 90_System/Scripts/validation/test_normalize_names.py
@@ -37,6 +38,7 @@ Thanks for helping. This template should stay small, plain Markdown and easy to 
    python3 -I 90_System/Scripts/validation/test_check_study_layer.py
    python3 -I 90_System/Scripts/validation/test_check_cards.py
    python3 -I 90_System/Scripts/validation/test_check_skills.py
+   python3 -I 90_System/Scripts/validation/test_check_bases.py
    python3 -I 90_System/Scripts/validation/test_check_index.py
    ```
 

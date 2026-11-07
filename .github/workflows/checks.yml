@@ -19,6 +19,7 @@ jobs:
       - run: python3 -I 90_System/Scripts/validation/check_names.py
       - run: python3 -I 90_System/Scripts/validation/check_cards.py
       - run: python3 -I 90_System/Scripts/validation/check_skills.py
+      - run: python3 -I 90_System/Scripts/validation/check_bases.py
       - run: python3 -I 90_System/Scripts/validation/check_index.py
       - run: python3 -I 90_System/Scripts/validation/test_format_notes.py
       - run: python3 -I 90_System/Scripts/validation/test_normalize_names.py
@@ -26,4 +27,5 @@ jobs:
       - run: python3 -I 90_System/Scripts/validation/test_check_study_layer.py
       - run: python3 -I 90_System/Scripts/validation/test_check_cards.py
       - run: python3 -I 90_System/Scripts/validation/test_check_skills.py
+      - run: python3 -I 90_System/Scripts/validation/test_check_bases.py
       - run: python3 -I 90_System/Scripts/validation/test_check_index.py

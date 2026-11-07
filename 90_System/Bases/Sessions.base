@@ -1,6 +1,7 @@
 filters:
   and:
     - type == "session"
+    - '!file.inFolder("90_System/Templates")'
 views:
   - type: table
     name: Sessions

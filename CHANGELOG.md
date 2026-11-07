@@ -4,6 +4,14 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+### Fixed
+
+- Bases no longer list the note templates as tracks, sessions, concepts or references. `check_bases.py` guards it.
+
+### Changed
+
+- The graph opens zoomed in, with labels, and the README shows the vault in Obsidian.
+
 Nothing yet.
 
 ## 0.2.0 (2026-11-07)

@@ -1,6 +1,7 @@
 filters:
   and:
     - type == "reference"
+    - '!file.inFolder("90_System/Templates")'
 formulas:
   state: 'if(verified == true, "verified", "to check")'
 views:

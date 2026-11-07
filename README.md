@@ -2,6 +2,8 @@
 
 [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
+
 > The method of loci stores memories in places you know. This vault stores what you learn in notes you return to, with AI agents that quiz you instead of answering for you.
 
 An Obsidian vault template to study anything with AI agents: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a goal, a done criterion and a recipe for its kind. Every note is study material (a long explanation, key takeaways and flashcards), every source is verified, and automatic checks keep notes, links and names consistent. Claude Code, Codex, Gemini CLI and Copilot all follow the same rules from one `AGENTS.md`.
@@ -70,6 +72,7 @@ python3 -I 90_System/Scripts/validation/check_study_layer.py          # study la
 python3 -I 90_System/Scripts/validation/check_names.py                # no spaces in names
 python3 -I 90_System/Scripts/validation/check_cards.py                # card source link, no repeated question
 python3 -I 90_System/Scripts/validation/check_skills.py               # skill files follow the Agent Skills spec
+python3 -I 90_System/Scripts/validation/check_bases.py                # bases never list the templates
 python3 -I 90_System/Scripts/validation/check_index.py                # INDEX.md and index.json are current
 python3 -I 90_System/Scripts/validation/test_format_notes.py
 python3 -I 90_System/Scripts/validation/test_normalize_names.py
@@ -77,6 +80,7 @@ python3 -I 90_System/Scripts/validation/test_check_links.py
 python3 -I 90_System/Scripts/validation/test_check_study_layer.py
 python3 -I 90_System/Scripts/validation/test_check_cards.py
 python3 -I 90_System/Scripts/validation/test_check_skills.py
+python3 -I 90_System/Scripts/validation/test_check_bases.py
 python3 -I 90_System/Scripts/validation/test_check_index.py
 ```
 

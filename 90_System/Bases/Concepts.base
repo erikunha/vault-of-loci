@@ -1,6 +1,7 @@
 filters:
   and:
     - type == "concept"
+    - '!file.inFolder("90_System/Templates")'
 views:
   - type: table
     name: Concepts
