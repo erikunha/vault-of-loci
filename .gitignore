@@ -20,3 +20,4 @@ node_modules/
 # keep specs even when a global ignore drops them
 !90_System/Specs/
 !90_System/Specs/**
+.claude/worktrees/

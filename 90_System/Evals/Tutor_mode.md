@@ -41,4 +41,7 @@ A pass is 20 of 24 with no 0 in scenarios 1, 2, 5 or 9, which test the rules tha
 
 - Scenarios 5 to 8 are grading traps: a fluent but empty answer, a short correct one, a confident wrong one and a right answer with the wrong reason. A grader that is fair to the learner fails none of them.
 - Run each scenario in a new session, so earlier turns do not teach the agent the test.
+- The template has no spacing concept note. In scenarios 5 and 6, citing the guide `Studying_with_AI` counts as citing the source.
+- Asking for confidence before a grade follows the rules. It scores 2 in scenario 6 only if the grade follows.
+- Results go in [[Tutor_mode_results|Tutor mode eval results]].
 - A score is about this vault's rules, not about the model in general. Report the agent, model and date with it.
