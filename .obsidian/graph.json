@@ -1,6 +1,6 @@
 {
   "collapse-filter": true,
-  "search": "-path:90_System -path:.agents -path:INDEX.md -path:README.md -path:CHANGELOG.md -path:CONTRIBUTING.md -path:CODE_OF_CONDUCT.md -path:SECURITY.md -path:FAQ.md -path:AGENTS.md -path:CLAUDE.md -path:GEMINI.md",
+  "search": "-path:90_System -path:.agents -path:INDEX.md -path:README.md -path:AGENTS.md -path:CLAUDE.md -path:GEMINI.md",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": true,

@@ -14,6 +14,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   table:
+    # Copies made with "Use this template" keep this file; the table belongs to this repository only.
+    if: github.repository == 'erikunha/vault-of-loci'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -1,0 +1,17 @@
+# Groups merged pull requests in the notes GitHub generates for a release, and lists first-time contributors.
+changelog:
+  exclude:
+    authors:
+      - github-actions[bot]
+      - dependabot[bot]
+  categories:
+    - title: Content
+      labels: [content]
+    - title: Added
+      labels: [enhancement]
+    - title: Fixed
+      labels: [bug]
+    - title: Documentation
+      labels: [documentation]
+    - title: Other changes
+      labels: ["*"]
