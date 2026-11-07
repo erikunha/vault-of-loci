@@ -20,7 +20,3 @@
 ## How did you test this change?
 
 <!-- The commands you ran and what they printed, or what you checked in Obsidian. -->
-
-## AI use
-
-<!-- None, or which agent or model helped and with what (drafting, translation, code, review). -->

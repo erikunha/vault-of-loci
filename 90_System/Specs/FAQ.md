@@ -1,3 +1,9 @@
+---
+type: spec
+summary: Common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
+tags: [type/spec]
+---
+
 # FAQ
 
 ## What can I learn with it?
@@ -6,7 +12,7 @@ Anything you can set a goal for: a course, a book, a certification, an interview
 
 ## Where can I ask a question or show what I built?
 
-In [GitHub Discussions](https://github.com/erikunha/vault-of-loci/discussions): Q&A for questions, Ideas for proposals you want to talk through, Show and tell for your own vault. Bugs go in an issue. [`SUPPORT.md`](SUPPORT.md) says what to include. You can write in Portuguese or English.
+In [GitHub Discussions](https://github.com/erikunha/vault-of-loci/discussions): Q&A for questions, Ideas for proposals you want to talk through, Show and tell for your own vault. Bugs go in an issue, with the steps and the output. You can write in Portuguese or English.
 
 ## Do I need AI agents to use this vault?
 
@@ -26,7 +32,7 @@ No. Plugin code is not committed, so each copy installs its own. Spaced Repetiti
 
 ## Can I write my notes in another language?
 
-Yes. Note text can be in any language. The study layer headings are set in `90_System/Specs/study_layer.json`; the README section "Customize" lists what to change if you rename them. A Portuguese version ships ready: copy `study_layer.pt-BR.json` over `study_layer.json`. To add another language, create `study_layer.<language>.json` with the same keys; `check_study_layer_translations.py` checks them.
+Yes. Note text can be in any language. The study layer headings are set in `90_System/Specs/study_layer.json`; [Tools and customization](Tools.md#customize) lists what to change if you rename them. A Portuguese version ships ready: copy `study_layer.pt-BR.json` over `study_layer.json`. To add another language, create `study_layer.<language>.json` with the same keys; `check_study_layer_translations.py` checks them.
 
 ## Why underscores in file names?
 

@@ -14,7 +14,6 @@ Reusable material is welcome: anything that helps another learner and stays corr
 | Example track | a folder in `10_Tracks/` with a track note, at least one session and a practice file, marked as an example |
 | Guide | `40_References/Guides/`, study layer format |
 | Study layer translation | `90_System/Specs/study_layer.<language>.json` with the same keys as `study_layer.json` |
-| README translation | `README.<language>.md`; a change to `README.md` updates every translation in the same pull request (`check_readme_translations.py` fails otherwise) |
 | Skill | `.agents/skills/<name>/SKILL.md` following the Agent Skills spec, tutor mode, `disable-model-invocation` and `agents/openai.yaml` if it writes files |
 | Tutor-mode scenario | a row in `90_System/Evals/Tutor_mode.md` with the expected agent behavior |
 | Tooling | fixes and new checks in `90_System/Scripts`, standard library only, with a test |
@@ -65,18 +64,9 @@ For anything bigger, the steps below use a local copy.
    If `check_index.py` fails after a note edit, run `python3 -I 90_System/Scripts/build_index.py` and run the checks again.
 
 5. A change to a script ships with a test that fails without the change and passes with it.
-6. Open a pull request that says what changed, why, and which checks you ran. Its title becomes the line in the release notes, so write it for a reader: `feat: concept note on spacing`, not `update file`. A bot labels it by the files it changes (`content`, `skills`, `tooling`, `translation`, `documentation`), and the release notes group it by that label.
+6. Open a pull request that says what changed, why, and which checks you ran. Its title becomes the line in the release notes, so write it for a reader: `feat: concept note on spacing`, not `update file`.
 
 Nothing reaches `main` without a pull request, maintainers and bots included. A pull request merges only when the `vault` check passes and every review thread is resolved, and it lands as one squashed commit. Force pushes and deleting `main` are blocked.
-
-## Contributions made with AI
-
-This vault is for studying with AI agents, so contributions made with one are welcome. The person who opens the pull request is its author and answers for every line.
-
-- Say in the pull request which agent or model helped and with what (drafting, translation, code, review).
-- Open every source an agent cites. Agents invent papers, DOIs and quotes that look real; a reference you did not open is not verified.
-- Read the whole diff before you open the pull request. Large batches of generated notes nobody reviewed are closed.
-- The checks apply the same way: `run_checks.py` must pass.
 
 ## Commit messages
 
@@ -85,10 +75,6 @@ Use Conventional Commits: `feat:`, `fix:`, `docs:`, `test:`, `chore:`. Keep the 
 ## Third-party files
 
 Folders with a `.vendored` file are copies of another project. Do not edit them here. To update one, copy the new version from its source and keep its `LICENSE`.
-
-## Recognition
-
-Release notes list every merged pull request and thank first-time contributors by name. Every contributor also appears in the Contributors table of `README.md`, with one emoji per kind of contribution. Commit authors are added by themselves. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker, bug reports) are added by hand to `.all-contributorsrc`: ask in your issue, pull request or discussion, or a maintainer adds you. Kinds and emojis follow the [All Contributors key](https://allcontributors.org/docs/en/emoji-key).
 
 ## License
 

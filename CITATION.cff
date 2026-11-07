@@ -1,9 +1,0 @@
-cff-version: 1.2.0
-message: "If you use this template in your work, please cite it."
-title: "Vault of Loci"
-authors:
-  - alias: erikunha
-license: MIT
-repository-code: "https://github.com/erikunha/vault-of-loci"
-version: 0.3.0
-date-released: 2026-11-07
