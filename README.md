@@ -155,9 +155,9 @@ Content is welcome, and you do not need to write code: concept notes, verified r
 
 Everyone whose change was merged appears below. Contributions that are not commits (ideas, reviews, content proposals) are thanked in the release notes.
 
-<a href="https://github.com/erikunha/vault-of-loci/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=erikunha/vault-of-loci" alt="Avatars of the people who contributed to Vault of Loci" />
-</a>
+<!-- contributors:start -->
+<a href="https://github.com/erikunha"><img src="https://avatars.githubusercontent.com/u/27955793?v=4&s=160" width="80" height="80" alt="erikunha" title="erikunha" /></a>
+<!-- contributors:end -->
 
 ## Credits
 

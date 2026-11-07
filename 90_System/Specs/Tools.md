@@ -35,6 +35,10 @@ It runs `format_notes.py --check`, then every `validation/check_*.py`, then ever
 
 If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`. The Claude Code hook does it after each note edit.
 
+## Contributors grid
+
+`update_contributors.py` writes the contributors of the GitHub repository (bots left out) between the `contributors:start` and `contributors:end` markers in every README, with avatars at 160 px shown at 80 px. `.github/workflows/contributors.yml` runs it on every push to `main` and every Monday, and commits only when the grid changed.
+
 ## Naming
 
 File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):

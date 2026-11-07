@@ -157,9 +157,9 @@ Conteúdo é bem-vindo, e não é preciso programar: notas de conceito, referên
 
 Quem teve uma mudança aceita aparece abaixo. Contribuições que não são commits (ideias, revisões, propostas de conteúdo) são agradecidas nas notas de release.
 
-<a href="https://github.com/erikunha/vault-of-loci/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=erikunha/vault-of-loci" alt="Fotos de quem contribuiu com o Vault of Loci" />
-</a>
+<!-- contributors:start -->
+<a href="https://github.com/erikunha"><img src="https://avatars.githubusercontent.com/u/27955793?v=4&s=160" width="80" height="80" alt="erikunha" title="erikunha" /></a>
+<!-- contributors:end -->
 
 ## Créditos
 
