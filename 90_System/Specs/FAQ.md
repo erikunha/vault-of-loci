@@ -10,9 +10,9 @@ tags: [type/spec]
 
 Anything you can set a goal for: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a kind, a goal and a done criterion, and `90_System/Specs/Track_kinds.md` has one recipe per kind. Ask for the `new-track` skill, or copy `90_System/Templates/Track.md`. A kind that is missing can start as `other` with a done criterion you can fail.
 
-## Where can I ask a question or show what I built?
+## Where can I ask a question?
 
-In [GitHub Discussions](https://github.com/erikunha/vault-of-loci/discussions): Q&A for questions, Ideas for proposals you want to talk through, Show and tell for your own vault. Bugs go in an issue, with the steps and the output. You can write in Portuguese or English.
+Open an issue with the "Question" form, after checking this FAQ. Ideas go in the "Improvement" form, bugs in the "Bug report" form with the steps and the output. You can write in Portuguese or English.
 
 ## Do I need AI agents to use this vault?
 

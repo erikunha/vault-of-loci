@@ -36,7 +36,7 @@ The documentation lives in the vault, so it travels with your copy:
 
 ## Contributing
 
-Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Read the [contributing guide](.github/CONTRIBUTING.md) to learn what fits and how to propose a change, start with a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue), and ask questions in [Discussions](https://github.com/erikunha/vault-of-loci/discussions). Everyone who takes part follows the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report security problems as [`SECURITY.md`](.github/SECURITY.md) explains.
+Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Read the [contributing guide](.github/CONTRIBUTING.md) to learn what fits and how to propose a change, start with a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue), and ask questions with the [Question form](https://github.com/erikunha/vault-of-loci/issues/new?template=question.yml). Everyone who takes part follows the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report security problems as [`SECURITY.md`](.github/SECURITY.md) explains.
 
 ## License
 
