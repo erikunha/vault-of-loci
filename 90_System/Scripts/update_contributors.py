@@ -58,12 +58,24 @@ def merge(rc, authors, users):
     return rc
 
 
+def link(kind, c, repo):
+    """Where an emoji leads: the commits, the reviews, or the issues and pull requests the person took part in."""
+    login, base = c["login"], f"https://github.com/{repo}"
+    if kind == "review":
+        return f"{base}/pulls?q=reviewed-by%3A{login}"
+    if kind in ("bug", "ideas", "question"):
+        return f"{base}/issues?q=author%3A{login}"
+    if "code" in c["contributions"]:
+        return f"{base}/commits?author={login}"
+    return f"{base}/issues?q=involves%3A{login}"
+
+
 def cell(c, repo, width):
     sep = "&" if "?" in c["avatar_url"] else "?"
     badges = []
     for kind in c["contributions"]:
         emoji, title = KINDS.get(kind, ("✨", kind))
-        href = f"https://github.com/{repo}/commits?author={c['login']}" if kind in ("code", "doc", "test") else f"#{kind}-{c['login']}"
+        href = link(kind, c, repo)
         badges.append(f'<a href="{escape(href)}" title="{escape(title)}">{emoji}</a>')
     return (f'      <td align="center" valign="top" width="{width}"><a href="{escape(c["profile"])}">'
             f'<img src="{escape(c["avatar_url"])}{sep}s=200" width="100px;" alt="{escape(c["name"])}"/>'

@@ -29,7 +29,7 @@ with tempfile.TemporaryDirectory() as tmp:
     (root / ".all-contributorsrc").write_text(json.dumps(RC), encoding="utf-8")
     for name in ("README.md", "README.pt-BR.md"):
         (root / name).write_text(README, encoding="utf-8")
-    args = [sys.executable, "-I", str(SCRIPT), "--root", str(root), "--from-json", str(root / "api.json"), "--users-json", str(root / "users.json")]
+    args = [sys.executable, "-I", str(SCRIPT), "--root", str(root), "--from-json", str(root / "api.json"), "--users-json", str(root / "users.json"), "--repo", "o/r"]
     subprocess.run(args, check=True, capture_output=True)
     rc = json.loads((root / ".all-contributorsrc").read_text(encoding="utf-8"))
     people = {c["login"]: c for c in rc["contributors"]}
@@ -40,6 +40,9 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "old" not in text and "## License" in text, "only the block changes"
     assert "<table>" in text and 'width="100px;"' in text and "s=200" in text, "table with sharp 100 px avatars"
     assert "<b>Ana Lima</b>" in text and 'title="Content">🖋' in text and 'title="Translation">🌍' in text, text
+    assert 'href="#' not in text, "every emoji links to a real page, never to an anchor that does not exist"
+    assert 'href="https://github.com/o/r/commits?author=ana" title="Code"' in text, "code goes to the commits"
+    assert 'href="https://github.com/o/r/issues?q=involves%3Acy" title="Content"' in text, "no commits: issues and pull requests they took part in"
     assert text.index("Ana Lima") < text.index("<b>bo</b>"), "people with more kinds of contribution come first"
     assert (root / "README.pt-BR.md").read_text(encoding="utf-8") == text, "every listed README is updated"
     first = text
