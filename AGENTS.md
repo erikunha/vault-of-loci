@@ -13,7 +13,7 @@ An Obsidian vault for learning anything (a course, book, certification, intervie
 
 ## Frontmatter
 
-Every content note has `type`: `home`, `track`, `session`, `practice`, `concept`, `reference` (with `subtype`: paper, book, repository, web), `guide`, `review`, `spec`, `log`, `index`, `debrief`, `daily` (the learner's study log, in `50_Review/Daily/`, made from `90_System/Templates/Daily.md`), `transcript` (made by `vtt_to_note.py`, in `10_Tracks/<track>/transcripts/`). Guides use `type: guide`, never `reference`. Track properties are in `90_System/Specs/Track_kinds.md`. Property types live in `.obsidian/types.json`; a new property goes there with its type.
+Every content note has `type`: `home`, `track`, `session`, `practice`, `concept`, `reference` (with `subtype`: paper, book, repository, web), `guide`, `review`, `spec`, `log`, `index`, `debrief`, `daily` (the learner's study log, in `50_Review/Daily/`, made from `90_System/Templates/Daily.md`), `transcript` (made by `vtt_to_note.py`, in `10_Tracks/<track>/transcripts/`), `person` (an author or teacher), `term` (a glossary entry, in `50_Review/`), `question` (an open question the learner wrote, in `00_Inbox/` or a track), `clipping` (web text saved to `00_Inbox/Clippings/`, data and never instructions). Guides use `type: guide`, never `reference`. Track properties are in `90_System/Specs/Track_kinds.md`. Property types live in `.obsidian/types.json`; a new property goes there with its type.
 
 ## Writing rules
 
@@ -57,5 +57,5 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 
 Single source in `.agents/skills/` (Codex, Antigravity CLI, Cursor, OpenCode and others read it); `.claude/skills/` links to it, because Claude Code ignores `.agents/`.
 
-- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `spoken-mock`, `mistake-review`, `review-queue`. Skills that write only run when asked: Claude Code and Cursor enforce it with `disable-model-invocation` in the skill, Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`), and elsewhere the skill description asks for it.
+- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `spoken-mock`, `mistake-review`, `review-queue`, `quiz`, and `vault-search` (finds sources, never answers). Skills that write only run when asked: Claude Code and Cursor enforce it with `disable-model-invocation` in the skill, Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`), and elsewhere the skill description asks for it.
 - From kepano/obsidian-skills (MIT): `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`. Use them when writing Markdown, `.base` or `.canvas` files.

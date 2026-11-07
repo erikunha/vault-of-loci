@@ -29,6 +29,10 @@ Parameter names can change between releases: `obsidian help base:query` is the r
 
 Read the frontmatter of each note in `20_Concepts` (never `.env` or plugin `data.json`). Sort by `score` ascending, then `last_tested` ascending; empty values come first. The "Review next" view of `Progress.base` ranks by (5 - confidence) x (days since last test + 1), so a weak concept not seen for a while comes first; an untested concept counts as 30 days. For one track, keep the concepts whose `tracks` property links to it. Find unresolved links with `check_links.py`.
 
+## Calibration and staleness
+
+`python3 -I 90_System/Scripts/calibration_report.py` lists concepts where the learner's confidence and score are 30 points or more apart, concepts not tested for 30 days and concepts never tested. Put the overconfident ones first: they feel known and are not.
+
 ## Daily cap and backlog
 
 A day's flashcard work is 10 to 20 reviews and about 2 new cards (defaults from `90_System/Specs/Track_kinds.md`, not research results). Ask the learner how many cards are due.

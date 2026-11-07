@@ -44,6 +44,17 @@ If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/
 
 A copy made with "Use this template" keeps these files. Delete `.github/` in your copy if you do not want them.
 
+## Search and reports
+
+```bash
+python3 -I 90_System/Scripts/search_vault.py "spaced review" --top 10   # sections ranked by relevance (BM25), as path:line and heading
+python3 -I 90_System/Scripts/kb_lint.py                                 # orphans, unused or unverified references, concepts in no track, old open questions and clippings
+python3 -I 90_System/Scripts/calibration_report.py                      # confidence against score per concept, stale and untested concepts
+python3 -I 90_System/Scripts/pdf_to_text.py paper.pdf --out /tmp/paper.txt --note 40_References/Papers/X.md   # PDF text once per file, recorded in 90_System/ingest_manifest.json
+```
+
+All four read only, except `pdf_to_text.py`, which writes the text file and the manifest. Search and the reports work offline with the standard library; `pdf_to_text.py` needs `pdftotext` from poppler, a local program.
+
 ## Naming
 
 File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):

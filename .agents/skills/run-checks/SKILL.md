@@ -11,6 +11,8 @@ python3 -I 90_System/Scripts/run_checks.py
 
 It runs `format_notes.py --check`, every `validation/check_*.py` and every `validation/test_*.py`, and prints passed or FAILED for each, with the last lines of a failure.
 
+For a report of notes that need attention (orphans, unused or unverified references, concepts in no track, old open questions and clippings), run `python3 -I 90_System/Scripts/kb_lint.py`. It never edits a note and is not a check.
+
 How to fix the usual failures:
 
 - Formatting: `python3 -I 90_System/Scripts/format_notes.py` (without `--check`).
