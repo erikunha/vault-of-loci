@@ -37,12 +37,11 @@ flowchart LR
 
 ## Quick start
 
-1. Click **Use this template** on GitHub (or clone it) and open the folder as a vault in Obsidian. Obsidian 1.9 or later is required for Bases. The optional CLI skills (`review-queue`) need 1.12.7 or later with the app running.
-2. Optional: install the Spaced Repetition community plugin (listed in `.obsidian/community-plugins.json`) to review flashcards. The vault needs no other plugin.
-3. Read `How_to_Study_with_this_Vault.md`, then `00_Home.md`.
-4. Create your first track with the `new-track` skill in Claude Code or Codex (it asks for the kind and the horizon), or copy `90_System/Templates/Track.md` into `10_Tracks/<NN>_<Name>/`.
-5. Delete or keep the example tracks, concept and paper. They show the full note format.
-6. Run `python3 -I 90_System/Scripts/run_checks.py`. Every check should pass before you write your first note.
+1. Click **Use this template** on GitHub (or clone it) and open the folder as a vault in Obsidian 1.9 or later.
+2. Ask your agent for a new track with the `new-track` skill (Claude Code or Codex ask for the kind and the horizon), or copy `90_System/Templates/Track.md` into `10_Tracks/<NN>_<Name>/`.
+3. Open `00_Home.md` and study. `How_to_Study_with_this_Vault.md` explains the method.
+
+Optional: the Spaced Repetition community plugin (listed in `.obsidian/community-plugins.json`) reviews the flashcards, and the CLI skills (`review-queue`) need Obsidian 1.12.7 or later with the app running. The example tracks, concept and paper show the full note format; keep or delete them. `python3 -I 90_System/Scripts/run_checks.py` checks the vault after you change it.
 
 ## Structure
 

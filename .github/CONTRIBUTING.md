@@ -65,7 +65,7 @@ For anything bigger, the steps below use a local copy.
    If `check_index.py` fails after a note edit, run `python3 -I 90_System/Scripts/build_index.py` and run the checks again.
 
 5. A change to a script ships with a test that fails without the change and passes with it.
-6. Open a pull request that says what changed, why, and which checks you ran. Its title becomes the line in the release notes, so write it for a reader: `feat: concept note on spacing`, not `update file`.
+6. Open a pull request that says what changed, why, and which checks you ran. Its title becomes the line in the release notes, so write it for a reader: `feat: concept note on spacing`, not `update file`. A bot labels it by the files it changes (`content`, `skills`, `tooling`, `translation`, `documentation`), and the release notes group it by that label.
 
 Nothing reaches `main` without a pull request, maintainers and bots included. A pull request merges only when the `vault` check passes and every review thread is resolved, and it lands as one squashed commit. Force pushes and deleting `main` are blocked.
 
