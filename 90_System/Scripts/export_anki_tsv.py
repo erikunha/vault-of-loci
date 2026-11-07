@@ -3,7 +3,7 @@
 Cards are `question::answer` lines and cloze lines with `==hidden==` text, the same
 format `check_cards.py` reads. Each card goes to a deck named after its track
 (`Vault of Loci::<track folder>`) or after its top folder for shared notes. Wikilinks
-become their readable text. Notes in templates, specs and tool folders are skipped.
+become their readable text. A `::` inside inline code does not make a card. Notes in templates, specs and tool folders are skipped.
 
 Dry run by default: prints a summary and the first lines. `--out FILE` writes the file,
 which Anki opens with File > Import (the header lines set the note type, deck and tags).
@@ -57,9 +57,11 @@ def cards(root):
                 continue
             if fenced:
                 continue
-            m = CARD.match(line.strip())
+            line = line.strip()
+            masked = re.sub(r"`[^`\n]*`", lambda c: "x" * len(c[0]), line)
+            m = CARD.match(masked)
             if m:
-                yield "Basic", deck(rel), clean(m["q"]), clean(m["a"]), tag
+                yield "Basic", deck(rel), clean(line[m.start("q"):m.end("q")]), clean(line[m.start("a"):m.end("a")]), tag
             elif CLOZE.search(line) and not line.lstrip().startswith((">", "|", "#")):
                 count = iter(range(1, 100))
                 text = CLOZE.sub(lambda c: "{{c%d::%s}}" % (next(count), c[1]), line)

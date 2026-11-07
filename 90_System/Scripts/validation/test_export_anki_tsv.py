@@ -13,7 +13,8 @@ type: concept
 
 ## Flashcards
 
-What is spacing?::Reviewing over time, see [[Spacing_Paper|the paper]].
+What is spacing?::Reviewing over time with `gap > 1`, see [[Spacing_Paper|the paper]].
+Run `SELECT id::text FROM t` here.
 Spacing beats ==massed== practice for ==long-term== retention.
 
 ```
@@ -36,6 +37,6 @@ with tempfile.TemporaryDirectory() as tmp:
     rows = [line.split("\t") for line in lines if not line.startswith("#")]
     assert lines[0] == "#separator:tab", "Anki header first"
     assert len(rows) == 2, f"two cards, templates and fences skipped: {rows}"
-    assert rows[0] == ["Basic", "Vault of Loci::01_Bio", "What is spacing?", "Reviewing over time, see the paper.", "S1"], rows[0]
+    assert rows[0] == ["Basic", "Vault of Loci::01_Bio", "What is spacing?", "Reviewing over time with `gap > 1`, see the paper.", "S1"], rows[0]
     assert rows[1][0] == "Cloze" and "{{c1::massed}}" in rows[1][2] and "{{c2::long-term}}" in rows[1][2], rows[1]
 print("ok: 6 checks")

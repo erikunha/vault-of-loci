@@ -1,6 +1,6 @@
 """Every image embedded in a note has alternative text.
 
-Accepts ![[image.png|alt text]] and ![alt text](image.png). Notes embedded with
+Accepts ![[image.png|alt text]] (or with \\| inside a table) and ![alt text](image.png). Inline and fenced code are skipped. Notes embedded with
 ![[Note]] (no image extension) are not images and are ignored. Exits 1 on any image
 without alt text.
 
@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
 IMAGE = r"\.(png|jpe?g|gif|svg|webp|avif|bmp)"
-WIKI = re.compile(r"!\[\[([^\]|]+?" + IMAGE + r")(\|[^\]]*)?\]\]", re.I)
+WIKI = re.compile(r"!\[\[([^\]|\\]+?" + IMAGE + r")(\\?\|[^\]]*)?\]\]", re.I)
 MD = re.compile(r"!\[([^\]]*)\]\(([^)]+?" + IMAGE + r")\)", re.I)
 SKIP = {".git", ".obsidian", ".agents", ".claude", "node_modules"}
 
@@ -23,8 +23,10 @@ def problems(root: Path) -> list[str]:
         if SKIP.intersection(note.relative_to(root).parts):
             continue
         text = note.read_text(encoding="utf-8")
+        text = re.sub(r"(?ms)^\s*(`{3,}|~{3,}).*?^\s*\1\s*$", "", text)
+        text = re.sub(r"`[^`\n]*`", "", text)
         for m in WIKI.finditer(text):
-            alt = (m.group(3) or "").lstrip("|").strip()
+            alt = (m.group(3) or "").lstrip("\\|").strip()
             if not alt or alt.isdigit():
                 found.append(f"{note.relative_to(root)}: {m.group(1)}")
         for m in MD.finditer(text):

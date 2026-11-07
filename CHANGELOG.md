@@ -4,6 +4,11 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+### Fixed
+
+- `check_alt_text.py` skips inline and fenced code and reads `\|` inside table cells, so an example in code no longer fails and an empty alt in a table no longer passes.
+- `export_anki_tsv.py` ignores `::` inside inline code and keeps the code text in the card.
+
 ## 0.3.0 (2026-11-07)
 
 ### Added

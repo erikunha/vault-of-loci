@@ -19,5 +19,8 @@ with tempfile.TemporaryDirectory() as tmp:
     assert run(root, "![[map.png|Map of the track]]\n") == 0, "wiki image with alt passes"
     assert run(root, "![](a.jpg)\n") == 1, "markdown image without alt fails"
     assert run(root, "![A chart](a.jpg)\n") == 0, "markdown image with alt passes"
+    assert run(root, "| ![[a.png\\|]] |\n") == 1, "escaped pipe in a table, empty alt fails"
+    assert run(root, "| ![[a.png\\|A map]] |\n") == 0, "escaped pipe in a table with alt passes"
+    assert run(root, "Example: `![[a.png|400]]`\n\n```\n![[b.png]]\n```\n") == 0, "inline and fenced code are not images"
     assert run(root, "![[Other_Note]]\n") == 0, "note embeds are not images"
-print("ok: 6 checks")
+print("ok: 9 checks")
