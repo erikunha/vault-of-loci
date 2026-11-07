@@ -9,6 +9,7 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 - Contributions of reusable content are welcome: a content-type table, the line between reusable and personal, a quality bar, a "Content proposal" issue form and a Contributors section.
 - `spoken-mock` skill (timed spoken mock, coached or observed) and a `Debrief` template.
 - The mistakes log records how AI was involved (scaffold, substitute, none) and closes a mistake only after an unaided correct retry.
+- Practice kits per kind in `90_System/Templates/Practice/` (blueprint map, problem log, input log, output sample, synthesis matrix, attempt log, checkpoints, 48-hour plan); `new-track` copies the right kit, and both example tracks show a filled checkpoint.
 - `study_layer.pt-BR.json` and `check_study_layer_translations.py`.
 
 ### Fixed

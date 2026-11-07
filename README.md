@@ -51,7 +51,7 @@ flowchart LR
 | `30_Maps/` | Canvases |
 | `40_References/` | `Papers/`, `Books/`, `Repositories/`, `Web/`, `Guides/` (verified sources only) |
 | `50_Review/` | Flashcard decks, glossaries and `Mistakes.md` (the mistakes log, with how AI was involved in each mistake) |
-| `90_System/` | `Templates/` (including `Checkpoint.md` and `Debrief.md`), `Bases/` (including `Tracks.base`, `Weakest.base` and `Interleave.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
+| `90_System/` | `Templates/` (including `Checkpoint.md`, `Debrief.md` and a practice kit per kind in `Practice/`), `Bases/` (including `Tracks.base`, `Weakest.base` and `Interleave.base`), `Specs/` (including `Track_kinds.md` and study layer translations), `Scripts/`, `Agent_Log/`, `index.json` |
 | `INDEX.md` | Generated reading index for agents: one line per note |
 
 ## Naming standard

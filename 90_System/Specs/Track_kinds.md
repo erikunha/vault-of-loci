@@ -37,6 +37,8 @@ Folder shape: `<Name>.md` (the track note), `sessions/` (one note per study sess
 
 ## Recipes
 
+Each kind has a practice kit in `90_System/Templates/Practice/` that `new-track` copies into the track's `practice/` folder: certification `Blueprint_Map`, interview `Problem_Log`, language `Input_Log` and `Output_Sample`, research `Synthesis_Matrix`, skill `Attempt_Log`, and `Checkpoints` for every kind. Tracks with a deadline also get `Plan_48h`.
+
 Each recipe gives notes, practice, review cadence and checkpoint.
 
 ### course
