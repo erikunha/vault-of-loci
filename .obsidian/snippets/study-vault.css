@@ -45,7 +45,7 @@ a.tag[href^="#cat/interface"]   { background: rgba(var(--cat-interface), .18);  
 a.tag[href^="#cat/architecture"] { background: rgba(var(--cat-architecture), .18); color: rgb(var(--cat-architecture)); }
 
 /* Numbered folders in the file explorer */
-.nav-folder-title[data-path="10_Courses"] .nav-folder-title-content::before { content: "🎓 "; }
+.nav-folder-title[data-path="10_Tracks"] .nav-folder-title-content::before { content: "🎓 "; }
 .nav-folder-title[data-path="20_Concepts"] .nav-folder-title-content::before { content: "🧠 "; }
 .nav-folder-title[data-path="30_Maps"] .nav-folder-title-content::before { content: "🗺️ "; }
 .nav-folder-title[data-path="00_Inbox"] .nav-folder-title-content::before { content: "📥 "; }

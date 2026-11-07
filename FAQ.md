@@ -1,16 +1,20 @@
 # FAQ
 
+## What can I learn with it?
+
+Anything you can set a goal for: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a kind, a goal and a done criterion, and `90_System/Specs/Track_kinds.md` has one recipe per kind. Ask for the `new-track` skill, or copy `90_System/Templates/Track.md`. A kind that is missing can start as `other` with a done criterion you can fail.
+
 ## Do I need AI agents to use this vault?
 
 No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use Claude Code, Codex, Gemini CLI, Copilot or Cursor.
 
 ## Do I need Python?
 
-Only for the checks and the naming tool (Python 3.10 or later, standard library only). The vault itself does not need it.
+Only for the checks, the naming tool and the index builder (Python 3.10 or later, standard library only). The vault itself does not need it.
 
 ## Which Obsidian version?
 
-Obsidian 1.9 or later, because the dashboards use Bases. The optional `review-queue` skill uses the Obsidian CLI and needs Obsidian 1.12.7 or later with the app running; without it, the skill reads the files.
+Obsidian 1.9 or later, because the dashboards use Bases. Obsidian 1.12.7 or later is needed only for the optional skills that call the Obsidian CLI (`review-queue`), with the app running; without it, the skill reads the files.
 
 ## The community plugin is listed but not installed. Is that a bug?
 
@@ -18,7 +22,7 @@ No. Plugin code is not committed, so each copy installs its own. Spaced Repetiti
 
 ## Can I write my notes in another language?
 
-Yes. Note text can be in any language. The study layer headings are fixed by the checks; the README section "Customize" lists every file to change if you rename them.
+Yes. Note text can be in any language. The study layer headings are set in `90_System/Specs/study_layer.json`; the README section "Customize" lists what to change if you rename them.
 
 ## Why underscores in file names?
 
@@ -32,25 +36,53 @@ Remembering by answering a question (retrieval practice) and spreading reviews o
 
 Not if it follows tutor mode, which `AGENTS.md` and the skills require: you attempt first, hints come in steps (hint, strong hint, partial example, answer) only after an attempt, you rate confidence from 1 to 5 before the reveal, and the agent never writes your study layer or your answers. You stay in charge: ask for questions before asking for answers.
 
+## How does an agent find the right note without reading everything?
+
+Through the generated index. `INDEX.md` has one line per note (type, line count, summary) and `90_System/index.json` lists every heading with its line number, so an agent reads the index and then only the line range it needs. The Claude Code hook rebuilds both after each note edit; `check_index.py` fails when they are out of date, and `python3 -I 90_System/Scripts/build_index.py` fixes it.
+
 ## Where do agents record what they did?
 
 In `90_System/Agent_Log/YYYY-MM.md`, one line per task. Agents read the current month before starting.
 
-## Can I delete the example course, concept and paper?
+## Can I delete the example tracks, concept and paper?
 
-Yes. They only show the full note format. Run the checks after deleting them to catch broken links.
+Yes. They only show the full note format. Run the checks after deleting them to catch broken links, then rebuild the index with `python3 -I 90_System/Scripts/build_index.py`.
 
-## How do I keep my copy up to date with the template?
+## Updating your copy
 
-A copy made with "Use this template" has no link to this repository. Read `CHANGELOG.md` and copy the changes you want, usually scripts, templates and specs.
+A copy made with "Use this template" has no link to this repository, so compare against a release instead of merging.
+
+1. Add this repository as a remote named `template` and fetch its tags: `git fetch template --tags`.
+2. Find the release you copied from (the newest version in your `CHANGELOG.md`, or the template's first commit date) and the latest tag with `git tag --list --sort=-v:refname`.
+3. See what changed in the files you share with the template: `git diff <old-tag> <latest-tag> -- 90_System/Scripts 90_System/Specs 90_System/Templates .agents .claude .github AGENTS.md`.
+4. Apply what you want. For a file you never customized, `git checkout <latest-tag> -- <path>` copies it. For one you changed, merge by hand.
+5. Read the version's entry in `CHANGELOG.md` first: a layout change such as 0.2.0 lists the renames to make in your notes. Then run every check and `build_index.py`.
+
+Your notes in `10_Tracks/`, `20_Concepts/`, `40_References/` and `50_Review/` are not in that diff.
 
 ## Can I keep my vault private?
 
 Yes. Create your copy as a private repository, or keep it only on your machine. Never commit `.env` files or plugin `data.json` files; `.gitignore` and `.claude/settings.json` already guard against both.
 
+## What does an agent send to its provider?
+
+Whatever it reads. When an agent opens a note, or `INDEX.md` with its summaries, that text goes to the provider of the model it runs on. Private notes and exam material belong in a vault you only open with a local model, or without an agent. The read blocks in `.claude/settings.json` keep secrets out, not note text. Read your provider's data terms before you point an agent at notes you cannot share.
+
+## Does it work offline?
+
+The vault does: Obsidian, the Markdown notes, the bases, the Spaced Repetition plugin and the Python checks need no network. Agents need a network unless they run a local model. The `defuddle` skill and any link you open need one too. Notes saved in `40_References/Web` stay readable offline.
+
+## Do I lose a streak when I skip a day?
+
+There is no streak counter. Missing a day costs nothing, and the weekly review asks how many days you studied, not whether the chain broke. A backlog is handled by the "catch up backlog" mode in `review-queue`, not by catching up all at once.
+
+## Should I study in my learning style?
+
+No. The evidence does not support matching teaching to visual, auditory or kinesthetic styles. Match the method to the material. The rituals in `90_System/Specs/Track_kinds.md` list the evidence.
+
 ## What are the checkpoint, pretest and mistake skills?
 
-Skills for agents that follow tutor mode. `pretest` writes questions you guess before a lesson. `no-ai-checkpoint` quizzes you closed book on concepts older than 14 days and logs `last_tested` and `score`. `teach-the-agent` lists the gaps in your explanation. `mistake-review` turns logged mistakes into corrected cards with a source. `review-queue` lists what to study next. The guide `40_References/Guides/Studying_with_AI.md` has the protocol and the evidence.
+Skills for agents that follow tutor mode. `pretest` writes questions you guess before a session. `no-ai-checkpoint` quizzes you closed book on concepts older than 14 days and logs `last_tested` and `score`. `teach-the-agent` lists the gaps in your explanation. `mistake-review` turns logged mistakes into corrected cards with a source. `review-queue` lists what to study next. The guide `40_References/Guides/Studying_with_AI.md` has the protocol and the evidence.
 
 ## Should I switch the Spaced Repetition plugin to FSRS?
 
@@ -58,4 +90,4 @@ It is optional. The plugin offers FSRS since version 1.15.0. Back up the vault a
 
 ## Does the vault ship an MCP server configuration for Obsidian?
 
-No. An Obsidian MCP server usually needs an API key from a community plugin, and a key must never be committed to a shared repository. It would also repeat what the Obsidian CLI (1.12.7 or later) and plain file access already give an agent, and it adds a tool that reads note text, which is a place for injected instructions to enter. The vault must work without community plugins. If you want one, add a configuration in your own copy with the key in an environment variable that stays out of Git, and keep it out of the shared template.
+No. MCP is optional here, and none is shipped. The servers for Obsidian either need an API key from a community plugin, and a key must never be committed to a shared repository, or they repeat what the Obsidian CLI (1.12.7 or later) and plain file access already give an agent. A server also adds a tool that reads note text, which is a place for injected instructions to enter. The vault must work without community plugins. If you want one, add a configuration in your own copy with the key in an environment variable that stays out of Git, and keep it out of the shared template.

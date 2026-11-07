@@ -1,25 +1,28 @@
 # Vault of Loci
 
-> An Obsidian vault template for studying courses with AI agents: courses, lessons, concept notes, verified references, flashcards and automatic checks. Rules for agents are in AGENTS.md.
+> An Obsidian vault template for learning anything (a course, book, certification, interview, research, skill or language) with AI agents: tracks, sessions, concept notes, verified references, flashcards and automatic checks. Rules for agents are in AGENTS.md.
 
 ## Start here
+- [INDEX.md](INDEX.md): every note with its type, line count and summary; open sections by line range from 90_System/index.json
 - [README.md](README.md): what it is and how to start
-- [AGENTS.md](AGENTS.md): structure, frontmatter, writing rules, safety
+- [AGENTS.md](AGENTS.md): how to read the vault, frontmatter, writing rules, tutor mode, safety
 - [How_to_Study_with_this_Vault.md](How_to_Study_with_this_Vault.md): the study method
 - [00_Home.md](00_Home.md): dashboard
 
 ## Examples
 - [Retrieval practice](20_Concepts/Retrieval_Practice.md): a concept note with the full study layer
 - [Test-enhanced learning](40_References/Papers/Test-Enhanced_Learning_(Roediger_and_Karpicke,_2006).md): a verified paper note
-- [Example course](10_Courses/01_Example_Course/Example_Course.md): a course with one lesson
+- [Example course](10_Tracks/01_Example_Course/Example_Course.md): a track of kind course with one session
+- [Example book](10_Tracks/02_Example_Book/Example_Book.md): a track of kind book with one chapter session
 
 ## Guides
 - [Studying with AI](40_References/Guides/Studying_with_AI.md): evidence, tutor-mode protocol and FSRS
 - [Repository and documentation patterns for AI](40_References/Guides/Repository_and_Documentation_Patterns_for_AI.md)
 
 ## Optional
+- [Track kinds](90_System/Specs/Track_kinds.md): one recipe per kind of learning project, and the rituals every track shares
+- [Study layer spec](90_System/Specs/Study_layer.md)
 - [Mistakes log](50_Review/Mistakes.md): wrong answers and their corrected cards
 - [Checkpoint template](90_System/Templates/Checkpoint.md): closed-book session sheet
 - [Weakest concepts base](90_System/Bases/Weakest.base)
 - [Interleave base](90_System/Bases/Interleave.base)
-- [Study layer spec](90_System/Specs/Study_layer.md)

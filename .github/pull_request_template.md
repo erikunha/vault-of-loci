@@ -9,7 +9,9 @@
 - [ ] `check_study_layer.py`
 - [ ] `check_names.py`
 - [ ] `check_cards.py`
-- [ ] `test_format_notes.py`, `test_normalize_names.py`, `test_check_links.py`, `test_check_study_layer.py` and `test_check_cards.py`
+- [ ] `check_skills.py`
+- [ ] `check_index.py` (run `build_index.py` if it fails)
+- [ ] Every `test_*.py` in `90_System/Scripts/validation`
 - [ ] A changed script has a test that fails without the change
 - [ ] `CHANGELOG.md` has a line under Unreleased
 - [ ] No em dash, en dash, secrets or personal notes

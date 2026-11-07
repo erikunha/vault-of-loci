@@ -1,8 +1,8 @@
 ---
 type: concept
 category:
-courses: []
-lessons: []
+tracks: []
+sessions: []
 aliases: []
 last_tested:
 score:

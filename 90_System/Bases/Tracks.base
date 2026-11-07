@@ -1,0 +1,29 @@
+filters:
+  and:
+    - type == "track"
+views:
+  - type: table
+    name: Active tracks
+    filters:
+      and:
+        - status == "active"
+    order:
+      - file.name
+      - kind
+      - horizon
+      - deadline
+      - status
+    sort:
+      - property: deadline
+        direction: ASC
+  - type: table
+    name: All tracks
+    order:
+      - file.name
+      - kind
+      - horizon
+      - deadline
+      - status
+    sort:
+      - property: order
+        direction: ASC

@@ -1,14 +1,16 @@
 filters:
   and:
-    - type == "lesson"
+    - type == "session"
 views:
   - type: table
-    name: Lessons
+    name: Sessions
     order:
-      - lesson
+      - session
       - file.name
+      - track
       - topic
       - date
+      - ai_use
       - status
     sort:
       - property: date

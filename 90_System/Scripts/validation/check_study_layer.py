@@ -1,19 +1,60 @@
 """Study layer in concept, reference and guide notes.
 
 Rule (90_System/Specs/Study_layer.md): every concept, reference and guide note in 20_Concepts and
-40_References has "## Study explanation" as its first ## section and "## Key takeaways" right
-after it. A note with another `type` (for example a course or a log) is not checked.
-Exits 1 on any note that lacks the layer or has it out of order.
+40_References has the explanation heading as its first ## section and the takeaways heading right
+after it. A note with another `type` (for example a track or a log) is not checked.
+The headings, the checked types and the folders live in 90_System/Specs/study_layer.json; without that
+file the built-in values apply. Exits 1 on any note that lacks the layer or has it out of order, and on
+an invalid study_layer.json.
 
 Usage: python3 -I 90_System/Scripts/validation/check_study_layer.py [root]
 """
+import json
 import re
 import sys
 from pathlib import Path
 
 VAULT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
-EXPLAIN, TAKEAWAYS = "## Study explanation", "## Key takeaways"
-CHECKED_TYPES = {"concept", "reference", "guide"}
+CONFIG = VAULT / "90_System" / "Specs" / "study_layer.json"
+DEFAULTS = {
+    "explanation": "## Study explanation",
+    "takeaways": "## Key takeaways",
+    "checked_types": ["concept", "reference", "guide"],
+    "folders": ["20_Concepts", "40_References"],
+}
+
+
+def load_config():
+    """Built-in values overridden by study_layer.json. Raises ValueError with a readable reason."""
+    config = dict(DEFAULTS)
+    if not CONFIG.is_file():
+        return config
+    try:
+        data = json.loads(CONFIG.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise ValueError(f"cannot read study_layer.json: {error}") from error
+    if not isinstance(data, dict):
+        raise ValueError("study_layer.json must hold one JSON object")
+    for key, default in DEFAULTS.items():
+        if key not in data:
+            continue
+        value = data[key]
+        ok = isinstance(value, str) if isinstance(default, str) else (
+            isinstance(value, list) and all(isinstance(v, str) for v in value))
+        if not ok or not value:
+            raise ValueError(f"study_layer.json: {key} must be a non-empty {'string' if isinstance(default, str) else 'list of strings'}")
+        config[key] = value
+    return config
+
+
+try:
+    CONFIG_VALUES = load_config()
+except ValueError as error:
+    print(error)
+    print("study layer problems: 1")
+    sys.exit(1)
+EXPLAIN, TAKEAWAYS = CONFIG_VALUES["explanation"], CONFIG_VALUES["takeaways"]
+CHECKED_TYPES = set(CONFIG_VALUES["checked_types"])
 
 
 def problem(text):
@@ -30,7 +71,7 @@ def problem(text):
 
 
 bad = []
-for folder in ("20_Concepts", "40_References"):
+for folder in CONFIG_VALUES["folders"]:
     for p in sorted((VAULT / folder).rglob("*.md")):
         reason = problem(p.read_text(encoding="utf-8"))
         if reason:

@@ -24,7 +24,7 @@ Now the AI. It can work with these techniques or against them, and the differenc
 
 A second risk is false confidence. Steyvers and colleagues (2025) found that people trust an LLM answer more when the explanation is longer, even when it is no more accurate [F16]. A fluent answer feels like understanding. That is why this protocol asks you to rate your confidence from 1 to 5 before any reveal, and compare it with the result.
 
-Tutor mode puts this into rules. You attempt first. The AI replies only after an attempt, with a hint ladder: a hint, then a strong hint, then a partial example, then the answer. You rate confidence before the reveal. The AI never writes your study layer or your answers. Self-explanation, where you explain an idea in your own words and an expert points out the gaps, has solid support [F17]. Mixed practice across topics (interleaving) helps most when the categories look alike, and less in other materials [F18]. Pretesting, a few questions before the lesson that you guess first, has a meta-analysis of its own, on the prequestion effect [F19].
+Tutor mode puts this into rules. You attempt first. The AI replies only after an attempt, with a hint ladder: a hint, then a strong hint, then a partial example, then the answer. You rate confidence before the reveal. The AI never writes your study layer or your answers. Self-explanation, where you explain an idea in your own words and an expert points out the gaps, has solid support [F17]. Mixed practice across topics (interleaving) helps most when the categories look alike, and less in other materials [F18]. Pretesting, a few questions before the session that you guess first, has a meta-analysis of its own, on the prequestion effect [F19].
 
 A worked example. You studied Retrieval practice three weeks ago. You run a no-AI checkpoint. The agent asks, "A friend rereads their notes three times and feels ready. What do you tell them?" You write your answer, then rate confidence 4. The agent reveals the note's answer. You missed the part about delay, so your score is 60 and your confidence was higher than it deserved. The property `last_tested` is set and the miss goes to the mistakes file as a corrected card with its source.
 
@@ -53,7 +53,7 @@ The most common mistake is to ask the AI for an explanation first and call that 
 | Study | Design | Finding | Limit |
 |---|---|---|---|
 | Bastani et al., PNAS 2025 [F5] | ~1,000 students, math, Turkey | GPT Base: +48% practice, -17% exam without AI; GPT Tutor: +127% and a tie | one school, one subject |
-| Barcaui, 2025 [F13] | randomized trial, university students | ChatGPT users retained less on a delayed surprise test | one course; numbers not checked here |
+| Barcaui, 2025 [F13] | randomized trial, university students | ChatGPT users retained less on a delayed surprise test | one study; numbers not checked here |
 | Fan et al., 2024 [F14] | lab study, essay task | better essays, no gain in knowledge or transfer | short task |
 | Lehmann et al., 2024 [F15] | two lab experiments and a field study | no overall effect; substitute use lowers depth, complement use does not | effect depends on usage |
 | Steyvers et al., 2025 [F16] | user studies on LLM answers | longer explanations raise trust, not accuracy | calibration, not learning |
@@ -83,8 +83,8 @@ Every skill and agent in this vault follows these rules.
 
 | Skill | When | What you do | What the AI does |
 |---|---|---|---|
-| `pretest` | before a lesson | guess 3 to 5 questions | writes the questions |
-| `no-ai-checkpoint` | concepts older than 14 days | answer closed book | grades, logs `last_tested` and `score` |
+| `pretest` | before a session | guess 3 to 5 questions | writes the questions |
+| `no-ai-checkpoint` | concepts older than 14 days | predict your score, then answer closed book | grades, logs `last_tested` and `score` |
 | `teach-the-agent` | after learning a concept | explain it in your words | lists only the gaps |
 | `mistake-review` | when `50_Review/Mistakes.md` has entries | write the correction | checks the source, drafts the card |
 | `review-queue` | start of a session | choose what to study | lists the weakest and oldest concepts |
@@ -93,7 +93,7 @@ The 14-day default is a rule of thumb: long enough that recall takes effort. It 
 
 ```mermaid
 flowchart TB
-  A1["1. Pretest: guess before the lesson"] --> A2["2. After the lesson: write from memory, then read the summary"]
+  A1["1. Pretest: guess before the session"] --> A2["2. After the session: write from memory, then read the notes"]
   A2 --> A3["3. Teach the concept to the agent, fix the gaps"]
   A3 --> A4["4. Your own flashcards, scheduled by Spaced Repetition"]
   A4 --> A5["5. No-AI checkpoint on concepts older than 14 days"]

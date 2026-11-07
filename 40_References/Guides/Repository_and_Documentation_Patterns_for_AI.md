@@ -20,7 +20,7 @@ The answer is to give each reader one entry point and to make every other file p
 
 A worked example. Suppose you decide that file names must use underscores instead of spaces. The tempting move is to write the rule in the README, in `AGENTS.md`, in `CLAUDE.md` and in the Copilot file. Next month one copy says something slightly different. The better move is one line in `AGENTS.md`. The other agent files already point there, so nothing else changes. Then the rule gets a check that runs on every push, so it no longer depends on any agent reading it. Now ask what else belongs in `AGENTS.md`. The exact commands to run the checks belong there, because an agent cannot guess them. A paragraph on why the project exists does not, because the README already says it.
 
-That last point has research behind it. Gloaguen and colleagues (ICLR 2026) measured three coding agents and found that human-written context files gave about a 4% average gain, while LLM-generated ones had a slightly negative effect and raised cost by more than 20% [F6]. Agents follow instructions, so an unnecessary requirement becomes extra work.
+That last point has research behind it. Gloaguen and colleagues tested coding agents with context files and found that they did not generally improve task success, while they raised inference cost by over 20% on average. This held for LLM-generated and developer-committed files alike. The agents followed the instructions well, but repository overviews, although popular and recommended, were not helpful [F6]. Agents follow instructions, so an unnecessary requirement becomes extra work.
 
 The most common mistake is to ask an AI to write a long `AGENTS.md` from the repository and commit it unedited. It repeats the README, adds requirements nobody needs and costs more to run. A second mistake is mixing kinds of documentation on one page. Diátaxis names four kinds: tutorial, how-to guide, reference and explanation, and the classic failure is to blend them [F7].
 
@@ -29,7 +29,7 @@ This guide connects to two other notes. [[Studying_with_AI|Studying with AI]] ma
 ## Key takeaways
 
 - **Remember:** one source of rules, short and hand-written. Every other agent file points to it. README for people, `AGENTS.md` for agents, `llms.txt` as an index.
-- **Common confusion:** a longer instructions file is not a better one. The gains come from exact commands and checks, not from more text.
+- **Common confusion:** a longer instructions file is not a better one. Overviews did not help; exact commands, checks and non-standard practices do.
 - **Exercise:** list every file in a repository you know that holds rules for agents. For each rule, decide which single file should own it and which copies to turn into pointers.
 
 ## 1. The files in this repository and why
@@ -41,10 +41,11 @@ This guide connects to two other notes. [[Studying_with_AI|Studying with AI]] ma
 | `CLAUDE.md`, `GEMINI.md` | Only import `@AGENTS.md`. Copilot also accepts both at the root [F3] |
 | `.github/copilot-instructions.md` | Copilot's repository-wide instructions. When `AGENTS.md` also exists, Copilot uses both [F3] |
 | `.github/instructions/*.instructions.md` | Path-specific rules with an `applyTo` glob [F3]; add them only when one folder needs different rules |
+| `INDEX.md`, `90_System/index.json` | Generated reading index: one line per note, and every heading with its line number, so an agent opens only the section it needs |
 | `llms.txt` | Curated index for LLMs: required H1, a blockquote summary, link lists under H2, an "Optional" section [F4] |
 | `.agents/skills/*/SKILL.md` | Skills in the open Agent Skills format: only name and description load at startup [F5] |
 | `.gitattributes`, `.editorconfig` | LF line endings, binaries marked, UTF-8 |
-| `.github/workflows/checks.yml` | Formatting, links, study layer, names, flashcards and tests on every push |
+| `.github/workflows/checks.yml` | Formatting, links, study layer, names, flashcards, skills, reading index and tests on every push |
 
 In a public template, `CONTRIBUTING.md`, `CODEOWNERS`, issue templates and `SECURITY.md` tell visitors how to help, who reviews and where to report a problem. A private notes vault can leave them out.
 
@@ -61,9 +62,9 @@ flowchart LR
 
 ## 2. What research says about context files
 
-- **Hand-written helps a little; LLM-generated hurts.** Gloaguen et al. (ICLR 2026) measured Claude Code, Codex and Qwen Code: human-written context files gave about 4% average gain; LLM-generated ones had a slightly negative effect and cost rose by more than 20% [F6].
-- **Why.** Agents follow instructions. An unnecessary requirement becomes extra work. Content that repeats the README adds nothing [F6].
-- **Rule of thumb.** Only what the agent cannot discover alone: exact commands, what never to do, where things are. Do not repeat the README.
+- **Context files do not generally help.** Gloaguen et al. found no general gain in task success and a cost increase of over 20% on average, for LLM-generated and developer-committed files [F6].
+- **Overviews do not help; instructions do.** Agents follow the instructions in a context file, but repository overviews were not helpful. Context files are useful for non-standard practices [F6].
+- **Rule of thumb.** Only what the agent cannot discover alone: exact commands, what never to do, non-standard practices. Do not repeat the README or describe the folder tree. A generated index (`INDEX.md`) lets the agent find the rest.
 
 ## 3. Content and writing patterns
 
@@ -89,8 +90,8 @@ flowchart LR
 ## Flashcards
 
 Where do an agent's rules live in this repository?::In `AGENTS.md`. `CLAUDE.md` and `GEMINI.md` only import it.
-What belongs in an agent rules file?::Only what the agent cannot discover alone: exact commands, what never to do, where things are.
-What did Gloaguen et al. (ICLR 2026) find about LLM-generated context files?::A slightly negative effect and cost up by more than 20%; human-written files gave about a 4% gain.
+What belongs in an agent rules file?::Only what the agent cannot discover alone: exact commands, what never to do, non-standard practices.
+What did Gloaguen et al. find about repository overviews in context files?::They were not helpful; context files raised cost by over 20% on average without a general gain in task success.
 What does `llms.txt` hold?::A required H1, a blockquote summary, link lists under H2 headings and an "Optional" section.
 What are the four Diátaxis document types?::Tutorial, how-to guide, reference and explanation.
 Which parts of a skill load at startup?::Only its name and description.

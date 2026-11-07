@@ -6,16 +6,18 @@ tags: [type/home]
 # Home
 
 > [!tldr] Start here
-> Courses on top, today's review below, and the bases that list every concept and reference.
+> Tracks on top, today's review below, and the bases that list every concept and reference.
 > New here? Read [[How_to_Study_with_this_Vault|How to study with this vault]] first.
 
-## Courses
+## Tracks
 
-- [[Example_Course|Example Course]]
+![[Tracks.base]]
+
+New learning project? Ask for the `new-track` skill. A track can be a course, a book, a certification, an interview, research, a skill or a language.
 
 ## Today
 
-- Flashcards: command palette, "Spaced Repetition: Review flashcards from all notes".
+- Flashcards: command palette, "Spaced Repetition: Review flashcards from all notes". Stop at 10 to 20 reviews; if the queue is longer, catch up the backlog first.
 - Closed-book checkpoint: ask for the `no-ai-checkpoint` skill on concepts older than 14 days.
 - Mistakes: turn open entries in [[Mistakes|the mistakes log]] into corrected cards.
 - Inbox: everything in `00_Inbox` gets a home during the weekly review.

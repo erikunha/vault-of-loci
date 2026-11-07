@@ -1,6 +1,6 @@
 {
   "collapse-filter": true,
-  "search": "-path:90_System -path:.agents",
+  "search": "-path:90_System -path:.agents -path:INDEX.md",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": true,
@@ -8,14 +8,14 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "tag:#type/course",
+      "query": "tag:#type/track",
       "color": {
         "a": 1,
         "rgb": 16436245
       }
     },
     {
-      "query": "tag:#type/lesson",
+      "query": "tag:#type/session",
       "color": {
         "a": 1,
         "rgb": 14870768

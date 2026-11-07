@@ -1,8 +1,8 @@
 ---
 type: concept
 category: foundations
-courses: ["[[Example_Course|Example Course]]"]
-lessons: ["[[lesson-01-how-memory-works|Lesson 01]]"]
+tracks: ["[[Example_Course|Example Course]]", "[[Example_Book|Example Book]]"]
+sessions: ["[[session-01-how-memory-works|Session 01]]", "[[session-01-chapter-1|Session 01, chapter 1]]"]
 aliases: [Retrieval practice, Testing effect, Active recall]
 last_tested:
 score:
@@ -23,9 +23,9 @@ Learning is not putting information into your head. It is being able to get it o
 
 The classic experiment is Roediger and Karpicke (2006). Students read short prose passages. One group reread the passage several times. The other group read it and then wrote down everything they could remember, without feedback. Five minutes later, the rereaders did better: 83% against 71%. One week later, the result flipped: the group that had tested itself remembered 61%, the rereaders 40% ([[Test-Enhanced_Learning_(Roediger_and_Karpicke,_2006)|Roediger and Karpicke, 2006]]). Rereading builds familiarity, the feeling that "I know this". Retrieval builds the path you will actually use later.
 
-A worked example. You just watched a lesson on how a database index works. The rereading approach: open the summary and go through it again. The retrieval approach: close everything, take a blank page, and write for five minutes what an index is, why it speeds up reads, and what it costs on writes. Then open the summary and compare. The gaps you find (say, you forgot that indexes slow down inserts) are exactly what to review. Turn each gap into a flashcard and let spaced repetition bring it back at growing intervals.
+A worked example. You just studied how a database index works, in a video, a chapter or a class. The rereading approach: open the summary and go through it again. The retrieval approach: close everything, take a blank page, and write for five minutes what an index is, why it speeds up reads, and what it costs on writes. Then open the summary and compare. The gaps you find (say, you forgot that indexes slow down inserts) are exactly what to review. Turn each gap into a flashcard and let spaced repetition bring it back at growing intervals.
 
-Compare also what the attempt feels like. Rereading is smooth: every sentence looks familiar, so you nod along. Retrieval is rough: you stall, you guess, you get something wrong. The roughness is the signal that work is happening. If you want the same exercise with this course, close [[lesson-01-how-memory-works|Lesson 01]], write what you remember about why testing beats rereading, and only then open the summary. In the 2006 experiment nobody saw corrections, and testing still won. In daily study you should check your answer against the source anyway, so that you do not rehearse a wrong one.
+Compare also what the attempt feels like. Rereading is smooth: every sentence looks familiar, so you nod along. Retrieval is rough: you stall, you guess, you get something wrong. The roughness is the signal that work is happening. If you want the same exercise with this vault, close [[session-01-how-memory-works|Session 01]], write what you remember about why testing beats rereading, and only then open the summary. In the 2006 experiment nobody saw corrections, and testing still won. In daily study you should check your answer against the source anyway, so that you do not rehearse a wrong one.
 
 The most common mistake is to treat testing only as a way to measure learning. It is also the main way to produce learning. A second mistake is to let an AI assistant answer for you. In a study with about a thousand high school students, those who used an unrestricted chatbot did better on practice problems but 17% worse on the exam without it; a version that gave hints instead of answers did not have that drop ([[Studying_with_AI|Studying with AI]]).
 

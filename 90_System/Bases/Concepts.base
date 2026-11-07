@@ -7,7 +7,7 @@ views:
     order:
       - file.name
       - category
-      - courses
+      - tracks
     sort:
       - property: category
         direction: ASC
