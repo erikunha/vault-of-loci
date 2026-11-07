@@ -94,29 +94,55 @@ The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard libra
 - **Folders.** The numbered top folders are referenced by `llms.txt`, the skills and the checks (the bases filter by the `type` property, not by folder). Rename one and run the checks to find what still points to the old name.
 - **Agents.** Add rules to `AGENTS.md` only. `CLAUDE.md` and `GEMINI.md` stay as one import line.
 
-## Working with AI agents
+## Studying with an AI agent
+
+The agent is a tutor, not an answer machine. You try first, it gives hints one step at a time, you rate your confidence before it reveals anything, and it never writes your notes or answers for you. Practice with unguarded AI raises scores while you have it and lowers them once you don't; a guarded tutor largely avoids that (see `40_References/Guides/Studying_with_AI.md`).
+
+A study session, with what to ask:
 
 ```mermaid
-flowchart TB
-  AG["AGENTS.md: single source of rules"]
-  CL["CLAUDE.md"] -->|"@AGENTS.md"| AG
-  GE["GEMINI.md"] -->|"@AGENTS.md"| AG
-  CP[".github/copilot-instructions.md"] -->|"points to"| AG
-  CX["Codex, Cursor, Copilot"] -->|"read directly"| AG
-  AG --> SK[".agents/skills"]
-  AG --> LOG["90_System/Agent_Log"]
-  AG --> CHK["90_System/Scripts"]
+flowchart LR
+  B["Before: pretest"] --> D["During: study, then teach-the-agent"]
+  D --> A["After: mistake-review"]
+  A --> W["Every week: review-queue and no-ai-checkpoint"]
+  W --> B
 ```
 
-| File | Read by |
+| When | Ask the agent | Skill |
+|---|---|---|
+| Starting something new | "Start a track for the book *X*, finishing in March" | `new-track` |
+| Before a session | "Pretest me on session 3" | `pretest` |
+| After reading | "I'll explain retrieval practice; list only my gaps" | `teach-the-agent` |
+| After a quiz | "Turn today's mistakes into cards" | `mistake-review` |
+| Any day | "What should I review today?" | `review-queue` |
+| Every two weeks | "Closed-book checkpoint on what I studied before the 1st" | `no-ai-checkpoint` |
+| Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
+| Before committing | "Run the checks" | `run-checks` |
+
+Skills that write files run only when you ask. Agents also have five Obsidian skills from kepano/obsidian-skills (`obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`) for writing Markdown, bases and canvases correctly.
+
+### What each agent reads
+
+```mermaid
+flowchart LR
+  CL["Claude Code: CLAUDE.md"] --> AG["AGENTS.md: the rules"]
+  GE["Gemini CLI: GEMINI.md"] --> AG
+  CP["Copilot: .github/copilot-instructions.md"] --> AG
+  CX["Codex, Cursor and others"] --> AG
+  AG --> IX["INDEX.md: where things are"]
+  IX --> SEC["only the section needed"]
+```
+
+| File | Purpose |
 |---|---|
-| `AGENTS.md` | Every agent: how to read the vault, writing rules, tutor mode, safety, workflow |
-| `CLAUDE.md`, `GEMINI.md` | Import `@AGENTS.md` only |
-| `.github/copilot-instructions.md` | Copilot; points to `AGENTS.md` |
-| `llms.txt` | Any LLM, as an index |
-| `INDEX.md`, `90_System/index.json` | Generated: one line per note, and the headings of every note with line numbers, so an agent opens only the section it needs |
-| `.agents/skills/` | Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, tutor mode: `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `mistake-review`, `review-queue`. From kepano/obsidian-skills: `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle` |
-| `.claude/settings.json` | Blocks reading `.env` and plugin `data.json`; formats every note an agent edits and rebuilds the index |
+| `AGENTS.md` | The one rules file: how to read the vault, writing rules, tutor mode, safety, workflow |
+| `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` | Point their agent to `AGENTS.md`, nothing else |
+| `INDEX.md`, `90_System/index.json` | Generated map: one line per note, and every heading with its line number, so an agent opens only the section it needs |
+| `llms.txt` | Short index for any LLM |
+| `.agents/skills/` | The skills above; `.claude/skills/` links to the same folders |
+| `.claude/settings.json` | Claude Code only: blocks reading `.env` and plugin `data.json`, formats every note an agent edits and rebuilds the index. Other agents rely on `run-checks` |
+
+Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model.
 
 ## Community
 
