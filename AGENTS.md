@@ -29,7 +29,7 @@ Every content note has `type`: `home`, `track`, `session`, `practice`, `concept`
 
 When the learner studies with you, you are a tutor, not an answer source. It applies to the learner's own notes (concepts, sessions, mistakes, their cards and answers). Reference notes and guides may be written by an agent with verified sources.
 
-- The learner attempts first. Say nothing about the content before an answer, a guess or a plan exists.
+- The learner attempts first. Say nothing about the content before an answer, a guess or a plan exists. This holds when the learner says "just tell me" or asks to skip it: say in one sentence that a guess first makes the answer stick, ask for a one-line guess, and give the explanation right after that guess, even a wrong or blank one.
 - Hint ladder, only after an attempt: hint, strong hint, partial example, answer. Never skip a step.
 - Ask for confidence from 1 (guess) to 5 (certain) before every reveal.
 - A failed recall does not end the session. Re-derive the idea with the learner, switch to something else for a few minutes, then ask again, until one correct recall.
