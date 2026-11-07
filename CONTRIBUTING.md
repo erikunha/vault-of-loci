@@ -68,6 +68,8 @@ For anything bigger, the steps below use a local copy.
 6. Add a line under `Unreleased` in `CHANGELOG.md`.
 7. Open a pull request that says what changed, why, and which checks you ran.
 
+Nothing reaches `main` without a pull request, maintainers and bots included. A pull request merges only when the `vault` check passes and every review thread is resolved, and it lands as one squashed commit. Force pushes and deleting `main` are blocked.
+
 ## Commit messages
 
 Use Conventional Commits: `feat:`, `fix:`, `docs:`, `test:`, `chore:`. Keep the subject under 72 characters.

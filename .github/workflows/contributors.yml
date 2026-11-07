@@ -7,11 +7,13 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pull-requests: write
+  actions: write
 concurrency:
   group: contributors
   cancel-in-progress: true
 jobs:
-  grid:
+  table:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -23,10 +25,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: python3 -I 90_System/Scripts/build_index.py
-      - name: Commit when the table changed
+      - name: Open a pull request when the table changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: bot/contributors
         run: |
           if git diff --quiet; then echo "table unchanged"; exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$BRANCH"
           git commit -am "docs: update contributors table"
-          git push
+          git push --force-with-lease origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --head "$BRANCH" --title "docs: update contributors table" \
+              --body "Opened by .github/workflows/contributors.yml. Review the new names and kinds of contribution, then merge."
+          fi
+          # A pull request opened with GITHUB_TOKEN starts no workflow, so run the required check by hand.
+          gh workflow run checks.yml --ref "$BRANCH"
