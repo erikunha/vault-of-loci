@@ -37,7 +37,7 @@ If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/
 
 ## Contributors table
 
-`.all-contributorsrc` lists every contributor and the kinds of contribution, in the [All Contributors](https://allcontributors.org) format. `update_contributors.py` adds each commit author of the GitHub repository (bots left out) with `code`, keeps the entries added by hand, and writes a table between the `ALL-CONTRIBUTORS-LIST` markers of each file in `files`: a 100 px avatar fetched at 200 px, the name, and one emoji per kind. People with more kinds come first. To credit a contribution that is not a commit, add the person or the kind to `.all-contributorsrc` and run the script. `.github/workflows/contributors.yml` runs it on every push to `main` and every Monday, and commits only when something changed.
+`.all-contributorsrc` lists every contributor and the kinds of contribution, in the [All Contributors](https://allcontributors.org) format. `update_contributors.py` adds each commit author of the GitHub repository (bots left out) with `code`, keeps the entries added by hand, and writes a table between the `ALL-CONTRIBUTORS-LIST` markers of each file in `files`: a 100 px avatar fetched at 200 px, the name, and one emoji per kind. People with more kinds come first. To credit a contribution that is not a commit, add the person or the kind to `.all-contributorsrc` and run the script. `.github/workflows/contributors.yml` runs it after every merge to `main` and every Monday. When the table changed, it opens a pull request from `bot/contributors` and runs the `checks` workflow on it, so a maintainer reviews the new names before they reach `main`.
 
 ## Naming
 
