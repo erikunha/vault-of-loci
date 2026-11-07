@@ -35,9 +35,9 @@ It runs `format_notes.py --check`, then every `validation/check_*.py`, then ever
 
 If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`. The Claude Code hook does it after each note edit.
 
-## Contributors grid
+## Contributors table
 
-`update_contributors.py` writes the contributors of the GitHub repository (bots left out) between the `contributors:start` and `contributors:end` markers in every README, with avatars at 160 px shown at 80 px. `.github/workflows/contributors.yml` runs it on every push to `main` and every Monday, and commits only when the grid changed.
+`.all-contributorsrc` lists every contributor and the kinds of contribution, in the [All Contributors](https://allcontributors.org) format. `update_contributors.py` adds each commit author of the GitHub repository (bots left out) with `code`, keeps the entries added by hand, and writes a table between the `ALL-CONTRIBUTORS-LIST` markers of each file in `files`: a 100 px avatar fetched at 200 px, the name, and one emoji per kind. People with more kinds come first. To credit a contribution that is not a commit, add the person or the kind to `.all-contributorsrc` and run the script. `.github/workflows/contributors.yml` runs it on every push to `main` and every Monday, and commits only when something changed.
 
 ## Naming
 

@@ -155,11 +155,23 @@ Conteúdo é bem-vindo, e não é preciso programar: notas de conceito, referên
 
 ## Contribuidores
 
-Quem teve uma mudança aceita aparece abaixo. Contribuições que não são commits (ideias, revisões, propostas de conteúdo) são agradecidas nas notas de release.
+Toda ajuda conta, não só código: conteúdo, tradução, revisão, ideias, relato de bug. Quem faz commit entra sozinho; para o resto, abra uma issue ou discussão e você entra à mão no `.all-contributorsrc`. Cada emoji é um tipo de contribuição ([legenda](https://allcontributors.org/docs/en/emoji-key)).
 
-<!-- contributors:start -->
-<a href="https://github.com/erikunha"><img src="https://avatars.githubusercontent.com/u/27955793?v=4&s=160" width="80" height="80" alt="erikunha" title="erikunha" /></a>
-<!-- contributors:end -->
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.29%"><a href="https://erikunha.dev"><img src="https://avatars.githubusercontent.com/u/27955793?v=4&s=200" width="100px;" alt="Erik Cunha"/><br /><sub><b>Erik Cunha</b></sub></a><br /><a href="#maintenance-erikunha" title="Maintenance">🚧</a> <a href="https://github.com/erikunha/vault-of-loci/commits?author=erikunha" title="Code">💻</a> <a href="#content-erikunha" title="Content">🖋</a> <a href="https://github.com/erikunha/vault-of-loci/commits?author=erikunha" title="Documentation">📖</a> <a href="#research-erikunha" title="Research">🔬</a> <a href="#translation-erikunha" title="Translation">🌍</a> <a href="https://github.com/erikunha/vault-of-loci/commits?author=erikunha" title="Tests">⚠️</a> <a href="#infra-erikunha" title="Infrastructure">🚇</a> <a href="#ideas-erikunha" title="Ideas, Planning, &amp; Feedback">🤔</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## Créditos
 

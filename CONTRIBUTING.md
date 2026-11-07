@@ -78,7 +78,7 @@ Folders with a `.vendored` file are copies of another project. Do not edit them 
 
 ## Recognition
 
-Everyone whose change is merged appears in the Contributors grid of `README.md`, which updates by itself. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker) are thanked by name in the release notes.
+Every contributor appears in the Contributors table of `README.md`, with one emoji per kind of contribution. Commit authors are added by themselves. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker, bug reports) are added by hand to `.all-contributorsrc`: ask in your issue, pull request or discussion, or a maintainer adds you. Kinds and emojis follow the [All Contributors key](https://allcontributors.org/docs/en/emoji-key).
 
 ## License
 
