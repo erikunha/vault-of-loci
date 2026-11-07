@@ -17,10 +17,15 @@ New learning project? Ask for the `new-track` skill. A track can be a course, a 
 
 ## Today
 
+- Study log: command palette, "Daily notes: Open today's daily note". Write it yourself, in a few lines.
 - Flashcards: command palette, "Spaced Repetition: Review flashcards from all notes". Stop at 10 to 20 reviews; if the queue is longer, catch up the backlog first.
 - Closed-book checkpoint: ask for the `no-ai-checkpoint` skill on concepts older than 14 days.
 - Mistakes: turn open entries in [[Mistakes|the mistakes log]] into corrected cards.
 - Inbox: everything in `00_Inbox` gets a home during the weekly review.
+
+## Study log
+
+![[Daily.base]]
 
 ## Concepts
 

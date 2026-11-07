@@ -13,7 +13,7 @@ An Obsidian vault for learning anything (a course, book, certification, intervie
 
 ## Frontmatter
 
-Every content note has `type`: `home`, `track`, `session`, `practice`, `concept`, `reference` (with `subtype`: paper, book, repository, web), `guide`, `review`, `spec`, `log`, `index`, `debrief`, `transcript` (made by `vtt_to_note.py`, in `10_Tracks/<track>/transcripts/`). Guides use `type: guide`, never `reference`. Track properties are in `90_System/Specs/Track_kinds.md`. Property types live in `.obsidian/types.json`; a new property goes there with its type.
+Every content note has `type`: `home`, `track`, `session`, `practice`, `concept`, `reference` (with `subtype`: paper, book, repository, web), `guide`, `review`, `spec`, `log`, `index`, `debrief`, `daily` (the learner's study log, in `50_Review/Daily/`, made from `90_System/Templates/Daily.md`), `transcript` (made by `vtt_to_note.py`, in `10_Tracks/<track>/transcripts/`). Guides use `type: guide`, never `reference`. Track properties are in `90_System/Specs/Track_kinds.md`. Property types live in `.obsidian/types.json`; a new property goes there with its type.
 
 ## Writing rules
 
