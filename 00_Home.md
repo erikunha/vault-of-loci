@@ -46,4 +46,5 @@ New learning project? Ask for the `new-track` skill. A track can be a course, a 
 ## Guides
 
 - [[Studying_with_AI|Studying with AI]]
+- [[Built-in_Study_Modes|Built-in study modes]]
 - [[Repository_and_Documentation_Patterns_for_AI|Repository and documentation patterns for AI]]
