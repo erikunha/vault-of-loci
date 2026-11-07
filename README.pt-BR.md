@@ -1,4 +1,6 @@
-# Vault of Loci &middot; [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![release](https://img.shields.io/github/v/release/erikunha/vault-of-loci)](https://github.com/erikunha/vault-of-loci/releases) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
+# Vault of Loci
+
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![release](https://img.shields.io/github/v/release/erikunha/vault-of-loci)](https://github.com/erikunha/vault-of-loci/releases) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
 
 [English](README.md) · **Português**
 
@@ -49,25 +51,19 @@ Esse é o comportamento que a [avaliação do modo tutor](90_System/Evals/Tutor_
 
 ## Contribuir
 
-Conteúdo é bem-vindo, e não é preciso programar: notas de conceito, referências conferidas, guias, receitas de trilha, trilhas de exemplo, traduções e skills ajudam. Contribuições são em inglês. Veja abaixo como participar.
+Conteúdo é bem-vindo, e não é preciso programar: notas de conceito, referências conferidas, guias, receitas de trilha, trilhas de exemplo, traduções e skills ajudam. Contribuições são em inglês.
 
-### [Código de Conduta](.github/CODE_OF_CONDUCT.md)
+* O [guia de contribuição](.github/CONTRIBUTING.md) diz o que cabe, como propor uma mudança, como fazer uma primeira contribuição toda pelo editor do GitHub no navegador, e a política para contribuições feitas com IA.
+* As [good first issues](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue) são tarefas pequenas e bem delimitadas, como uma nota de conceito ou uma tradução.
+* Quem participa segue o [Código de Conduta](.github/CODE_OF_CONDUCT.md).
 
-Quem participa segue o [Código de Conduta](.github/CODE_OF_CONDUCT.md). Problemas de segurança vão em privado, como o [`SECURITY.md`](.github/SECURITY.md) explica.
+## Comunidade e suporte
 
-### [Guia de Contribuição](.github/CONTRIBUTING.md)
+* Pergunte em [Discussions](https://github.com/erikunha/vault-of-loci/discussions) depois de olhar o [FAQ](.github/FAQ.md); pode perguntar em português. O [`SUPPORT.md`](.github/SUPPORT.md) diz para onde vai cada tipo de pergunta.
+* Problemas de segurança vão em privado, como o [`SECURITY.md`](.github/SECURITY.md) explica.
+* Os [Releases](https://github.com/erikunha/vault-of-loci/releases) listam o que mudou em cada versão e quem contribuiu pela primeira vez.
 
-Leia o [guia de contribuição](.github/CONTRIBUTING.md) para saber o que cabe, como propor uma mudança, como fazer uma primeira contribuição toda pelo editor do GitHub no navegador, e a política para contribuições feitas com IA.
-
-### [Good First Issues](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue)
-
-Para conhecer o processo, comece por uma [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue): tarefas pequenas e bem delimitadas, como uma nota de conceito ou uma tradução.
-
-### [Perguntas e Suporte](https://github.com/erikunha/vault-of-loci/discussions)
-
-Pergunte em [Discussions](https://github.com/erikunha/vault-of-loci/discussions) depois de olhar o [FAQ](.github/FAQ.md); pode perguntar em português. O [`SUPPORT.md`](.github/SUPPORT.md) diz para onde vai cada tipo de pergunta. Os [Releases](https://github.com/erikunha/vault-of-loci/releases) listam o que mudou em cada versão e quem contribuiu pela primeira vez.
-
-### Contribuidores
+## Contribuidores
 
 Toda ajuda conta, não só código: conteúdo, tradução, revisão, ideias, relato de bug. Quem faz commit entra sozinho; para o resto, abra uma issue ou discussão e você entra à mão no `.all-contributorsrc`. Cada emoji é um tipo de contribuição ([legenda](https://allcontributors.org/docs/en/emoji-key)).
 
