@@ -1,4 +1,5 @@
 # Groups merged pull requests in the notes GitHub generates for a release, and lists first-time contributors.
+# .github/labeler.yml sets most of these labels from the files a pull request changes.
 changelog:
   exclude:
     authors:
@@ -11,6 +12,12 @@ changelog:
       labels: [enhancement]
     - title: Fixed
       labels: [bug]
+    - title: Skills and agent rules
+      labels: [skills]
+    - title: Translations
+      labels: [translation]
+    - title: Tooling
+      labels: [tooling]
     - title: Documentation
       labels: [documentation]
     - title: Other changes

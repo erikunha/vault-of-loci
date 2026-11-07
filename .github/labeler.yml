@@ -1,0 +1,16 @@
+# Labels a pull request by the files it changes; .github/release.yml groups release notes by these labels.
+content:
+  - changed-files:
+      - any-glob-to-any-file: ["10_Tracks/**", "20_Concepts/**", "30_Maps/**", "40_References/**", "50_Review/**"]
+skills:
+  - changed-files:
+      - any-glob-to-any-file: [".agents/**", ".claude/**", "AGENTS.md", "CLAUDE.md", "GEMINI.md", "llms.txt"]
+tooling:
+  - changed-files:
+      - any-glob-to-any-file: ["90_System/Scripts/**", ".github/workflows/**", ".githooks/**"]
+translation:
+  - changed-files:
+      - any-glob-to-any-file: ["README.*.md", "90_System/Specs/study_layer.*.json"]
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: ["README.md", ".github/*.md", "How_to_Study_with_this_Vault.md", "90_System/Specs/**"]

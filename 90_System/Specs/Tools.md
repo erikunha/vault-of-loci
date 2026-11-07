@@ -39,6 +39,18 @@ If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/
 
 `.all-contributorsrc` lists every contributor and the kinds of contribution, in the [All Contributors](https://allcontributors.org) format. `update_contributors.py` adds each commit author of the GitHub repository (bots left out) with `code`, keeps the entries added by hand, and writes a table between the `ALL-CONTRIBUTORS-LIST` markers of each file in `files`: a 100 px avatar fetched at 200 px, the name, and one emoji per kind. People with more kinds come first. To credit a contribution that is not a commit, add the person or the kind to `.all-contributorsrc` and run the script. `.github/workflows/contributors.yml` runs it after every merge to `main` and every Monday. When the table changed, it opens a pull request from `bot/contributors` and runs the `checks` workflow on it, so a maintainer reviews the new names before they reach `main`.
 
+## Repository automation
+
+| File | What it does |
+|---|---|
+| `.github/workflows/checks.yml` | Runs `run_checks.py` on every push and pull request. `main` accepts a pull request only when this `vault` check passes |
+| `.github/workflows/labeler.yml` and `.github/labeler.yml` | Label each pull request by the files it changes |
+| `.github/release.yml` | Groups the notes GitHub writes for a release by those labels and lists first-time contributors |
+| `.github/workflows/contributors.yml` | Opens a pull request when the contributors table changes; runs only in this repository, not in copies |
+| `.githooks/pre-commit` | Refuses a commit with a stale index, once enabled with `git config core.hooksPath .githooks` |
+
+A copy made with "Use this template" keeps these files. Delete `.github/` in your copy if you do not want them.
+
 ## Naming
 
 File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):

@@ -37,12 +37,11 @@ flowchart LR
 
 ## Começo rápido
 
-1. Clique em **Use this template** no GitHub (ou clone) e abra a pasta como vault no Obsidian. É preciso o Obsidian 1.9 ou mais novo para as Bases. As skills opcionais de CLI (`review-queue`) pedem 1.12.7 ou mais novo, com o app aberto.
-2. Opcional: instale o plugin da comunidade Spaced Repetition (listado em `.obsidian/community-plugins.json`) para revisar os flashcards. O vault não precisa de nenhum outro plugin.
-3. Leia `How_to_Study_with_this_Vault.md` e depois `00_Home.md`.
-4. Crie sua primeira trilha com a skill `new-track` no Claude Code ou no Codex (ela pergunta o tipo e o horizonte), ou copie `90_System/Templates/Track.md` para `10_Tracks/<NN>_<Name>/`.
-5. Apague ou mantenha as trilhas, o conceito e o paper de exemplo. Eles mostram o formato completo das notas.
-6. Rode `python3 -I 90_System/Scripts/run_checks.py`. Todas as checagens devem passar antes da sua primeira nota.
+1. Clique em **Use this template** no GitHub (ou clone) e abra a pasta como vault no Obsidian 1.9 ou mais novo.
+2. Peça ao seu agente uma trilha nova com a skill `new-track` (o Claude Code ou o Codex perguntam o tipo e o horizonte), ou copie `90_System/Templates/Track.md` para `10_Tracks/<NN>_<Name>/`.
+3. Abra `00_Home.md` e estude. O `How_to_Study_with_this_Vault.md` explica o método.
+
+Opcional: o plugin da comunidade Spaced Repetition (listado em `.obsidian/community-plugins.json`) revisa os flashcards, e as skills de CLI (`review-queue`) pedem o Obsidian 1.12.7 ou mais novo, com o app aberto. As trilhas, o conceito e o paper de exemplo mostram o formato completo das notas; mantenha ou apague. O `python3 -I 90_System/Scripts/run_checks.py` confere o vault depois que você o muda.
 
 ## Estrutura
 
