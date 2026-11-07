@@ -1,6 +1,7 @@
 ---
 name: new-concept-note
 description: Create or deepen a concept note in 20_Concepts following the study layer spec. Use when a session, paper, book or question introduces a concept worth its own note. Writes files, so only run when asked.
+disable-model-invocation: true
 ---
 
 1. Check `20_Concepts/` first: one idea per note. If the concept exists, extend it instead of creating another.

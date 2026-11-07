@@ -6,7 +6,7 @@
 
 > The method of loci stores memories in places you know. This vault stores what you learn in notes you return to, with AI agents that quiz you instead of answering for you.
 
-An Obsidian vault template to study anything with AI agents: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a goal, a done criterion and a recipe for its kind. Every note is study material (a long explanation, key takeaways and flashcards), every source is verified, and automatic checks keep notes, links and names consistent. Claude Code, Codex, Gemini CLI and Copilot all follow the same rules from one `AGENTS.md`.
+An Obsidian vault template to study anything with AI agents: a course, a book, a certification, an interview, research, a skill or a language. Each learning project is a track with a goal, a done criterion and a recipe for its kind. Every note is study material (a long explanation, key takeaways and flashcards), every source is verified, and automatic checks keep notes, links and names consistent. Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor and OpenCode all follow the same rules from one `AGENTS.md`.
 
 Plain Markdown. MIT licensed.
 
@@ -92,7 +92,7 @@ The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard libra
 - **Track kinds.** Recipes live in `90_System/Specs/Track_kinds.md`; the `new-track` skill reads them. Edit a recipe or add a kind there.
 - **Concept categories.** Each category is a `cat/<name>` tag with a color in `.obsidian/graph.json` and `.obsidian/snippets/study-vault.css`. Add or rename them in both places.
 - **Folders.** The numbered top folders are referenced by `llms.txt`, the skills and the checks (the bases filter by the `type` property, not by folder). Rename one and run the checks to find what still points to the old name.
-- **Agents.** Add rules to `AGENTS.md` only. `CLAUDE.md` and `GEMINI.md` stay as one import line.
+- **Agents.** Add rules to `AGENTS.md` only. `CLAUDE.md` and `GEMINI.md` stay as one import line. Add other secret paths to `.cursorignore`, `.geminiignore` and `.claude/settings.json`.
 
 ## Studying with an AI agent
 
@@ -119,30 +119,47 @@ flowchart LR
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
 | Before committing | "Run the checks" | `run-checks` |
 
-Skills that write files run only when you ask. Agents also have five Obsidian skills from kepano/obsidian-skills (`obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`) for writing Markdown, bases and canvases correctly.
+Skills that write files run only when you ask. Claude Code and Cursor enforce it with `disable-model-invocation` in each skill, and Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`). Other agents rely on the skill description, which asks for it. Agents also have the Obsidian skills listed under Credits (`obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`) for writing Markdown, bases and canvases correctly.
 
-### What each agent reads
+### Supported agents
+
+Every agent ends up at `AGENTS.md`, then `INDEX.md`, then only the section it needs:
 
 ```mermaid
 flowchart LR
-  CL["Claude Code: CLAUDE.md"] --> AG["AGENTS.md: the rules"]
-  GE["Gemini CLI: GEMINI.md"] --> AG
-  CP["Copilot: .github/copilot-instructions.md"] --> AG
-  CX["Codex, Cursor and others"] --> AG
+  AGT["Any agent"] --> AG["AGENTS.md: the rules"]
   AG --> IX["INDEX.md: where things are"]
   IX --> SEC["only the section needed"]
 ```
+
+Where each agent looks for its files. A dash means the vault does not use that file; it says nothing about the agent.
+
+| Agent | Rules file | Skills | Hooks | MCP config | Ignore and permissions |
+|---|---|---|---|---|---|
+| Claude Code | `CLAUDE.md`, which imports `@AGENTS.md` | `.claude/skills` | `.claude/settings.json` | `.mcp.json` | `permissions.deny` and the sandbox |
+| Codex | `AGENTS.md` | `.agents/skills` | `.codex/hooks.json` (trusted projects) | `.codex/config.toml` | `sandbox_mode` and deny-read rules |
+| Antigravity CLI (`agy`) | `GEMINI.md` and `AGENTS.md` | `.agents/skills` | - | `.agents/mcp_config.json` | not documented |
+| Gemini CLI | `GEMINI.md`, with `@` imports | `.gemini/skills` or `.agents/skills` | - | `.gemini/settings.json` | `.geminiignore` |
+| GitHub Copilot | `AGENTS.md`; `.github/copilot-instructions.md` is a fallback | `.github/skills`, `.claude/skills` or `.agents/skills`, depending on the surface | - | `.vscode/mcp.json` | content exclusion in GitHub settings |
+| Cursor | `AGENTS.md` | `.agents/skills` | - | - | `.cursorignore` (terminal and MCP tools bypass it) |
+| OpenCode | `AGENTS.md` | `.agents/skills` | - | - | - |
+
+- Claude Code reads `AGENTS.md` itself only when no `CLAUDE.md` exists, and it ignores `.agents/`. That is why `CLAUDE.md` imports `AGENTS.md` and `.claude/skills/` links to the folders in `.agents/skills/`.
+- Since 2026-06-18, Gemini CLI is available only with enterprise licences and paid API keys.
+- The vault ships the rules files, the skills, `.claude/settings.json`, `.cursorignore` and `.geminiignore`. The MCP and hook paths in the table are where each agent looks if you add your own.
+- To check that an agent loaded the rules, ask it which rules file it loaded and what tutor mode means here.
 
 | File | Purpose |
 |---|---|
 | `AGENTS.md` | The one rules file: how to read the vault, writing rules, tutor mode, safety, workflow |
 | `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md` | Point their agent to `AGENTS.md`, nothing else |
 | `INDEX.md`, `90_System/index.json` | Generated map: one line per note, and every heading with its line number, so an agent opens only the section it needs |
-| `llms.txt` | Short index for any LLM |
+| `llms.txt` | Optional index that follows the llms.txt convention; no major agent reads it automatically, so paste or link it when a tool needs a short map |
 | `.agents/skills/` | The skills above; `.claude/skills/` links to the same folders |
-| `.claude/settings.json` | Claude Code only: blocks reading `.env` and plugin `data.json`, formats every note an agent edits and rebuilds the index. Other agents rely on `run-checks` |
+| `.claude/settings.json` | Claude Code only: denies reading `.env` and plugin `data.json`, formats every note an agent edits and rebuilds the index. Other agents rely on `run-checks` |
+| `.cursorignore`, `.geminiignore` | Keep `.env` files and plugin `data.json` out of Cursor and Gemini CLI context. A terminal command or a tool can still read them, so they lower the risk but do not remove it |
 
-Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model.
+Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see `FAQ.md`).
 
 ## Community
 

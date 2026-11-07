@@ -37,7 +37,7 @@ def path(folder):
 code, out = run({path("good-skill"): skill("good-skill")})
 check(code == 0, f"valid skill: {out}")
 
-code, out = run({path("good-skill"): skill("good-skill", extra="disable-model-invocation: true\n")})
+code, out = run({path("good-skill"): skill("good-skill", extra="license: MIT\n")})
 check(code == 0, f"extra keys are allowed: {out}")
 
 code, out = run({path("good-skill"): skill("other-name")})
@@ -72,6 +72,24 @@ check(code == 0, f"folded description: {out}")
 
 code, out = run({path("good-skill"): '---\nname: "good-skill"\ndescription: \'Quoted: value\'\n---\n'})
 check(code == 0, f"quoted values: {out}")
+
+POLICY = "policy:\n  allow_implicit_invocation: false\n"
+explicit = skill("good-skill", extra="disable-model-invocation: true\n")
+
+code, out = run({path("good-skill"): explicit, ".agents/skills/good-skill/agents/openai.yaml": POLICY})
+check(code == 0, f"explicit-only skill with its Codex policy file: {out}")
+
+code, out = run({path("good-skill"): explicit})
+check(code == 1 and "openai.yaml" in out, f"explicit-only skill without the Codex policy file: {out}")
+
+code, out = run({path("good-skill"): explicit, ".agents/skills/good-skill/agents/openai.yaml": "policy:\n  allow_implicit_invocation: true\n"})
+check(code == 1 and "allow_implicit_invocation" in out, f"policy file that allows implicit invocation: {out}")
+
+code, out = run({path("good-skill"): explicit, ".agents/skills/good-skill/agents/openai.yaml": "interface:\n  display_name: Good\n" + POLICY})
+check(code == 0, f"policy file with other sections: {out}")
+
+code, out = run({path("good-skill"): skill("good-skill"), ".agents/skills/good-skill/agents/openai.yaml": POLICY, ".agents/skills/good-skill/references/a.md": "x\n"})
+check(code == 0, f"extra files in a skill folder are allowed: {out}")
 
 code, out = run({".agents/skills/empty-folder/notes.md": "x\n"})
 check(code == 1 and "SKILL.md" in out, f"a skill folder without SKILL.md: {out}")

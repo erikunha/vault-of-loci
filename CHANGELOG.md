@@ -7,12 +7,18 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 ### Fixed
 
 - Bases no longer list the note templates as tracks, sessions, concepts or references. `check_bases.py` guards it.
+- `new-track`, `new-concept-note`, `process-paper` and `process-web` had no explicit-use setting; they now run only when asked.
 
 ### Changed
 
 - The graph opens zoomed in, with labels, and the README shows the vault in Obsidian.
+- The README replaces the agent diagram and file table with a "Supported agents" matrix: rules file, skills, hooks, MCP config and ignore or permissions for Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor and OpenCode, plus a short diagram and a way to check that an agent loaded the rules. Gemini CLI is noted as available only with enterprise licences and paid API keys since 2026-06-18. `llms.txt` is described as an optional index that no major agent reads automatically.
+- Skills that write files carry `disable-model-invocation: true` (enforced in Claude Code and Cursor) and `agents/openai.yaml` with `allow_implicit_invocation: false` (enforced in Codex). `check_skills.py` fails a skill that sets the first without the second, with tests.
+- The FAQ answer on secrets is rewritten: what `permissions.deny` covers in Claude Code, why the sandbox is the real guard and is not on by default, a Codex deny-read example, and the limits of ignore files. New answers: "Studying privately with a local model" and "AI inside Obsidian".
 
-Nothing yet.
+### Added
+
+- `.cursorignore` and `.geminiignore`: keep `.env`, `.env.*` and plugin `data.json` out of Cursor and Gemini CLI context. A terminal command or a tool can still read them.
 
 ## 0.2.0 (2026-11-07)
 

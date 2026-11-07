@@ -1,6 +1,7 @@
 ---
 name: process-web
 description: Save a web page as a reference note in 40_References/Web with a summary and headings, so agents read it by section instead of fetching it again. Use when a task needs a URL and the vault has no copy. Writes files, so only run when asked.
+disable-model-invocation: true
 ---
 
 1. Look for a copy first: search `INDEX.md` and `40_References/Web/` for the URL in a `link` property. If a note exists, read it by section (see "How to read this vault" in `AGENTS.md`) and stop.

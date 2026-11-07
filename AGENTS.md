@@ -38,7 +38,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 
 ## Safety
 
-- Never read, print or copy `.env` files or plugin `data.json` files (`.claude/settings.json` blocks them).
+- Never read, print or copy `.env` files or plugin `data.json` files (`.claude/settings.json`, `.cursorignore` and `.geminiignore` list them, but a terminal command can still read them, so this rule holds for every agent).
 - Never delete notes: move them to `00_Inbox` and say why.
 - Never invent references: a paper needs a verifiable arXiv ID or DOI, a repository must exist.
 - Folders with a `.vendored` file are third-party copies: do not edit, update by copying from upstream.
@@ -52,7 +52,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 
 ## Skills
 
-Single source in `.agents/skills/` (Codex reads it); `.claude/skills/` links to it.
+Single source in `.agents/skills/` (Codex, Antigravity CLI, Cursor, OpenCode and others read it); `.claude/skills/` links to it, because Claude Code ignores `.agents/`.
 
-- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `mistake-review`, `review-queue`. Skills that write only run when asked.
+- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `mistake-review`, `review-queue`. Skills that write only run when asked: Claude Code and Cursor enforce it with `disable-model-invocation` in the skill, Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`), and elsewhere the skill description asks for it.
 - From kepano/obsidian-skills (MIT): `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`. Use them when writing Markdown, `.base` or `.canvas` files.

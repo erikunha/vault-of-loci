@@ -6,7 +6,7 @@ Anything you can set a goal for: a course, a book, a certification, an interview
 
 ## Do I need AI agents to use this vault?
 
-No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use Claude Code, Codex, Gemini CLI, Copilot or Cursor.
+No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use an agent such as Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor or OpenCode. The README table "Supported agents" lists what each one reads.
 
 ## Do I need Python?
 
@@ -62,11 +62,53 @@ Your notes in `10_Tracks/`, `20_Concepts/`, `40_References/` and `50_Review/` ar
 
 ## Can I keep my vault private?
 
-Yes. Create your copy as a private repository, or keep it only on your machine. Never commit `.env` files or plugin `data.json` files; `.gitignore` and `.claude/settings.json` already guard against both.
+Yes. Create your copy as a private repository, or keep it only on your machine. Never commit `.env` files or plugin `data.json` files; `.gitignore` already keeps them out of Git. Keeping them out of an agent's view is a separate matter, covered in the next answer.
+
+## Does the vault keep secrets away from agents?
+
+Only partly, and the strength depends on the agent.
+
+- **Claude Code.** The `permissions.deny` rules in `.claude/settings.json` cover its file tools and simple shell reads, but not every command a shell can run. The real guard is the sandbox (`sandbox.enabled`). It is off by default, and the template does not turn it on, because it can block hooks and commands you rely on. The sandbox covers shell commands only. Turn it on in your own settings if you keep secrets in the vault. See https://code.claude.com/docs/en/sandboxing.
+- **Codex.** In a trusted project, `.codex/config.toml` can deny reads of matching files. This example follows https://developers.openai.com/codex/permissions; check that page for the current syntax before you rely on it:
+
+  ```toml
+  default_permissions = "vault"
+
+  [permissions.vault.filesystem]
+  ":minimal" = "read"
+
+  [permissions.vault.filesystem.":workspace_roots"]
+  "." = "write"
+  "**/.env" = "deny"
+  "**/.env.*" = "deny"
+  ```
+
+  Codex ignores project `.codex/` files in an untrusted project, so this protects nothing there.
+- **Cursor and Gemini CLI.** `.cursorignore` and `.geminiignore` list `.env`, `.env.*` and plugin `data.json`. They keep those files out of context, but a terminal command or a tool can still read them. Cursor says so for its terminal and MCP tools.
+- **Other agents** rely on the rule in `AGENTS.md` and on what you choose to put in the vault. Do not keep a secret in a vault you open with an agent.
 
 ## What does an agent send to its provider?
 
-Whatever it reads. When an agent opens a note, or `INDEX.md` with its summaries, that text goes to the provider of the model it runs on. Private notes and exam material belong in a vault you only open with a local model, or without an agent. The read blocks in `.claude/settings.json` keep secrets out, not note text. Read your provider's data terms before you point an agent at notes you cannot share.
+Whatever it reads. When an agent opens a note, or `INDEX.md` with its summaries, that text goes to the provider of the model it runs on. Private notes and exam material belong in a vault you only open with a local model, or without an agent. The deny rules and ignore files keep secrets out, not note text. Read your provider's data terms before you point an agent at notes you cannot share.
+
+## Studying privately with a local model
+
+A local model keeps your notes on your machine. Two ways to run Claude Code against one:
+
+- **Ollama.** Run `ollama launch claude`, or set `ANTHROPIC_BASE_URL=http://localhost:11434` (with `ANTHROPIC_AUTH_TOKEN=ollama` and an empty `ANTHROPIC_API_KEY`) and start `claude --model <model>`. Give the model a context window of 64k tokens or more, or the rules and the index will not fit. See https://docs.ollama.com/integrations/claude-code.
+- **LM Studio.** Its local server answers Anthropic-style requests at `/v1/messages`. Set `ANTHROPIC_BASE_URL=http://localhost:1234` (no `/v1`) and `ANTHROPIC_AUTH_TOKEN=lmstudio`, then start `claude --model <model>`. See https://lmstudio.ai/docs/developer/anthropic-compat.
+
+A small local model follows the tutor-mode rules less reliably than a large one, so check its first answers. Keep private notes out of any vault you also open with a cloud agent: the agent sends what it reads.
+
+## AI inside Obsidian
+
+Community plugins can put a model inside Obsidian itself. They fall into three groups:
+
+- Chat with a local or OpenAI-compatible model, in a side panel.
+- Local semantic search, which builds embeddings of your notes on your machine.
+- A local REST API for the vault, which MCP servers build on.
+
+Before you install one, check that it is still maintained and what it sends where: a plugin that calls a cloud model sends the note text it reads, like any cloud agent. The vault works without them (see the answer on community plugins), and the skills here need none.
 
 ## Does it work offline?
 

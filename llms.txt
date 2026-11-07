@@ -4,7 +4,7 @@
 
 ## Start here
 - [INDEX.md](INDEX.md): every note with its type, line count and summary; open sections by line range from 90_System/index.json
-- [README.md](README.md): what it is and how to start
+- [README.md](README.md): what it is, how to start and which agent reads which file
 - [AGENTS.md](AGENTS.md): how to read the vault, frontmatter, writing rules, tutor mode, safety
 - [How_to_Study_with_this_Vault.md](How_to_Study_with_this_Vault.md): the study method
 - [00_Home.md](00_Home.md): dashboard

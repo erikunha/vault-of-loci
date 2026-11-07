@@ -1,6 +1,7 @@
 ---
 name: new-track
 description: Create a new learning track in this vault (course, book, certification, interview, research, skill, language or other) from the recipe of its kind. Asks for the kind and the horizon. Use when the user starts learning something. Writes files, so only run when asked.
+disable-model-invocation: true
 ---
 
 Tutor mode: the goal, the done criterion and the if-then plan are the learner's words. Ask for them and write what the learner says; do not invent them.

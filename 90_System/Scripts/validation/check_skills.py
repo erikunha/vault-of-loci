@@ -4,7 +4,9 @@ Every folder in .agents/skills has a SKILL.md whose frontmatter has:
 - name: the folder name, 1 to 64 characters, lowercase letters, digits and single hyphens, not starting
   or ending with a hyphen;
 - description: not empty, at most 1024 characters.
-Other keys (license, compatibility, tool settings) are not checked.
+Other keys (license, compatibility, tool settings) and other files in the folder are not checked, with one
+exception: a skill with `disable-model-invocation: true` (explicit use only in Claude Code and Cursor) also
+needs `agents/openai.yaml` with `allow_implicit_invocation: false` (the same rule in Codex).
 
 Usage: python3 -I 90_System/Scripts/validation/check_skills.py [root]   (exits 1 on any problem)
 """
@@ -64,6 +66,13 @@ def problems_in(folder):
         found.append("description is missing or empty")
     elif len(description) > DESCRIPTION_MAX:
         found.append(f"description has {len(description)} characters, the limit is {DESCRIPTION_MAX}")
+    if props.get("disable-model-invocation", "").lower() == "true":
+        policy = folder / "agents" / "openai.yaml"
+        if not policy.is_file():
+            found.append("disable-model-invocation is set but agents/openai.yaml is missing")
+        elif not re.search(r"^\s+allow_implicit_invocation:\s*false\s*$",
+                           policy.read_text(encoding="utf-8", errors="replace"), flags=re.M):
+            found.append("agents/openai.yaml must set allow_implicit_invocation: false")
     return found
 
 

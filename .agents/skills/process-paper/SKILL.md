@@ -1,6 +1,7 @@
 ---
 name: process-paper
 description: Turn a paper into a verified reference note in 40_References/Papers with the study layer. Use when the user adds or asks about a paper. Writes files, so only run when asked.
+disable-model-invocation: true
 ---
 
 1. Verify the paper exists: arXiv ID, DOI or publisher page. If it cannot be verified, stop and say so.
