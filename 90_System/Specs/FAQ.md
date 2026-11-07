@@ -46,6 +46,10 @@ Remembering by answering a question (retrieval practice) and spreading reviews o
 
 Not if it follows tutor mode, which `AGENTS.md` and the skills require: you attempt first, hints come in steps (hint, strong hint, partial example, answer) only after an attempt, you rate confidence from 1 to 5 before the reveal, and the agent never writes your study layer or your answers. You stay in charge: ask for questions before asking for answers. Tutor mode is an instruction, and an agent can still ignore it. In Claude Code the vault adds a lock: every edit in your own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`) asks you first, unless you run it in a mode that skips permission prompts. Other agents have no such setting here. To see how well your agent follows the rules, run the twelve scenarios in `90_System/Evals/Tutor_mode.md`.
 
+## Why not just use ChatGPT study mode, Claude's Learning mode or Gemini Guided Learning?
+
+Use them if they help. All three guide with questions instead of answers, which is the same idea as tutor mode here. They live inside one product's chat, though. This vault keeps the rules in `AGENTS.md`, which any supported agent reads, and keeps your notes, cards, mistakes and review queue in your own files, so you keep them when you change tools. A study mode works well for a conversation, and the vault for what you review and test afterwards. [[Built-in_Study_Modes|Built-in study modes]] compares the three with their sources.
+
 ## How does an agent find the right note without reading everything?
 
 Through the generated index. `INDEX.md` has one line per note (type, line count, summary) and `90_System/index.json` lists every heading with its line number, so an agent reads the index and then only the line range it needs. The Claude Code hook rebuilds both after each note edit; `check_index.py` fails when they are out of date, and `python3 -I 90_System/Scripts/build_index.py` fixes it.
