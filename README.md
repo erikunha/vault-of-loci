@@ -1,4 +1,6 @@
-# Vault of Loci &middot; [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![release](https://img.shields.io/github/v/release/erikunha/vault-of-loci)](https://github.com/erikunha/vault-of-loci/releases) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
+# Vault of Loci
+
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![release](https://img.shields.io/github/v/release/erikunha/vault-of-loci)](https://github.com/erikunha/vault-of-loci/releases) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](.github/CONTRIBUTING.md)
 
 **English** · [Português](README.pt-BR.md)
 
@@ -49,25 +51,19 @@ This is the behavior the [tutor mode evaluation](90_System/Evals/Tutor_mode.md) 
 
 ## Contributing
 
-Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Read below to learn how to take part.
+Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help.
 
-### [Code of Conduct](.github/CODE_OF_CONDUCT.md)
+* The [contributing guide](.github/CONTRIBUTING.md) says what fits, how to propose a change, how to make a first contribution entirely in the GitHub web editor, and the policy for contributions made with AI.
+* [Good first issues](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue) are small, well-scoped tasks such as a concept note or a translation.
+* Everyone who takes part follows the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
 
-Everyone who takes part follows the [Code of Conduct](.github/CODE_OF_CONDUCT.md). Report security problems privately, as [`SECURITY.md`](.github/SECURITY.md) explains.
+## Community and support
 
-### [Contributing Guide](.github/CONTRIBUTING.md)
+* Ask in [Discussions](https://github.com/erikunha/vault-of-loci/discussions) after checking the [FAQ](.github/FAQ.md); [`SUPPORT.md`](.github/SUPPORT.md) says where each kind of question goes.
+* Report security problems privately, as [`SECURITY.md`](.github/SECURITY.md) explains.
+* [Releases](https://github.com/erikunha/vault-of-loci/releases) list what changed in each version and who contributed for the first time.
 
-Read the [contributing guide](.github/CONTRIBUTING.md) to learn what fits, how to propose a change, how to make a first contribution entirely in the GitHub web editor, and the policy for contributions made with AI.
-
-### [Good First Issues](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue)
-
-To get familiar with the process, start with a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue): small, well-scoped tasks such as a concept note or a translation.
-
-### [Questions and Support](https://github.com/erikunha/vault-of-loci/discussions)
-
-Ask in [Discussions](https://github.com/erikunha/vault-of-loci/discussions) after checking the [FAQ](.github/FAQ.md); [`SUPPORT.md`](.github/SUPPORT.md) says where each kind of question goes. [Releases](https://github.com/erikunha/vault-of-loci/releases) list what changed in each version and who contributed for the first time.
-
-### Contributors
+## Contributors
 
 Every kind of help counts, not only code: content, translations, reviews, ideas, bug reports. Commit authors are added on their own; for anything else, open an issue or a discussion and you are added by hand to `.all-contributorsrc`. Each emoji is a kind of contribution ([key](https://allcontributors.org/docs/en/emoji-key)).
 
