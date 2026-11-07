@@ -138,7 +138,8 @@ Tutor mode says the AI never writes your ==study layer== or your answers.
 
 ## Not verified
 
-- The full texts of Bastani (PNAS), Kestin (Scientific Reports), Barcaui, Fan, Lehmann and Steyvers were not read; findings come from abstracts and publisher pages. Their numbers should be checked before reuse.
+- The full text of Bastani (PNAS) was read in its open copy on PubMed Central: about 1,000 students in grades 9 to 11 at one school in Turkey, GPT Base +48% in practice and -17% on the exam without AI, GPT Tutor +127% in practice and statistically indistinguishable from control on the exam; the authors note one school, one subject, Fall 2023 and short-term outcomes.
+- The full texts of Kestin (Scientific Reports), Barcaui, Fan, Lehmann and Steyvers were not read; findings come from abstracts and publisher pages. Their numbers should be checked before reuse.
 - The size of the pretesting benefit, the Barcaui retention numbers and the exact settings label for FSRS in the plugin were not checked.
 - Widely shared numbers from the MIT study (such as "83% could not quote their own essay") appear only in blogs and were left out.
 - The launch date of Claude's learning mode differs between sources (April or August 2025).
@@ -150,7 +151,7 @@ Tutor mode says the AI never writes your ==study layer== or your answers.
 - [F2] Cepeda, N. J., Pashler, H., Vul, E., Wixted, J. T., & Rohrer, D. (2006). Distributed practice in verbal recall tasks. *Psychological Bulletin*, 132(3), 354-380. https://pubmed.ncbi.nlm.nih.gov/16719566/
 - [F3] Cepeda, N. J., et al. (2008). Spacing effects in learning: a temporal ridgeline of optimal retention. *Psychological Science*, 19(11), 1095-1102. https://pubmed.ncbi.nlm.nih.gov/19076480/
 - [F4] Dunlosky, J., Rawson, K., Marsh, E., Nathan, M. J., & Willingham, D. (2013). Improving students' learning with effective learning techniques. *Psychological Science in the Public Interest*, 14, 4-58. https://www.sciencedaily.com/releases/2013/01/130110111734.htm
-- [F5] Bastani, H., et al. (2025). Generative AI without guardrails can harm learning: evidence from high school mathematics. *PNAS*, 122(26), e2422633122. doi:10.1073/pnas.2422633122
+- [F5] Bastani, H., et al. (2025). Generative AI without guardrails can harm learning: evidence from high school mathematics. *PNAS*, 122(26), e2422633122. doi:10.1073/pnas.2422633122. Open copy: https://pmc.ncbi.nlm.nih.gov/articles/PMC12232635/
 - [F6] Kestin, G., Miller, K., Klales, A., Milbourne, T., & Ponti, G. (2025). AI tutoring outperforms in-class active learning. *Scientific Reports*, 15, 17458. https://pmc.ncbi.nlm.nih.gov/articles/PMC12179260/
 - [F7] Kosmyna, N., et al. (2025). Your Brain on ChatGPT. arXiv:2506.08872. https://arxiv.org/abs/2506.08872
 - [F8] Lee, H.-P., Sarkar, A., et al. (2025). The impact of generative AI on critical thinking. CHI '25. https://advait.org/files/lee_2025_ai_critical_thinking_survey.pdf
