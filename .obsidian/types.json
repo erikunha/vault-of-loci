@@ -36,6 +36,8 @@
     "score": "number",
     "confidence": "number",
     "weight": "number",
-    "source": "text"
+    "source": "text",
+    "minutes": "number",
+    "cards": "number"
   }
 }

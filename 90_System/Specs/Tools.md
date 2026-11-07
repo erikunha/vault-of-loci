@@ -39,6 +39,7 @@ If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/
 | File | What it does |
 |---|---|
 | `.github/workflows/checks.yml` | Runs `run_checks.py` on every push and pull request. `main` accepts a pull request only when this `vault` check passes |
+| `.github/workflows/release.yml` | Builds the blank vault with `build_blank_vault.py` and attaches it to every published release |
 | `.githooks/pre-commit` | Refuses a commit with a stale index, once enabled with `git config core.hooksPath .githooks` |
 
 A copy made with "Use this template" keeps these files. Delete `.github/` in your copy if you do not want them.
@@ -71,6 +72,7 @@ python3 -I 90_System/Scripts/build_canvas.py --write   # 30_Maps/<Track>.canvas:
 ## Export
 
 ```bash
+python3 -I 90_System/Scripts/build_blank_vault.py --out vault-of-loci-blank.zip   # the vault without the example tracks, checked, as the release zip
 python3 -I 90_System/Scripts/export_anki_tsv.py --out cards.tsv   # cards and clozes for Anki (File > Import), one deck per track
 python3 -I 90_System/Scripts/export_bibtex.py --out refs.bib --csl-out refs.json   # reference notes for Zotero, Pandoc or LaTeX
 ```
