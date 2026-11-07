@@ -15,6 +15,7 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ### Changed
 
+- Claude Code asks before any edit in the learner's own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`), through `ask` rules in `.claude/settings.json`; `test_claude_settings.py` keeps them and the secret-file denies in place. Other agents still rely on the instruction in `AGENTS.md`.
 - The README is shorter: script commands and customization moved to `90_System/Specs/Tools.md`, which also says what each check guards.
 
 ### Fixed

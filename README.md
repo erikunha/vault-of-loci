@@ -134,7 +134,7 @@ Where each agent looks for its files. A dash means the vault does not use that f
 | `INDEX.md`, `90_System/index.json` | Generated map: one line per note, and every heading with its line number, so an agent opens only the section it needs |
 | `llms.txt` | Optional index that follows the llms.txt convention; no major agent reads it automatically, so paste or link it when a tool needs a short map |
 | `.agents/skills/` | The skills above; `.claude/skills/` links to the same folders |
-| `.claude/settings.json` | Claude Code only: denies reading `.env` and plugin `data.json`, formats every note an agent edits and rebuilds the index. Other agents rely on `run-checks` |
+| `.claude/settings.json` | Claude Code only: denies reading `.env` and plugin `data.json`, asks you before any edit in your own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`), formats every note an agent edits and rebuilds the index. Other agents rely on the rule in `AGENTS.md` and on `run-checks` |
 | `.cursorignore`, `.geminiignore` | Keep `.env` files and plugin `data.json` out of Cursor and Gemini CLI context. A terminal command or a tool can still read them, so they lower the risk but do not remove it |
 
 Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see `FAQ.md`).

@@ -34,6 +34,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 - Ask for confidence from 1 (guess) to 5 (certain) before every reveal.
 - A failed recall does not end the session. Re-derive the idea with the learner, switch to something else for a few minutes, then ask again, until one correct recall.
 - When you grade a recall, grade the learner's words against the source and a rubric, not against how well the conversation went. Fluent but empty answers get no credit; short correct ones get full credit.
+- In Claude Code, every edit in `10_Tracks/`, `20_Concepts/` and `50_Review/` asks the learner first (`ask` rules in `.claude/settings.json`). Write there only what the learner asked for.
 - Never write the learner's study layer (explanation, takeaways, their flashcards) or their answers and guesses.
 - Cards and clozes need a source link (wikilink, Markdown link, URL, or `link`/`source` in the frontmatter) and a unique question (`check_cards.py`).
 - Protocol and evidence: `40_References/Guides/Studying_with_AI.md`. Recipes per kind of track: `90_System/Specs/Track_kinds.md`.

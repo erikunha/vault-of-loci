@@ -136,7 +136,7 @@ Onde cada agente procura seus arquivos. Um traço quer dizer que o vault não us
 | `INDEX.md`, `90_System/index.json` | Mapa gerado: uma linha por nota, e cada título com o número da linha, para o agente abrir só a seção de que precisa |
 | `llms.txt` | Índice opcional que segue a convenção llms.txt; nenhum agente grande o lê sozinho, então cole ou aponte quando uma ferramenta precisar de um mapa curto |
 | `.agents/skills/` | As skills acima; `.claude/skills/` aponta para as mesmas pastas |
-| `.claude/settings.json` | Só no Claude Code: nega leitura de `.env` e dos `data.json` de plugins, formata toda nota que um agente edita e refaz o índice. Os outros agentes contam com `run-checks` |
+| `.claude/settings.json` | Só no Claude Code: nega leitura de `.env` e dos `data.json` de plugins, pede sua confirmação antes de qualquer edição nas suas notas (`10_Tracks/`, `20_Concepts/`, `50_Review/`), formata toda nota que um agente edita e refaz o índice. Os outros agentes contam com a regra do `AGENTS.md` e com `run-checks` |
 | `.cursorignore`, `.geminiignore` | Tiram arquivos `.env` e `data.json` de plugins do contexto do Cursor e do Gemini CLI. Um comando de terminal ou uma ferramenta ainda consegue lê-los, então reduzem o risco mas não o eliminam |
 
 Os agentes enviam as notas que leem ao seu provedor. Deixe material privado fora de um vault aberto com agente na nuvem, ou use um modelo local (veja `FAQ.md`).

@@ -38,7 +38,7 @@ Remembering by answering a question (retrieval practice) and spreading reviews o
 
 ## Will an agent just answer for me instead of teaching me?
 
-Not if it follows tutor mode, which `AGENTS.md` and the skills require: you attempt first, hints come in steps (hint, strong hint, partial example, answer) only after an attempt, you rate confidence from 1 to 5 before the reveal, and the agent never writes your study layer or your answers. You stay in charge: ask for questions before asking for answers.
+Not if it follows tutor mode, which `AGENTS.md` and the skills require: you attempt first, hints come in steps (hint, strong hint, partial example, answer) only after an attempt, you rate confidence from 1 to 5 before the reveal, and the agent never writes your study layer or your answers. You stay in charge: ask for questions before asking for answers. Tutor mode is an instruction, and an agent can still ignore it. In Claude Code the vault adds a lock: every edit in your own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`) asks you first, unless you run it in a mode that skips permission prompts. Other agents have no such setting here. To see how well your agent follows the rules, run the twelve scenarios in `90_System/Evals/Tutor_mode.md`.
 
 ## How does an agent find the right note without reading everything?
 

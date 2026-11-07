@@ -6,6 +6,11 @@
       "Read(**/.env.*)",
       "Edit(**/.env)",
       "Read(./.obsidian/plugins/*/data.json)"
+    ],
+    "ask": [
+      "Edit(/10_Tracks/**)",
+      "Edit(/20_Concepts/**)",
+      "Edit(/50_Review/**)"
     ]
   },
   "hooks": {
