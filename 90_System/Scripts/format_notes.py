@@ -2,8 +2,8 @@
 
 Usage: python3 -I 90_System/Scripts/format_notes.py [--check]
 
-Rules (outside frontmatter and code fences):
-- headings, callouts, tables, horizontal rules and code fences are separated from neighbors by one blank line;
+Rules (outside frontmatter, code fences and $$ math blocks):
+- headings, callouts, tables, horizontal rules, code fences and math blocks are separated from neighbors by one blank line;
 - lists and paragraphs are separated by one blank line (indented lines right after an item continue it);
 - consecutive lines of the same kind (list items, callout lines, table rows, a paragraph) stay together;
 - two or more blank lines collapse into one.
@@ -68,6 +68,20 @@ def format_text(text):
                     break
                 i += 1
             i += 1
+            prev = k
+            continue
+        if ln.strip().startswith("$$"):
+            indented = ln[:1] in (" ", "\t") and prev in ("list", "cont")
+            k = "cont" if indented else "code"
+            if out and out[-1].strip() and prev != "start" and needs_gap(prev, k):
+                out.append("")
+            out.append(ln)
+            closed = len(ln.strip()) > 2 and ln.strip().endswith("$$")
+            i += 1
+            while not closed and i < len(lines):
+                out.append(lines[i])
+                closed = lines[i].strip().endswith("$$")
+                i += 1
             prev = k
             continue
         k = kind(ln, prev)

@@ -22,7 +22,7 @@ body:
     id: versions
     attributes:
       label: Versions
-      placeholder: Obsidian 1.12, Python 3.12, macOS 15
+      placeholder: Obsidian 1.9, Python 3.12, macOS 15
   - type: checkboxes
     id: checks
     attributes:

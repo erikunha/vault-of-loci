@@ -13,7 +13,7 @@ Plain Markdown. MIT licensed.
 - **Notes you can study from**, not just an index: each concept, paper and guide carries a study layer and its own flashcards.
 - **Built on learning science**: retrieval practice and spaced review, with a protocol for using AI without losing the learning (see `40_References/Guides/Studying_with_AI.md`).
 - **Agent-ready**: one rules file, project skills, a log of what each agent did, and a hook that formats every note an agent writes.
-- **Checked on every push**: formatting, broken links (including `obsidian://` links to a sibling vault), study layer order, file names and tests.
+- **Checked on every push**: formatting, broken links (including `obsidian://` links to a sibling vault, `README.md` and `llms.txt`), the study layer, file names and tests.
 
 ## How the material flows
 
@@ -30,8 +30,8 @@ flowchart LR
 
 ## Quick start
 
-1. Click **Use this template** on GitHub (or clone it) and open the folder as a vault in Obsidian 1.12 or later (Bases is required).
-2. Install the community plugins listed in `.obsidian/community-plugins.json`: Dataview, Spaced Repetition, Templater, Omnisearch, Kanban.
+1. Click **Use this template** on GitHub (or clone it) and open the folder as a vault in Obsidian 1.9 or later (Bases is required).
+2. Optional: install the Spaced Repetition community plugin (listed in `.obsidian/community-plugins.json`) to review flashcards. The vault needs no other plugin.
 3. Read `How_to_Study_with_this_Vault.md`, then `00_Home.md`.
 4. Create your first course with the `new-course` skill in Claude Code or Codex, or copy `90_System/Templates/Course.md` into `10_Courses/01_<Course_Name>/`.
 5. Delete or keep the example course, concept and paper. They show the full note format.
@@ -52,22 +52,24 @@ flowchart LR
 
 ## Naming standard
 
-File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand:
+File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):
 
 ```bash
 python3 90_System/Scripts/normalize_names.py          # dry run
-python3 90_System/Scripts/normalize_names.py --write  # git mv and rewrite every link
+python3 90_System/Scripts/normalize_names.py --write  # rename (git mv when tracked) and rewrite every link
 ```
 
 ## Checks
 
 ```bash
 python3 -I 90_System/Scripts/format_notes.py --check                  # note spacing
-python3 -I 90_System/Scripts/validation/check_links.py                # wikilinks, Markdown, obsidian://
-python3 -I 90_System/Scripts/validation/check_study_layer.py          # study layer order
+python3 -I 90_System/Scripts/validation/check_links.py                # wikilinks, Markdown, obsidian://, llms.txt
+python3 -I 90_System/Scripts/validation/check_study_layer.py          # study layer present and in order
 python3 -I 90_System/Scripts/validation/check_names.py                # no spaces in names
 python3 -I 90_System/Scripts/validation/test_format_notes.py
 python3 -I 90_System/Scripts/validation/test_normalize_names.py
+python3 -I 90_System/Scripts/validation/test_check_links.py
+python3 -I 90_System/Scripts/validation/test_check_study_layer.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only.
@@ -108,6 +110,7 @@ flowchart TB
 - [`FAQ.md`](FAQ.md): common questions about setup, plugins, language and agents.
 - [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
 - [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
+- Help and maintainer: open an issue on GitHub. The maintainer is [@erikunha](https://github.com/erikunha).
 
 ## Credits
 

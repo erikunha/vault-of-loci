@@ -7,4 +7,5 @@ The minimum, in case `AGENTS.md` is not in context:
 - Never read or quote `**/.env` or plugin `data.json` files.
 - Do not invent references: a paper needs a verifiable arXiv ID or DOI.
 - File and folder names use underscores instead of spaces.
-- Notes with `verified: true` are edited by hand only, keeping their structure.
+- What was not checked says "not verified".
+- Concept, reference and guide notes keep `## Study explanation` first and `## Key takeaways` second.

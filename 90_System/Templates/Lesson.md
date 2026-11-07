@@ -5,7 +5,7 @@ lesson:
 date: {{date:YYYY-MM-DD}}
 topic:
 status: draft
-tags: [type/lesson]
+tags: [type/lesson, flashcards]
 ---
 
 # Lesson {{title}}
@@ -25,4 +25,4 @@ Write from memory, in 5 minutes, what you remember. Then read on.
 
 ## Flashcards
 
-#flashcards
+question::answer

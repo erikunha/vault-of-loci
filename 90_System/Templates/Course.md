@@ -13,11 +13,11 @@ tags: [type/course]
 
 ## Lessons
 
-![[Lessons.base]]
+- [[]]
 
 ## Concepts
 
-![[Concepts.base]]
+- [[]]
 
 ## Project
 

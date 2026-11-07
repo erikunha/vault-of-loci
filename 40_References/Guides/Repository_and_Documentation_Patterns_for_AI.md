@@ -1,15 +1,36 @@
 ---
-type: reference
-subtype: guide
+type: guide
 topic: "Repository, documentation and agent-file patterns for working with AI"
 updated: 2026-11-07
-tags: [type/reference]
+tags: [type/guide, flashcards]
 ---
 
 # Repository and documentation patterns for AI
 
-> [!tldr] In short
-> One rules file (`AGENTS.md`), short and written by hand. The other agent files only point to it. The README says what the repository is, how to start and where everything else is. Checks run on every push. Anything that is a prediction is marked as one.
+> [!tldr] In 3 lines
+> One rules file (`AGENTS.md`), short and written by hand. Every other agent file only points to it.
+> The README tells people what the repository is and how to start; `llms.txt` indexes it for LLMs.
+> Checks run on every push, and anything that is a prediction is marked as one.
+
+## Study explanation
+
+A repository now has two kinds of readers: people and AI agents. Both arrive with no memory of the project. A person opens the README. An agent reads a rules file. The problem this guide solves is drift. If the same rule is written in five places, the copies slowly disagree, and an agent follows a stale copy as faithfully as a fresh one.
+
+The answer is to give each reader one entry point and to make every other file point to it. `AGENTS.md` holds the rules for any agent. It is an open standard, now under the Agentic AI Foundation [F2]. `CLAUDE.md` and `GEMINI.md` only import it, and the Copilot instructions file points to it, since Copilot uses both when both exist [F3]. The README is for people: what the project does, why it helps, how to start, where to get help and who maintains it [F1]. `llms.txt` is an index for a model that cannot browse the repository: a title, a short summary and lists of links [F4]. Skills sit apart, in `SKILL.md` files, and only their name and description load at startup [F5].
+
+A worked example. Suppose you decide that file names must use underscores instead of spaces. The tempting move is to write the rule in the README, in `AGENTS.md`, in `CLAUDE.md` and in the Copilot file. Next month one copy says something slightly different. The better move is one line in `AGENTS.md`. The other agent files already point there, so nothing else changes. Then the rule gets a check that runs on every push, so it no longer depends on any agent reading it. Now ask what else belongs in `AGENTS.md`. The exact commands to run the checks belong there, because an agent cannot guess them. A paragraph on why the project exists does not, because the README already says it.
+
+That last point has research behind it. Gloaguen and colleagues (ICLR 2026) measured three coding agents and found that human-written context files gave about a 4% average gain, while LLM-generated ones had a slightly negative effect and raised cost by more than 20% [F6]. Agents follow instructions, so an unnecessary requirement becomes extra work.
+
+The most common mistake is to ask an AI to write a long `AGENTS.md` from the repository and commit it unedited. It repeats the README, adds requirements nobody needs and costs more to run. A second mistake is mixing kinds of documentation on one page. Diátaxis names four kinds: tutorial, how-to guide, reference and explanation, and the classic failure is to blend them [F7].
+
+This guide connects to two other notes. [[Studying_with_AI|Studying with AI]] makes the same argument from the learner's side: the assistant should do the part that does not teach, and leave the effort to you. [[How_to_Study_with_this_Vault|How to study with this vault]] is the human-facing method that the rules file tells agents to follow.
+
+## Key takeaways
+
+- **Remember:** one source of rules, short and hand-written. Every other agent file points to it. README for people, `AGENTS.md` for agents, `llms.txt` as an index.
+- **Common confusion:** a longer instructions file is not a better one. The gains come from exact commands and checks, not from more text.
+- **Exercise:** list every file in a repository you know that holds rules for agents. For each rule, decide which single file should own it and which copies to turn into pointers.
 
 ## 1. The files in this repository and why
 
@@ -25,7 +46,7 @@ tags: [type/reference]
 | `.gitattributes`, `.editorconfig` | LF line endings, binaries marked, UTF-8 |
 | `.github/workflows/checks.yml` | Formatting, links, study layer, names and tests on every push |
 
-For a personal or small repository, `CONTRIBUTING`, `CODEOWNERS`, issue templates and `SECURITY.md` are usually overkill.
+In a public template, `CONTRIBUTING.md`, `CODEOWNERS`, issue templates and `SECURITY.md` tell visitors how to help, who reviews and where to report a problem. A private notes vault can leave them out.
 
 ```mermaid
 flowchart LR
@@ -60,11 +81,20 @@ flowchart LR
 | Less context text, more automatic checks | Prediction supported by [F6]: gains come from commands and tests, not long instructions | medium |
 | `llms.txt` as a standard index | Stable format; real adoption by models not yet measured | low |
 
-## 5. Key takeaways
+## Related
 
-- One source of rules. Every other agent file points to it.
-- Short and hand-written beats long and generated.
-- README for people, `AGENTS.md` for agents, `llms.txt` as an index.
+- [[Studying_with_AI|Studying with AI]]
+- [[Retrieval_Practice|Retrieval practice]]
+
+## Flashcards
+
+Where do an agent's rules live in this repository?::In `AGENTS.md`. `CLAUDE.md` and `GEMINI.md` only import it.
+What belongs in an agent rules file?::Only what the agent cannot discover alone: exact commands, what never to do, where things are.
+What did Gloaguen et al. (ICLR 2026) find about LLM-generated context files?::A slightly negative effect and cost up by more than 20%; human-written files gave about a 4% gain.
+What does `llms.txt` hold?::A required H1, a blockquote summary, link lists under H2 headings and an "Optional" section.
+What are the four Diátaxis document types?::Tutorial, how-to guide, reference and explanation.
+Which parts of a skill load at startup?::Only its name and description.
+A skill loads its full `SKILL.md` ==when the task needs it==.
 
 ## Sources
 

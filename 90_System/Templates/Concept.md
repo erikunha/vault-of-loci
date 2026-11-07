@@ -4,7 +4,7 @@ category:
 courses: []
 lessons: []
 aliases: []
-tags: [type/concept, flashcards]
+tags: [type/concept, cat/<category>, flashcards]
 ---
 
 # {{title}}

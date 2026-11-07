@@ -10,11 +10,11 @@ Only for the checks and the naming tool (Python 3.10 or later, standard library 
 
 ## Which Obsidian version?
 
-1.12 or later, because the dashboards use Bases.
+Obsidian 1.9 or later, because the dashboards use Bases.
 
-## The community plugins are listed but not installed. Is that a bug?
+## The community plugin is listed but not installed. Is that a bug?
 
-No. Plugin code is not committed, so each copy installs its own. Open Settings, Community plugins, and install Dataview, Spaced Repetition, Templater, Omnisearch and Kanban. The vault opens without them; only the dashboards and flashcard review need them.
+No. Plugin code is not committed, so each copy installs its own. Spaced Repetition is the only community plugin the vault uses, and it is optional: open Settings, Community plugins, and install it to review flashcards. The vault opens and the dashboards work without it.
 
 ## Can I write my notes in another language?
 

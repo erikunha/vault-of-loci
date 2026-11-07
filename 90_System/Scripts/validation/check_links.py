@@ -1,5 +1,6 @@
-"""Broken links: wikilinks by name, relative Markdown links to .md files, and obsidian://
-links to another vault that sits in the same parent folder as this one.
+"""Broken links: wikilinks by name, relative Markdown links to .md files (parentheses allowed in
+the target), and obsidian:// links to another vault that sits in the same parent folder as this one.
+Scans every .md file (README.md included) and llms.txt.
 
 Usage: python3 -I 90_System/Scripts/validation/check_links.py [root]   (exits 1 on any broken link)
 """
@@ -16,15 +17,15 @@ names = {unicodedata.normalize("NFC", n) for p in files
          for n in (p.stem, p.name, str(p.relative_to(root).with_suffix("")))}
 broken = []
 for p in files:
-    if p.suffix != ".md":
+    if p.suffix != ".md" and p.name != "llms.txt":
         continue
-    t = re.sub(r"```.*?```", "", p.read_text(errors="ignore"), flags=re.DOTALL)
+    t = re.sub(r"```.*?```", "", p.read_text(encoding="utf-8", errors="ignore"), flags=re.DOTALL)
     t = re.sub(r"`[^`\n]*`", "", t)
     for m in re.finditer(r"\[\[([^\]|#^]+)", t):
         n = unicodedata.normalize("NFC", m.group(1).strip().replace("\\", ""))
         if n and n not in names:
             broken.append((p, n))
-    for m in re.finditer(r"\]\(([^)\s]+?\.md)(?:#[^)]*)?\)", t):
+    for m in re.finditer(r"\]\(((?:[^()\s]|\([^()\s]*\))+?\.md)(?:#[^)\s]*)?\)", t):
         target = unquote(m.group(1))
         if "://" not in target and not (p.parent / target).resolve().exists():
             broken.append((p, target))

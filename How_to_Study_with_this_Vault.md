@@ -44,6 +44,6 @@ Every day: run "Spaced Repetition: Review flashcards from all notes". Every week
 
 The AI asks, hints and corrects; you recall, solve and explain. The evidence is in [[Studying_with_AI|Studying with AI]].
 
-## 5. Plugins this vault expects
+## 5. Plugins this vault uses
 
-Core: Properties, Bases, Canvas, Graph, Templates, Backlinks, Outline. Community: Dataview, Spaced Repetition, Templater, Omnisearch, Kanban. Install them from Settings, Community plugins; the vault only lists them.
+Core: Properties, Bases, Canvas, Graph, Templates, Backlinks, Outline. Community (optional): Spaced Repetition, to review flashcards. Install it from Settings, Community plugins; the vault only lists it.

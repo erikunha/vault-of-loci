@@ -1,9 +1,8 @@
 ---
-type: reference
-subtype: guide
+type: guide
 topic: "Studying with AI: learning science, new evidence and a protocol for this vault"
 updated: 2026-11-07
-tags: [type/reference, flashcards]
+tags: [type/guide, flashcards]
 ---
 
 # Studying with AI
@@ -80,7 +79,7 @@ flowchart TB
   A5 --> A6["6. Project: try alone first, use the AI to review and test"]
 ```
 
-1. **Before the lesson.** In a notebook tool (Gemini Notebook, formerly NotebookLM) with the readings, ask for questions on the topic, not a summary.
+1. **Before the lesson.** In a notebook tool with the readings, ask for questions on the topic, not a summary.
 2. **Right after the lesson.** Close everything and write what you remember for 5 minutes. Only then open the lesson summary. The difference is what to review.
 3. **Concept notes.** In Claude Code or Codex: "Read `20_Concepts/Retrieval_Practice.md` and ask me 5 questions of increasing difficulty. Wait for my answer before the next one."
 4. **Flashcards.** Write your own as `question::answer`. If an AI drafts them, edit each one in your words. Review the queue daily.

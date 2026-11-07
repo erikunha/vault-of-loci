@@ -4,6 +4,20 @@ Notable changes to this template. Versions follow semantic versioning: a major v
 
 ## Unreleased
 
+- The naming tool now renames folders with spaces too (deepest first), rewrites links that contain folder paths, skips `.vendored` folders and renames untracked files without git.
+- The naming tool and the link check accept parentheses in Markdown link targets.
+- The link check also scans `llms.txt`.
+- The formatter leaves `$$` math blocks untouched.
+- The Claude Code hook formats only notes inside the vault and skips `.vendored` folders.
+- The study layer check now fails a concept, reference or guide note that has no `## Study explanation`.
+- Guides use `type: guide` and no longer appear in the references base.
+- The course template lists lessons and concepts by hand instead of embedding unfiltered bases.
+- The lesson and concept templates carry the `flashcards` and `cat/<category>` tags.
+- Spaced Repetition is the only listed community plugin, and it is optional. Obsidian 1.9 or later is required for Bases.
+- The example concept, paper and repository guide now follow the study layer spec, with flashcards.
+- `.gitkeep` files keep the empty folders in the template.
+- Tests for the link check and the study layer check.
+
 ## 0.1.0 (2026-11-07)
 
 ### Added
