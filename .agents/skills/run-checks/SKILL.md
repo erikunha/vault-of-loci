@@ -1,6 +1,6 @@
 ---
 name: run-checks
-description: Run every check of this vault (formatting, links, study layer, names, flashcards, skills, reading index, tests). Use after editing and before committing.
+description: Run every check of this vault (formatting, links, study layer, names, flashcards, skills, alt text, reading index, tests). Use after editing and before committing.
 ---
 
 1. Formatting: `python3 -I 90_System/Scripts/format_notes.py --check` (to fix, run it without `--check`).
@@ -11,8 +11,9 @@ description: Run every check of this vault (formatting, links, study layer, name
 6. Skills: `python3 -I 90_System/Scripts/validation/check_skills.py`
 7. Bases: `python3 -I 90_System/Scripts/validation/check_bases.py`
 8. Study layer translations: `python3 -I 90_System/Scripts/validation/check_study_layer_translations.py`
-9. Reading index: `python3 -I 90_System/Scripts/validation/check_index.py` (to fix, `python3 -I 90_System/Scripts/build_index.py`).
-10. Tests, one per line:
+9. Image alt text: `python3 -I 90_System/Scripts/validation/check_alt_text.py`
+10. Reading index: `python3 -I 90_System/Scripts/validation/check_index.py` (to fix, `python3 -I 90_System/Scripts/build_index.py`).
+11. Tests, one per line:
    - `python3 -I 90_System/Scripts/validation/test_format_notes.py`
    - `python3 -I 90_System/Scripts/validation/test_normalize_names.py`
    - `python3 -I 90_System/Scripts/validation/test_check_links.py`
@@ -22,5 +23,8 @@ description: Run every check of this vault (formatting, links, study layer, name
    - `python3 -I 90_System/Scripts/validation/test_check_bases.py`
    - `python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py`
    - `python3 -I 90_System/Scripts/validation/test_check_index.py`
+   - `python3 -I 90_System/Scripts/validation/test_check_alt_text.py`
+   - `python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py`
+   - `python3 -I 90_System/Scripts/validation/test_export_bibtex.py`
 
 Report each step as passed, failed or not run. Not run is never passed.

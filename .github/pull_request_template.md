@@ -12,6 +12,7 @@
 - [ ] `check_skills.py`
 - [ ] `check_bases.py`
 - [ ] `check_study_layer_translations.py`
+- [ ] `check_alt_text.py`
 - [ ] `check_index.py` (run `build_index.py` if it fails)
 - [ ] Every `test_*.py` in `90_System/Scripts/validation`
 - [ ] A changed script has a test that fails without the change

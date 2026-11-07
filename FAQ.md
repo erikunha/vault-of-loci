@@ -130,6 +130,10 @@ Skills for agents that follow tutor mode. `pretest` writes questions you guess b
 
 It is optional. The plugin offers FSRS since version 1.15.0. Back up the vault and the plugin's `data.json` first, then pick FSRS in the plugin settings. The FSRS benchmark measures how well an algorithm predicts recall, not how much you learn. The guide has the steps.
 
+## Can I review the cards in Anki or cite the references in Zotero?
+
+Yes. `export_anki_tsv.py --out cards.tsv` writes every card and cloze to a file Anki imports with File > Import, one deck per track; the header lines set the note type, deck and tags. `export_bibtex.py --out refs.bib --csl-out refs.json` turns the reference notes into BibTeX and CSL JSON, which Zotero, Pandoc and LaTeX read. A reference with `verified: false` is exported with the note "not verified". The vault stays the source; export again after you edit.
+
 ## Does the vault ship an MCP server configuration for Obsidian?
 
 No. MCP is optional here, and none is shipped. The servers for Obsidian either need an API key from a community plugin, and a key must never be committed to a shared repository, or they repeat what the Obsidian CLI (1.12.7 or later) and plain file access already give an agent. A server also adds a tool that reads note text, which is a place for injected instructions to enter. The vault must work without community plugins. If you want one, add a configuration in your own copy with the key in an environment variable that stays out of Git, and keep it out of the shared template.

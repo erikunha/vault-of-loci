@@ -63,6 +63,15 @@ python3 90_System/Scripts/normalize_names.py          # dry run
 python3 90_System/Scripts/normalize_names.py --write  # rename (git mv when tracked) and rewrite every link
 ```
 
+## Export
+
+Both scripts print a dry run unless you give them an output file.
+
+```bash
+python3 -I 90_System/Scripts/export_anki_tsv.py --out cards.tsv   # cards and clozes for Anki (File > Import), one deck per track
+python3 -I 90_System/Scripts/export_bibtex.py --out refs.bib --csl-out refs.json   # reference notes for Zotero, Pandoc or LaTeX
+```
+
 ## Checks
 
 ```bash
@@ -74,6 +83,7 @@ python3 -I 90_System/Scripts/validation/check_cards.py                # card sou
 python3 -I 90_System/Scripts/validation/check_skills.py               # skill files follow the Agent Skills spec
 python3 -I 90_System/Scripts/validation/check_bases.py                # bases never list the templates
 python3 -I 90_System/Scripts/validation/check_study_layer_translations.py   # translations keep the same keys
+python3 -I 90_System/Scripts/validation/check_alt_text.py             # every image has alt text
 python3 -I 90_System/Scripts/validation/check_index.py                # INDEX.md and index.json are current
 python3 -I 90_System/Scripts/validation/test_format_notes.py
 python3 -I 90_System/Scripts/validation/test_normalize_names.py
@@ -84,6 +94,9 @@ python3 -I 90_System/Scripts/validation/test_check_skills.py
 python3 -I 90_System/Scripts/validation/test_check_bases.py
 python3 -I 90_System/Scripts/validation/test_check_study_layer_translations.py
 python3 -I 90_System/Scripts/validation/test_check_index.py
+python3 -I 90_System/Scripts/validation/test_check_alt_text.py
+python3 -I 90_System/Scripts/validation/test_export_anki_tsv.py
+python3 -I 90_System/Scripts/validation/test_export_bibtex.py
 ```
 
 The same set runs in `.github/workflows/checks.yml`. Python 3.10+ standard library only. If `check_index.py` fails, rebuild the index with `python3 -I 90_System/Scripts/build_index.py`; the Claude Code hook does it after each note edit.
