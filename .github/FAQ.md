@@ -57,10 +57,10 @@ Yes. They only show the full note format. Run the checks after deleting them to 
 A copy made with "Use this template" has no link to this repository, so compare against a release instead of merging.
 
 1. Add this repository as a remote named `template` and fetch its tags: `git fetch template --tags`.
-2. Find the release you copied from (the newest version in your `CHANGELOG.md`, or the template's first commit date) and the latest tag with `git tag --list --sort=-v:refname`.
+2. Find the release you copied from (the release whose date is closest before your copy, on the Releases page) and the latest tag with `git tag --list --sort=-v:refname`.
 3. See what changed in the files you share with the template: `git diff <old-tag> <latest-tag> -- 90_System/Scripts 90_System/Specs 90_System/Templates .agents .claude .github AGENTS.md`.
 4. Apply what you want. For a file you never customized, `git checkout <latest-tag> -- <path>` copies it. For one you changed, merge by hand.
-5. Read the version's entry in `CHANGELOG.md` first: a layout change such as 0.2.0 lists the renames to make in your notes. Then run every check and `build_index.py`.
+5. Read the release notes of each version first (Releases page): a layout change such as 0.2.0 lists the renames to make in your notes. Then run every check and `build_index.py`.
 
 Your notes in `10_Tracks/`, `20_Concepts/`, `40_References/` and `50_Review/` are not in that diff.
 

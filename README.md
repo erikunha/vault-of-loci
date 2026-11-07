@@ -4,6 +4,8 @@
 
 [![checks](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml/badge.svg)](https://github.com/erikunha/vault-of-loci/actions/workflows/checks.yml) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+[Quick start](#quick-start) · [Studying with an AI agent](#studying-with-an-ai-agent) · [FAQ](.github/FAQ.md) · [Discussions](https://github.com/erikunha/vault-of-loci/discussions) · [Contributing](.github/CONTRIBUTING.md) · [Releases](https://github.com/erikunha/vault-of-loci/releases)
+
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
 
 > The method of loci stores memories in places you know. This vault stores what you learn in notes you return to, with AI agents that quiz you instead of answering for you.
@@ -137,18 +139,18 @@ Where each agent looks for its files. A dash means the vault does not use that f
 | `.claude/settings.json` | Claude Code only: denies reading `.env` and plugin `data.json`, asks you before any edit in your own notes (`10_Tracks/`, `20_Concepts/`, `50_Review/`), formats every note an agent edits and rebuilds the index. Other agents rely on the rule in `AGENTS.md` and on `run-checks` |
 | `.cursorignore`, `.geminiignore` | Keep `.env` files and plugin `data.json` out of Cursor and Gemini CLI context. A terminal command or a tool can still read them, so they lower the risk but do not remove it |
 
-Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see `FAQ.md`).
+Agents send the notes they read to their provider. Keep private material out of a vault you open with a cloud agent, or use a local model (see `.github/FAQ.md`).
 
 ## Contributing
 
-Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Start with the "Content proposal" issue form, or a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue). [`CONTRIBUTING.md`](CONTRIBUTING.md) says what fits and walks through a first contribution, even one made entirely in the GitHub web editor.
+Content is welcome, and you do not need to write code: concept notes, verified references, guides, track recipes, example tracks, translations and skills all help. Start with the "Content proposal" issue form, or a [good first issue](https://github.com/erikunha/vault-of-loci/labels/good%20first%20issue). [`CONTRIBUTING.md`](.github/CONTRIBUTING.md) says what fits and walks through a first contribution, even one made entirely in the GitHub web editor.
 
 ## Community
 
-- [`SUPPORT.md`](SUPPORT.md) and [Discussions](https://github.com/erikunha/vault-of-loci/discussions): questions, ideas and what you built with the vault.
-- [`FAQ.md`](FAQ.md): common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
-- [`CHANGELOG.md`](CHANGELOG.md): what changed in each version.
-- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) and [`SECURITY.md`](SECURITY.md).
+- [`SUPPORT.md`](.github/SUPPORT.md) and [Discussions](https://github.com/erikunha/vault-of-loci/discussions): questions, ideas and what you built with the vault.
+- [`FAQ.md`](.github/FAQ.md): common questions about setup, updating your copy, privacy, offline use, plugins, language and agents.
+- [Releases](https://github.com/erikunha/vault-of-loci/releases): what changed in each version and who contributed for the first time.
+- [`CODE_OF_CONDUCT.md`](.github/CODE_OF_CONDUCT.md) and [`SECURITY.md`](.github/SECURITY.md).
 - The maintainer is [@erikunha](https://github.com/erikunha).
 
 ## Contributors

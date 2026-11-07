@@ -65,10 +65,18 @@ For anything bigger, the steps below use a local copy.
    If `check_index.py` fails after a note edit, run `python3 -I 90_System/Scripts/build_index.py` and run the checks again.
 
 5. A change to a script ships with a test that fails without the change and passes with it.
-6. Add a line under `Unreleased` in `CHANGELOG.md`.
-7. Open a pull request that says what changed, why, and which checks you ran.
+6. Open a pull request that says what changed, why, and which checks you ran. Its title becomes the line in the release notes, so write it for a reader: `feat: concept note on spacing`, not `update file`.
 
 Nothing reaches `main` without a pull request, maintainers and bots included. A pull request merges only when the `vault` check passes and every review thread is resolved, and it lands as one squashed commit. Force pushes and deleting `main` are blocked.
+
+## Contributions made with AI
+
+This vault is for studying with AI agents, so contributions made with one are welcome. The person who opens the pull request is its author and answers for every line.
+
+- Say in the pull request which agent or model helped and with what (drafting, translation, code, review).
+- Open every source an agent cites. Agents invent papers, DOIs and quotes that look real; a reference you did not open is not verified.
+- Read the whole diff before you open the pull request. Large batches of generated notes nobody reviewed are closed.
+- The checks apply the same way: `run_checks.py` must pass.
 
 ## Commit messages
 
@@ -80,7 +88,7 @@ Folders with a `.vendored` file are copies of another project. Do not edit them 
 
 ## Recognition
 
-Every contributor appears in the Contributors table of `README.md`, with one emoji per kind of contribution. Commit authors are added by themselves. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker, bug reports) are added by hand to `.all-contributorsrc`: ask in your issue, pull request or discussion, or a maintainer adds you. Kinds and emojis follow the [All Contributors key](https://allcontributors.org/docs/en/emoji-key).
+Release notes list every merged pull request and thank first-time contributors by name. Every contributor also appears in the Contributors table of `README.md`, with one emoji per kind of contribution. Commit authors are added by themselves. Contributions that are not commits (ideas, reviews, content proposals, translations checked by a native speaker, bug reports) are added by hand to `.all-contributorsrc`: ask in your issue, pull request or discussion, or a maintainer adds you. Kinds and emojis follow the [All Contributors key](https://allcontributors.org/docs/en/emoji-key).
 
 ## License
 
