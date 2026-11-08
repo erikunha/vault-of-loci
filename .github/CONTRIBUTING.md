@@ -29,6 +29,7 @@ Reusable content teaches without your history: nothing in it identifies you, you
 - Examples are generic. A sample source that stands in for a real one says so.
 - Skills follow the Agent Skills spec: the name matches the folder, the description has at most 1024 characters, and `SKILL.md` stays short.
 - You can explain every line you submit. Drafts written with AI help are fine when you verified every source and say so in the pull request.
+- Say how AI was used. The pull request template asks whether an agent wrote the change and who reviewed it. A pull request opened by an agent with no person answering review comments is closed.
 - No personal data, no em dash or en dash.
 
 ## What does not fit
