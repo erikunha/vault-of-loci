@@ -31,4 +31,4 @@
 - [Interleave base](90_System/Bases/Interleave.base)
 - [Progress base](90_System/Bases/Progress.base): sessions by track and what to review next
 - [Blueprint base](90_System/Bases/Blueprint.base): concepts ranked by exam weight and confidence
-- [Tutor mode eval](90_System/Evals/Tutor_mode.md): twelve scenarios to check an agent by hand
+- [Tutor mode eval](90_System/Evals/Tutor_mode.md): seventeen scenarios to check an agent by hand

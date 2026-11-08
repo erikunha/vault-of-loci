@@ -44,6 +44,9 @@ The most common mistake is to ask the AI for an explanation first and call that 
 | Spacing | high utility [F4] | schedules reviews | cramming the night before |
 | Interleaving | moderate [F4]; helps most for similar categories [F18] | mixes topics in one review | easy single-type drills |
 | Self-explanation | moderate [F4]; reliable gain [F17] | lists the gaps in your explanation | explains for you |
+| Elaborative interrogation (asking why it is true) | moderate [F4] | asks why after a correct answer | supplies the reason for you |
+| Concept mapping | maps linked to better retention, effects vary by use [F21] | lists missing links in your map | draws the map for you |
+| Worked examples, faded as you improve | help novices, can hurt experts (expertise reversal) [F22] | shows a solved example from a source, then a similar problem | keeps solving for you once you can do it |
 | Pretesting | meta-analysis of the prequestion effect [F19] | writes the prequestions | gives the answers first |
 | Summarizing | low [F4] | organizes after you summarized | summarizes instead of you |
 | Rereading, highlighting | low [F4] | nothing to add | false sense of mastery |
@@ -80,6 +83,11 @@ Every skill and agent in this vault follows these rules.
 3. **Confidence before reveal.** Rate 1 (guess) to 5 (certain). The gap between confidence and result is what to study.
 4. **The AI never writes your study layer or your answers.** It does not fill `## Study explanation`, `## Key takeaways`, your flashcards or your guesses.
 5. **Every claim has a source.** Cards link to the note they came from; unchecked material says "not verified".
+6. **Start from your record.** Before a quiz, the AI reads `score`, `last_tested` and `50_Review/Mistakes.md` for the topic, says what it read, and sets the first question's difficulty from it. Your files, not a chat memory, so any agent sees the same record.
+7. **New topic, worked example.** With no record or a low score, your guess is followed by a worked example from a source note and a similar problem for you. The worked steps drop away as your score rises.
+8. **Why, once.** After a correct answer, the AI asks why it is true. A right answer with a wrong or missing reason gets partial credit.
+9. **You map, it asks.** To check how ideas connect, you draw a Mermaid diagram or a canvas; the AI lists missing or wrong links as questions and adds nothing.
+10. **Two lines of reflection.** At the end, you write in `Reflection` what was hard and what to test next.
 
 | Skill | When | What you do | What the AI does |
 |---|---|---|---|
@@ -143,6 +151,9 @@ Tutor mode says the AI never writes your ==study layer== or your answers.
 - The size of the pretesting benefit, the Barcaui retention numbers and the exact settings label for FSRS in the plugin were not checked.
 - Widely shared numbers from the MIT study (such as "83% could not quote their own essay") appear only in blogs and were left out.
 - The launch date of Claude's learning mode differs between sources (April or August 2025).
+- Only the title and the OpenAlex abstract of Kalyuga and colleagues [F22] were read; the guide uses only its main claim.
+- Setting difficulty from `score` and the mistakes file is a design choice for this vault, not a measured method.
+- Only the abstract of Nesbit and Adesope [F21] was read; which way of using maps (building, editing or viewing) works best was not checked.
 - The 14-day checkpoint interval is a design choice for this vault, not a measured optimum.
 
 ## Sources
@@ -167,3 +178,5 @@ Tutor mode says the AI never writes your ==study layer== or your answers.
 - [F18] Brunmair, M., & Richter, T. (2019). Similarity matters: a meta-analysis of interleaved learning and its moderators. *Psychological Bulletin*. doi:10.1037/bul0000209
 - [F19] St. Hilaire, K. J., Chan, J. C. K., & Ahn, D. (2023). Guessing as a learning intervention: a meta-analytic review of the prequestion effect. *Psychonomic Bulletin & Review*. doi:10.3758/s13423-023-02353-8
 - [F20] Ye, J., Su, J., & Cao, Y. (2022). A stochastic shortest path algorithm for optimizing spaced repetition scheduling. *KDD '22*. doi:10.1145/3534678.3539081
+- [F21] Nesbit, J. C., & Adesope, O. O. (2006). Learning with concept and knowledge maps: a meta-analysis. *Review of Educational Research*, 76(3), 413-448. doi:10.3102/00346543076003413
+- [F22] Kalyuga, S., Ayres, P., Chandler, P., & Sweller, J. (2003). The expertise reversal effect. *Educational Psychologist*, 38(1), 23-31. doi:10.1207/S15326985EP3801_4
