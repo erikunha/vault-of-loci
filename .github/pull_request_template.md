@@ -20,3 +20,11 @@
 ## How did you test this change?
 
 <!-- The commands you ran and what they printed, or what you checked in Obsidian. -->
+
+## AI use
+
+<!-- Pick one and keep it. -->
+
+- [ ] No AI tool wrote any part of this change.
+- [ ] An AI tool helped. I reviewed every line, opened every reference and can answer review comments myself.
+- [ ] An agent opened this pull request. A person named here reviewed it and answers comments: @
