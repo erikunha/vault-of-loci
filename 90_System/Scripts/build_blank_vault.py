@@ -1,7 +1,7 @@
 """Build a zip of the vault without the example tracks, ready to open in Obsidian.
 
-Copies every file git tracks, leaves out the example tracks, their canvases and the repository-only
-files (`.github/`, `.githooks/`, `README.md`), and removes the links that pointed to what was left out: list
+Copies every file git tracks, leaves out the example tracks, their canvases, the repository-only
+files (`.github/`, `.githooks/`, `README.md`) and the tutor eval transcripts (`90_System/Evals/runs/`), and removes the links that pointed to what was left out: list
 entries in the frontmatter, the link markup in the text (its label stays), and lines of `llms.txt`.
 Then it rebuilds the index and runs the format check and every `check_*.py` inside the copy, and
 writes the zip only if all of them pass. The release workflow attaches the zip to each release.
@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NAME = "vault-of-loci"
 LEFT_OUT = ("10_Tracks/01_Example_Course/", "10_Tracks/02_Example_Book/", "30_Maps/Example_Course.canvas",
-            "30_Maps/Example_Book.canvas", ".github/", ".githooks/", "README.md")
+            "30_Maps/Example_Book.canvas", ".github/", ".githooks/", "README.md", "90_System/Evals/runs/")
 
 
 def tracked(root):

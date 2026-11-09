@@ -18,6 +18,7 @@ with tempfile.TemporaryDirectory() as tmp:
     files = {n.split("/", 1)[1] for n in names if not n.endswith("/")}
     assert not any("Example_" in f for f in files), "example tracks and their canvases are left out"
     assert not any(f.startswith((".github/", ".githooks/", ".git/")) for f in files), "repository files are left out"
+    assert not any(f.startswith("90_System/Evals/runs/") for f in files), "tutor eval transcripts are left out"
     for kept in ("AGENTS.md", "00_Home.md", "20_Concepts/Retrieval_Practice.md", "90_System/Templates/Track.md",
                  ".obsidian/core-plugins.json", "90_System/Scripts/run_checks.py"):
         assert kept in files, f"{kept} is kept"
