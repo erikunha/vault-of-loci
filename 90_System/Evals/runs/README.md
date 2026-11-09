@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Tutor eval runs
 
-Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. No run is stored yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
+Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`. Run the commands below from the root of the vault, then commit the folder you want to keep.
 
 A run folder holds:
 
@@ -14,13 +14,13 @@ A run folder holds:
 - `transcript.md`: the same transcript, readable.
 - `run.json` and `README.md`: the settings and a short description of the run.
 - `scoring_sheet.md`: a table a person fills in.
-- `scores.json` and `summary.md`: written when a judge scores the run.
+- `scores.json` and `summary.md`: written when a judge scores the run. A second judge from another family adds `scores-judge-<family>.json` and `summary-judge-<family>.md` next to them.
 
 The scenarios, the rubric and the pass rule are in [[Tutor_mode|Tutor mode eval]]. Results are summarized in [[Tutor_mode_results|Tutor mode eval results]].
 
 ## Run it against an agent
 
-The runner starts the agent you name, so run it yourself. Each command sends the conversation to the agent on standard input. The flags for `agy` and `kimi` follow their `--help` and have not been run; check them against your version.
+The runner starts the agent you name, so run it yourself. Each command sends the conversation to the agent on standard input. The flags for `agy` and `kimi` follow their `--help`; check them against your version. The `agy` and `kimi` commands below are the ones the runs of 2026-11-09 used.
 
 ```bash
 # Claude Code
@@ -37,6 +37,11 @@ python3 -I 90_System/Scripts/run_tutor_eval.py --label kimi --agent-family moons
 ```
 
 Add `--scenarios 1,2,5` to try a few scenarios first, or `--dry-run` to print the prompts and run nothing. Without a judge, score the run by hand with `scoring_sheet.md`.
+
+Two things changed in the runs of 2026-11-09, both about the CLI rather than the model:
+
+- **Antigravity needs the delegated print mode to read the vault.** In the plain print mode its PreToolUse hook refuses to read files inside the vault copy, so the agent answers from the prompt alone and the run measures the hook. `AI_DEV_RUNTIME_AGY_DELEGATED=1` is the mode that lets ordinary reads through. The run of 2026-11-09 used it.
+- **The MiniMax Code CLI can lose the answer on exit.** When its runtime shutdown misses the deadline it exits 70 and prints nothing, even though the reply was produced. The wrapper `mcode-tutor.sh` in the run folder `2026-11-09-minimax` runs the CLI with `--diagnostics-dir` and prints the message it finds there. Use it as `--agent-cmd` or as `--judge-cmd`.
 
 ## Add a judge from another family
 
