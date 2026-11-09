@@ -1,6 +1,6 @@
 ---
 type: log
-updated: 2026-11-07
+updated: 2026-11-09
 tags: [type/log]
 ---
 
@@ -50,3 +50,11 @@ Result: **10 of 10.** With the run of scenarios 1 to 12 above, 31 of 34 and no 0
 
 - The template has no spacing concept note, so scenarios 5 and 6 cannot cite one. A grade that cites the guide `Studying_with_AI` counts as citing the source.
 - Asking for confidence before grading follows the tutor rules. In scenario 6 it scores 2 only if the grade follows in the same reply or right after the number.
+
+## How the 2026-11-07 scores were produced
+
+- The Claude Code session that launched the subagents scored every reply against the rubric. No person re-scored them before the results were merged.
+- The same session wrote the rule under test, built the scenario prompts and chose which runs to repeat. Treat these results as a smoke test, not an independent benchmark.
+- In scenarios 2, 3, 7, 8, 9 and 14 the earlier turns in the prompt were written by that session, not taken from real agent replies. Scenario 2 was launched one second after scenario 1, so it does not continue the real scenario 1 reply.
+- The scorer notes for scenarios 5 and 6 above were added after those replies were seen.
+- An independent re-score by a model from another family is planned and will be logged here.
