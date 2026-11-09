@@ -51,6 +51,8 @@ python3 -I 90_System/Scripts/search_vault.py "spaced review" --top 10   # sectio
 python3 -I 90_System/Scripts/kb_lint.py                                 # orphans, unused or unverified references, concepts in no track, old open questions and clippings
 python3 -I 90_System/Scripts/calibration_report.py                      # confidence against score per concept, stale and untested concepts
 python3 -I 90_System/Scripts/retention_report.py                         # retention, transfer and calibration from the attempt ledger
+python3 -I 90_System/Scripts/schedule_review.py                          # the review plan for today, ranked by weakness and staleness
+python3 -I 90_System/Scripts/retention_audit.py                         # objectives that owe a delayed attempt, and those never tested
 python3 -I 90_System/Scripts/pdf_to_text.py paper.pdf --out /tmp/paper.txt --note 40_References/Papers/X.md   # PDF text once per file, recorded in 90_System/ingest_manifest.json
 ```
 
@@ -65,7 +67,8 @@ python3 -I 90_System/Scripts/record_attempt.py --objective retrieval-practice-re
 
 `record_attempt.py` appends one line to `50_Review/Attempts.jsonl` and never edits an older one.
 `retention_report.py` reads the same file. The schema, the metrics and the reasons behind each
-choice are in `90_System/Evals/Learning_outcomes.md`.
+choice are in `90_System/Evals/Learning_outcomes.md`, and what the vault does with the record is
+in `90_System/Evals/Learning_interventions.md`.
 
 ## Naming
 
