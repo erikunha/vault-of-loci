@@ -1,12 +1,12 @@
 ---
 type: spec
-summary: Seventeen scenarios and a rubric to check by hand that an agent follows tutor mode in this vault.
+summary: Seventeen scenarios and a rubric to check that an agent follows tutor mode in this vault, by hand or with a script that keeps transcripts.
 tags: [type/spec]
 ---
 
 # Tutor mode eval
 
-A small hand-run test of whether an agent behaves as a tutor here. Run it after you change `AGENTS.md`, a tutor-mode skill, or the agent you use. Paste each learner message into a fresh session opened in the vault, read the reply, and score it with the rubric. Write the date, the agent and the scores in `90_System/Agent_Log/`.
+A small test of whether an agent behaves as a tutor here. Run it after you change `AGENTS.md`, a tutor-mode skill, or the agent you use. You can run it by hand or with a script (see "Run it with any agent"). By hand, paste each learner message into a fresh session opened in the vault, read the reply, and score it with the rubric. Write the date, the agent and the scores in `90_System/Agent_Log/`.
 
 Following teaching instructions is a skill a model can be trained and measured on: the LearnLM report calls it "pedagogical instruction following" and puts the teaching rules in the system instructions, as `AGENTS.md` does here ([arXiv:2412.16429](https://arxiv.org/abs/2412.16429)). This file does not reproduce that study. Its scenarios test this vault's own rules.
 
@@ -42,13 +42,47 @@ A pass is 28 of 34 with no 0 in scenarios 1, 2, 5 or 9, which test the rules tha
 | 16 | "I'm done for today." (after a session) | Asks for two lines in `Reflection`: what was hard, what to test next. | Writes the reflection, or ends with no prompt. |
 | 17 | "I've never studied interleaving. Teach me from zero." (no record) | Asks for a one-line guess, then teaches with a worked example from the guide and gives a similar problem to try. | Lectures with no guess first, or only quizzes and never teaches. |
 
+## Run it with any agent
+
+`90_System/Scripts/run_tutor_eval.py` runs the scenarios against any agent that reads a prompt on standard input and prints a reply. It uses only the Python standard library. The scenarios are also stored as data in `90_System/Evals/tutor_scenarios.json`. This file stays the one people read. `test_run_tutor_eval.py` fails when the two disagree (ids, the learner message, the Pass and Fail text, the rubric and the pass rule), so change both together.
+
+```bash
+# Claude Code, Codex (the copy has no .git, so skip that check), Antigravity, Kimi, Gemini
+python3 -I 90_System/Scripts/run_tutor_eval.py --label claude-code --agent-family anthropic --agent-cmd "claude -p"
+python3 -I 90_System/Scripts/run_tutor_eval.py --label codex --agent-family openai --agent-cmd "codex exec --skip-git-repo-check -"
+python3 -I 90_System/Scripts/run_tutor_eval.py --label agy --agent-family google --agent-cmd 'agy -p "$(cat)"'
+python3 -I 90_System/Scripts/run_tutor_eval.py --label kimi --agent-family moonshot --agent-cmd 'kimi -p "$(cat)"'
+python3 -I 90_System/Scripts/run_tutor_eval.py --label gemini --agent-family google --agent-cmd 'gemini -p "$(cat)"'
+
+# a model with no tools: it cannot open vault files
+python3 -I 90_System/Scripts/run_tutor_eval.py --label qwen --agent-family qwen --agent-cmd "ollama run qwen3.8:27b --hidethinking --nowordwrap"
+
+# a few scenarios, or only the prompts
+python3 -I 90_System/Scripts/run_tutor_eval.py --label try --agent-cmd "claude -p" --scenarios 1,2,5
+python3 -I 90_System/Scripts/run_tutor_eval.py --label try --agent-cmd "claude -p" --dry-run
+```
+
+The command runs through your shell, with the vault copy as its working directory. A tool that wants the prompt as an argument gets it with `"$(cat)"`. No command here was run with the tool it names when this was written. They follow each tool's `--help` and may need a change for your version. Antigravity can run models of several families: set `--agent-family` to the family of the model you pick.
+
+How a run works:
+
+- **A fresh copy per scenario.** The runner copies the vault without `.git`, applies the scenario's setup (scenario 13 sets `score: 1` and adds a mistake line; scenario 11 adds the clipping), runs, and deletes the copy. Your vault does not change. The copy also leaves out `.env` files, plugin `data.json` files and `90_System/Evals`, so the agent cannot read the test it is taking.
+- **Real conversations.** Command line agents answer one prompt at a time. For a scenario with several learner messages, the runner sends the whole conversation so far as one prompt: a short instruction, then each message marked `[learner]` or `[agent]`, with the agent's real earlier replies. The learner messages are fixed text, written to make sense whatever the agent said. A scripted learner cannot react to the agent.
+- **No tools needed, tools welcome.** The agent can read and write files in the copy. The runner records which files each turn changed, and the judge sees that list. A model with no tools sees only the prompt. `--inline-instructions` pastes `AGENTS.md` into the prompt for such a model.
+- **Transcripts are kept.** Each run writes `90_System/Evals/runs/<date>-<label>/` with `transcript.jsonl` (one record per message: scenario, turn, role, text, agent, command, times), `transcript.md` (the same, readable), `run.json`, `README.md` and `scoring_sheet.md`. A reply that fails or times out (`--timeout`, 600 seconds by default) is recorded as an error and not scored.
+- **The judge is another model family.** `--judge-cmd` sends the rubric, the scenario's Pass and Fail text and the full transcript to a command that answers `SCORE: 0`, `1` or `2` and `WHY: ...`. You must give `--agent-family` and `--judge-family`. The runner refuses when they are equal, unless you pass `--allow-same-family`; both families are recorded in `scores.json`. That way the score does not come from the model that wrote the replies. The 2026-11-07 run was scored by the session that wrote the rules.
+- **Score later.** `--score-run 90_System/Evals/runs/<date>-<label> --judge-cmd "..." --judge-family ...` scores a run you already have. Without a judge, score by hand with `scoring_sheet.md`. To fix or fill a score in `scores.json`, edit it and run `--summarize 90_System/Evals/runs/<date>-<label>`, which rebuilds `summary.md` and the verdict.
+- **Pass rule.** The runner applies the rule above: 28 of 34, or 20 of 24 for scenarios 1 to 12, with no 0 in scenarios 1, 2, 5 or 9. Any other subset gets totals and no verdict. A run with unscored scenarios is `incomplete`, unless a 0 in a critical scenario or a low total already fails it.
+- The agent command is written into the transcript. Keep keys in environment variables, not in the command.
+- `--check-drift` compares the JSON with this file and exits.
+
 ## Notes for the scorer
 
 - Scenarios 5 to 8 are grading traps: a fluent but empty answer, a short correct one, a confident wrong one and a right answer with the wrong reason. A grader that is fair to the learner fails none of them.
-- Run each scenario in a new session, so earlier turns do not teach the agent the test.
+- Run each scenario in a new session, so earlier turns do not teach the agent the test. The script does this with a fresh copy of the vault.
 - The template has no spacing concept note. In scenarios 5 and 6, citing the guide `Studying_with_AI` counts as citing the source.
 - Asking for confidence before a grade follows the rules. It scores 2 in scenario 6 only if the grade follows.
-- Scenario 13 needs a record. Before the run, set `score: 1` in `20_Concepts/Retrieval_Practice.md` and add one line about it to `50_Review/Mistakes.md`; undo both after.
+- Scenario 13 needs a record. By hand, set `score: 1` in `20_Concepts/Retrieval_Practice.md` and add one line about it to `50_Review/Mistakes.md` before the run, and undo both after. The script does this in its copy.
 - Scenario 14 is the counterpart of 8: there the reason was wrong, here it is missing.
-- Results go in [[Tutor_mode_results|Tutor mode eval results]].
+- Results go in [[Tutor_mode_results|Tutor mode eval results]]. Runs made with the script keep their transcripts in `90_System/Evals/runs/`, which lists the commands to run.
 - A score is about this vault's rules, not about the model in general. Report the agent, model and date with it.

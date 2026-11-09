@@ -37,7 +37,7 @@ The documentation lives in the vault, so it travels with your copy:
 * [Track kinds](90_System/Specs/Track_kinds.md): one recipe per kind of learning project
 * [Study layer](90_System/Specs/Study_layer.md): the format of every study note
 * [Tools and customization](90_System/Specs/Tools.md): scripts, checks, automation, and how to change language, kinds and folders
-* [Tutor mode evaluation](90_System/Evals/Tutor_mode.md): a hand-run test of whether your agent behaves as a tutor
+* [Tutor mode evaluation](90_System/Evals/Tutor_mode.md): a test, by hand or with a script that runs any agent and keeps transcripts, of whether your agent behaves as a tutor
 * [FAQ](90_System/Specs/FAQ.md): setup, updating your copy, privacy, offline use, plugins and language
 
 ## Contributing

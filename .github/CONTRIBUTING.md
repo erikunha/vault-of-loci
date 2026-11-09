@@ -15,7 +15,7 @@ Reusable material is welcome: anything that helps another learner and stays corr
 | Guide | `40_References/Guides/`, study layer format |
 | Study layer translation | `90_System/Specs/study_layer.<language>.json` with the same keys as `study_layer.json` |
 | Skill | `.agents/skills/<name>/SKILL.md` following the Agent Skills spec, tutor mode, `disable-model-invocation` and `agents/openai.yaml` if it writes files |
-| Tutor-mode scenario | a row in `90_System/Evals/Tutor_mode.md` with the expected agent behavior |
+| Tutor-mode scenario | a row in `90_System/Evals/Tutor_mode.md` with the expected agent behavior, and the same scenario in `90_System/Evals/tutor_scenarios.json` (a test checks that they match) |
 | Tooling | fixes and new checks in `90_System/Scripts`, standard library only, with a test |
 
 ### Reusable or personal
