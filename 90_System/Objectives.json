@@ -1,0 +1,26 @@
+{
+  "version": "v1",
+  "objectives": [
+    {
+      "id": "retrieval-practice-recall",
+      "concept": "Retrieval_Practice",
+      "mode": "recall",
+      "criterion": "State the one week retention result of testing against rereading, with both numbers, without looking.",
+      "rubric_version": "v1"
+    },
+    {
+      "id": "retrieval-practice-explain",
+      "concept": "Retrieval_Practice",
+      "mode": "explain",
+      "criterion": "Explain why the result can point one way after five minutes and the other way after one week.",
+      "rubric_version": "v1"
+    },
+    {
+      "id": "retrieval-practice-apply",
+      "concept": "Retrieval_Practice",
+      "mode": "apply",
+      "criterion": "Choose what to do the night before a test in a new subject and say why, using the effect.",
+      "rubric_version": "v1"
+    }
+  ]
+}

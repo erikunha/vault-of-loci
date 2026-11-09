@@ -34,7 +34,7 @@ Folder shape: `<Name>.md` (the track note), `sessions/` (one note per study sess
 - **Shallow folders.** Folders stay two levels deep. Structure lives in links, properties, bases and the review loop, not in nested folders. Heavy filing did not pay off for retrieval in a study of email [Whittaker 2011].
 - **No learning styles.** Do not sort yourself into visual, auditory or kinesthetic and study that way. A review of the evidence found no adequate support for matching instruction to a style [Pashler 2008]. Match the method to the material.
 - **Concept map by necessity.** `practice/Concept_Map.md` orders the concepts by what must be understood first, not by chapter order, and marks the few threshold concepts that unlock the rest. Study a concept only after its prerequisites.
-- **Learned means recalled twice and used once.** A concept counts as learned after two correct recalls without notes on different days and one use in a task you had not seen. Feeling familiar does not count.
+- **Learned means recalled twice and used once.** A concept counts as learned after two correct recalls without notes on different days and one use in a task you had not seen. Feeling familiar does not count. The learning ledger computes this rule from your attempts, so it stops being a claim: `90_System/Evals/Learning_outcomes.md`.
 - **Procedures are practiced on new cases.** When the knowledge is a procedure (a proof step, a command, a grammar rule), practice it on a case you have not seen. Reciting the steps is not practicing them.
 - **Tutor mode applies.** The learner attempts first, hints come in steps, and the agent never writes the learner's own notes or answers. Reference notes and guides may be written by an agent with verified sources.
 
