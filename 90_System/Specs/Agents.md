@@ -25,6 +25,9 @@ flowchart LR
 | After reading | "I'll explain retrieval practice; list only my gaps" | `teach-the-agent` |
 | After a quiz | "Turn today's mistakes into cards" | `mistake-review` |
 | Any day | "What should I review today?" | `review-queue` |
+| Any day | "Plan my review from what I got wrong" | `schedule-review` |
+| After a break | "I was away for a while, where do I start?" | `recovery-after-inactivity` |
+| After a delay | "Which material is due a delayed test?" | `retention-audit` |
 | To test yourself | "Quiz me on the book track" | `quiz` |
 | Looking for a source | "Where in my notes is spacing explained?" | `vault-search` |
 | Before an interview, oral exam or conversation | "Run a 30-minute observed mock" | `spoken-mock` |

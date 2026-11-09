@@ -33,6 +33,15 @@ python3 -I 90_System/Scripts/retention_report.py
 
 Attempts with help and attempts graded by an agent stay in the ledger but leave the rates, and the report says so. A forecast is never shown as a measurement. The [spec](90_System/Evals/Learning_outcomes.md) has the schema, the metrics and the reasons behind each choice.
 
+From the same ledger come the two things the vault does next: a plan for today and a list of what is due.
+
+```bash
+python3 -I 90_System/Scripts/schedule_review.py        # what to review now, and why
+python3 -I 90_System/Scripts/retention_audit.py         # what passed 7, 30 or 90 days without a test
+```
+
+The plan ranks by how weak and how stale each item is, and a wrong last attempt comes first. The audit names the objectives whose delay has arrived and still has nothing measured, so a new task can be written for them. The [interventions spec](90_System/Evals/Learning_interventions.md) explains each one and says what it does not prove.
+
 ## Screenshots
 
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
