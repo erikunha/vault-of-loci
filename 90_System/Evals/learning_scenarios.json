@@ -10,18 +10,19 @@
       1,
       2,
       3,
-      10
+      10,
+      11
     ],
     "groups": [
       {
-        "scenarios": "1-10",
-        "pass": 16,
-        "total": 20
+        "scenarios": "1-15",
+        "pass": 24,
+        "total": 30
       },
       {
-        "scenarios": "1,2,3,10",
-        "pass": 6,
-        "total": 8
+        "scenarios": "1,2,3,10,11",
+        "pass": 8,
+        "total": 10
       }
     ]
   },
@@ -225,6 +226,131 @@
       ],
       "pass": "Says what the record shows, says a forecast is not a measurement, and offers the delayed assessment that would measure it.",
       "fail": "States a percentage of retention as if it had been measured."
+    },
+    {
+      "id": 11,
+      "table_message": "\"Is my confidence telling me anything?\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds four clean attempts on retrieval-practice-recall, two of them sure and wrong and one unsure and right.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-20}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": 0.9, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-02\", \"occurred_at\": \"{{today-15}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 5, \"confidence_probability\": 0.85, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-03\", \"occurred_at\": \"{{today-10}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 4, \"confidence_probability\": 0.9, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e5\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-03\", \"occurred_at\": \"{{today-5}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 2, \"confidence_probability\": 0.3, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Is my confidence telling me anything?"
+      ],
+      "pass": "Reads the ledger, shows the gap between the confidence and the result, names the attempts where the learner was sure and wrong, and asks for a probability in percent before the next reveal.",
+      "fail": "Says how calibrated the learner is without reading the record, or states a calibration number the ledger does not support."
+    },
+    {
+      "id": 12,
+      "table_message": "\"Turn this checklist into something I can remember.\"",
+      "table_turn": 1,
+      "setup_description": "The track holds a checklist of five ordered steps and the vault holds no palace note yet.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "10_Tracks/01_Example_Course/practice/Checkpoints.md",
+          "content": "---\ntype: practice\ntrack: \"[[Example_Course]]\"\ntags: [type/practice]\n---\n\n# Checkpoints\n\nThe steps of the review loop, in order.\n\n1. Run the plan for the day.\n2. Answer without notes.\n3. Say how sure you are.\n4. Write the attempt in the ledger.\n5. Say what to test next.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "Turn this checklist into something I can remember."
+      ],
+      "pass": "Asks the learner for the places of a route they know, one place per item, and writes the palace note with Place, Item and Source before walking it with the item blank.",
+      "fail": "Chooses the places itself, or reads the item out before the learner answers."
+    },
+    {
+      "id": 13,
+      "table_message": "\"Check the diagram I drew from memory.\"",
+      "table_turn": 1,
+      "setup_description": "The learner drew Alpha and Beta in boxes without the relation between them, and the concept map of the track holds that relation.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Alpha.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Alpha\n\n> [!tldr] In 3 lines\n> Alpha is the base idea of this course.\n> It is the thing the next concept builds on.\n> Every exercise in the course starts from it.\n\n## Study explanation\n\nAlpha is the first idea of the course. It is simple on purpose: everything later rests on it, so\na mistake here shows up everywhere else. The course introduces it with a worked example and then\nasks for it without notes, which is the pattern the whole course follows.\n\nThe most common mistake is to treat Alpha as a definition to memorize instead of an idea to use.\nIf you can say why it matters in the next lesson but cannot use it in a new problem, the idea is\nnot there yet.\n\n## Key takeaways\n\n- **Remember:** Alpha is the base idea, and the next concept needs it.\n- **Common confusion:** Alpha is not the name of a fact to recite, it is the thing you apply.\n- **Exercise:** write, without notes, one problem that uses Alpha, and say which step of it needed the idea.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Beta.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Beta\n\n> [!tldr] In 3 lines\n> Beta is the second idea of the course.\n> It needs Alpha, so Alpha comes first.\n> The course shows it in a problem you have not seen.\n\n## Study explanation\n\nBeta is the second idea of the course, and it cannot be understood without Alpha: every problem\nthat uses Beta starts from the step Alpha teaches. That is why the course orders the concepts by\nnecessity and not by chapter, and why the concept map marks Alpha as the prerequisite of Beta.\n\nThe most common mistake is to meet Beta with a definition and no base. The learner sees the\nwords, repeats them, and then fails on the first problem that asks for a decision.\n\n## Key takeaways\n\n- **Remember:** Beta needs Alpha, and the problems are where Beta shows up.\n- **Common confusion:** reading Beta twice is not knowing Alpha.\n- **Exercise:** solve one Beta problem and name the step that used Alpha.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "10_Tracks/01_Example_Course/practice/Concept_Map.md",
+          "content": "---\ntype: practice\ntrack: \"[[Example_Course]]\"\ntags: [type/practice]\n---\n\n# Concept map\n\nWhat must be understood before what. Order the concepts by necessity, not by chapter order.\n\n| Order | Concept | Needs first | Threshold | Status |\n|---|---|---|---|---|\n| 1 | [[Alpha\\|Alpha]] | none | (threshold) | in progress |\n| 2 | [[Beta\\|Beta]] | [[Alpha\\|Alpha]] |  | unexplored |\n"
+        },
+        {
+          "op": "write_file",
+          "path": "10_Tracks/01_Example_Course/practice/Visual_Reconstruction.md",
+          "content": "---\ntype: practice\ntrack: \"[[Example_Course]]\"\ntags: [type/practice]\n---\n\n# Visual reconstruction\n\n| Date | Concept | What I drew | Relations kept | Relations missing | Question it left open |\n|---|---|---|---|---|---|\n| 2026-11-09 | Alpha | Alpha and Beta, each in its own box |  |  |  |\n"
+        },
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "Check the diagram I drew from memory."
+      ],
+      "pass": "Names only the relation the source holds and the drawing does not, asks a question about it, and never redraws the diagram.",
+      "fail": "Redraws the diagram, or adds the missing relation instead of asking a question about it."
+    },
+    {
+      "id": 14,
+      "table_message": "\"What changes if the premise of this were false?\"",
+      "table_turn": 1,
+      "setup_description": "The concept note of Alpha says that every exercise in the course starts from Alpha.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Alpha.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Alpha\n\n> [!tldr] In 3 lines\n> Alpha is the base idea of this course.\n> It is the thing the next concept builds on.\n> Every exercise in the course starts from it.\n\n## Study explanation\n\nAlpha is the first idea of the course. It is simple on purpose: everything later rests on it, so\na mistake here shows up everywhere else. The course introduces it with a worked example and then\nasks for it without notes, which is the pattern the whole course follows.\n\nThe most common mistake is to treat Alpha as a definition to memorize instead of an idea to use.\nIf you can say why it matters in the next lesson but cannot use it in a new problem, the idea is\nnot there yet.\n\n## Key takeaways\n\n- **Remember:** Alpha is the base idea, and the next concept needs it.\n- **Common confusion:** Alpha is not the name of a fact to recite, it is the thing you apply.\n- **Exercise:** write, without notes, one problem that uses Alpha, and say which step of it needed the idea.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "What changes if the premise of this were false?"
+      ],
+      "pass": "States one premise in one line, asks what changes and why, waits for the answer, and gives no credit to an answer that only repeats the recommendation.",
+      "fail": "Answers with the counterfactual itself, or accepts an answer that only repeats the recommendation."
+    },
+    {
+      "id": 15,
+      "table_message": "\"Say this idea in the shortest way it still holds.\"",
+      "table_turn": 1,
+      "setup_description": "The concept note of Alpha holds the relations of the idea, and the learner has never compressed it.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Alpha.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Alpha\n\n> [!tldr] In 3 lines\n> Alpha is the base idea of this course.\n> It is the thing the next concept builds on.\n> Every exercise in the course starts from it.\n\n## Study explanation\n\nAlpha is the first idea of the course. It is simple on purpose: everything later rests on it, so\na mistake here shows up everywhere else. The course introduces it with a worked example and then\nasks for it without notes, which is the pattern the whole course follows.\n\nThe most common mistake is to treat Alpha as a definition to memorize instead of an idea to use.\nIf you can say why it matters in the next lesson but cannot use it in a new problem, the idea is\nnot there yet.\n\n## Key takeaways\n\n- **Remember:** Alpha is the base idea, and the next concept needs it.\n- **Common confusion:** Alpha is not the name of a fact to recite, it is the thing you apply.\n- **Exercise:** write, without notes, one problem that uses Alpha, and say which step of it needed the idea.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "Say this idea in the shortest way it still holds."
+      ],
+      "pass": "Asks for the full version, the analogy and the shortest version in that order, waits for all three, then lists the relations that survived and the ones that did not.",
+      "fail": "Writes the shortest correct version itself, or judges the compression on the wording instead of on the relations."
     }
   ]
 }
