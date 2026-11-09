@@ -53,6 +53,9 @@ python3 -I 90_System/Scripts/calibration_report.py                      # confid
 python3 -I 90_System/Scripts/retention_report.py                         # retention, transfer and calibration from the attempt ledger
 python3 -I 90_System/Scripts/schedule_review.py                          # the review plan for today, ranked by weakness and staleness
 python3 -I 90_System/Scripts/retention_audit.py                         # objectives that owe a delayed attempt, and those never tested
+python3 -I 90_System/Scripts/transfer_lab.py                             # objectives that were studied and never applied in a new task
+python3 -I 90_System/Scripts/misconception_report.py                    # objectives that were wrong more than once, and the drill they need
+python3 -I 90_System/Scripts/dependency_check.py                         # what has to be understood first, and where the gap is
 python3 -I 90_System/Scripts/pdf_to_text.py paper.pdf --out /tmp/paper.txt --note 40_References/Papers/X.md   # PDF text once per file, recorded in 90_System/ingest_manifest.json
 ```
 
@@ -69,6 +72,18 @@ python3 -I 90_System/Scripts/record_attempt.py --objective retrieval-practice-re
 `retention_report.py` reads the same file. The schema, the metrics and the reasons behind each
 choice are in `90_System/Evals/Learning_outcomes.md`, and what the vault does with the record is
 in `90_System/Evals/Learning_interventions.md`.
+
+## The two evals
+
+```bash
+python3 -I 90_System/Scripts/run_tutor_eval.py --agent-cmd "my-agent -p" --label my-agent --agent-family my-family
+python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd "my-agent -p" \
+  --label my-agent --agent-family my-family
+```
+
+The first asks whether the agent behaves as a tutor. The second asks whether it uses the
+learner's record to measure what was learned, with the scenarios in
+`90_System/Evals/learning_scenarios.json` and the table in `90_System/Evals/Learning_evals.md`.
 
 ## Naming
 

@@ -19,7 +19,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from learning_ledger import LEDGER, read_ledger  # noqa: E402
-from scheduler import DAILY_CAP, NEW_PER_DAY, plan, recovery_plan  # noqa: E402
+from scheduler import DAILY_CAP, NEW_PER_DAY, error_items, plan, recovery_plan  # noqa: E402
 
 
 def parse_args(argv):
@@ -29,6 +29,7 @@ def parse_args(argv):
     ap.add_argument("--new", type=int, default=NEW_PER_DAY, help="new cards per day (about 2)")
     ap.add_argument("--objective", help="plan only this objective")
     ap.add_argument("--recovery", action="store_true", help="the diagnostic after a break")
+    ap.add_argument("--errors", action="store_true", help="only the items whose last attempt was wrong")
     ap.add_argument("--json", dest="as_json", action="store_true", help="print the plan as JSON")
     return ap.parse_args(argv)
 
@@ -61,6 +62,20 @@ def main(argv=None):
         print(recovery["why"])
         return 0
     ranked = plan(events, cap=args.cap, new_per_day=args.new, today=date.today())
+    if args.errors:
+        errors = error_items(events, date.today())
+        if args.as_json:
+            print(json.dumps({"errors": errors}, ensure_ascii=False, indent=2, sort_keys=True))
+            return 0
+        print("Items whose last attempt was wrong")
+        if not errors:
+            print("none.")
+            return 0
+        for row in errors:
+            print(f"  {row['objective_id']} / {row['item_id']}  "
+                  f"{row['attempts']} attempt(s), last {row['days_since']} days ago")
+            print(f"    write a variation of the task with the id {row['variant_id']}")
+        return 0
     if args.as_json:
         print(json.dumps(ranked, ensure_ascii=False, indent=2, sort_keys=True))
         return 0

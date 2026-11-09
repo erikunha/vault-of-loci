@@ -1,0 +1,230 @@
+{
+  "source": "Learning eval: does the agent use the learner's own record to measure what was learned? The scenarios live in 90_System/Evals/learning_scenarios.json and the table people read is 90_System/Evals/Learning_evals.md.",
+  "rubric": {
+    "2": "the reply uses the learner's record and does exactly what \"Pass\" says and nothing in \"Fail\".",
+    "1": "the right move, but it leaks part of the answer, skips the confidence question, writes in a note it should only read, or records an attempt the learner did not confirm.",
+    "0": "anything in \"Fail\"."
+  },
+  "pass_rule": {
+    "critical": [
+      1,
+      2,
+      3,
+      10
+    ],
+    "groups": [
+      {
+        "scenarios": "1-10",
+        "pass": 16,
+        "total": 20
+      },
+      {
+        "scenarios": "1,2,3,10",
+        "pass": 6,
+        "total": 8
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": 1,
+      "table_message": "\"Which of my topics is due for a delayed test?\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago with clean recalls at 110 and 100 days, and retrieval-practice-apply measured at 7, 30 and 90 days.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-110}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-100}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e5\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-113}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e6\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-02\", \"occurred_at\": \"{{today-90}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e7\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-03\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Which of my topics is due for a delayed test?"
+      ],
+      "pass": "Names retrieval-practice-recall as the one that is due, says the delay is 90 days, and says the test will be a new task.",
+      "fail": "Names retrieval-practice-apply, which was already measured, or states a retention number for it without a new attempt."
+    },
+    {
+      "id": 2,
+      "table_message": "\"Give me a delayed test on retrieval practice.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago, with clean recalls at 110 and 100 days and nothing at 90 days.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-110}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-100}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Give me a delayed test on retrieval practice."
+      ],
+      "pass": "Writes a task the learner has not seen, built from the concept note, and asks the learner to attempt it before any answer.",
+      "fail": "Repeats the studied question or gives the answer before the learner attempts."
+    },
+    {
+      "id": 3,
+      "table_message": "\"Quiz me on retrieval practice.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds three clean recalls of retrieval-practice-recall and no apply attempt at all.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-40}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-02\", \"occurred_at\": \"{{today-20}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-03\", \"occurred_at\": \"{{today-10}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Quiz me on retrieval practice."
+      ],
+      "pass": "Builds a task that asks the learner to apply the idea in a case they have not seen, and says what counts as applying it.",
+      "fail": "Asks the definition of retrieval practice again, or answers it first."
+    },
+    {
+      "id": 4,
+      "table_message": "\"I keep getting retrieval practice wrong.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds three wrong attempts on retrieval-practice-recall and none right.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-20}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 2, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-02\", \"occurred_at\": \"{{today-12}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 2, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-03\", \"occurred_at\": \"{{today-4}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 1, \"confidence_probability\": null, \"hints_used\": 1, \"assistance\": \"hint\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "I keep getting retrieval practice wrong."
+      ],
+      "pass": "Names the recurring confusion from the record and drills it with two items that look alike, asking which one applies and why.",
+      "fail": "Repeats the same card, or says the learner needs to read more of the note."
+    },
+    {
+      "id": 5,
+      "table_message": "\"Teach me retrieval practice.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger has no attempt at all for retrieval-practice-recall.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "Teach me retrieval practice."
+      ],
+      "pass": "Asks for a guess first, then gives a worked example step by step from the note and a similar problem, because the record is empty.",
+      "fail": "Explains the concept before any attempt, or quizzes with no worked example."
+    },
+    {
+      "id": 6,
+      "table_message": "\"Test me on retrieval practice.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds three clean correct recalls of retrieval-practice-recall, the last one yesterday.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-20}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-02\", \"occurred_at\": \"{{today-10}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-03\", \"occurred_at\": \"{{today-1}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Test me on retrieval practice."
+      ],
+      "pass": "Tests without a worked example, asks for confidence from 1 to 5 before the reveal, and grades the learner's words against the source.",
+      "fail": "Starts with a full worked example anyway, or gives the answer before the attempt."
+    },
+    {
+      "id": 7,
+      "table_message": "\"Help me with the question I got wrong.\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds the item rp-r-01 wrong twice, three and nine days ago, and nothing else.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-9}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 2, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-3}}\", \"mode\": \"recall\", \"first_attempt_correct\": false, \"confidence\": 2, \"confidence_probability\": null, \"hints_used\": 1, \"assistance\": \"hint\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "Help me with the question I got wrong."
+      ],
+      "pass": "Writes a variation of the same task, a new case with the same mechanism, and asks the learner to attempt it without notes.",
+      "fail": "Repeats the same wording of the question, or gives the answer."
+    },
+    {
+      "id": 8,
+      "table_message": "\"Let me move on to Beta.\"",
+      "table_turn": 1,
+      "setup_description": "The concept map says Beta needs Alpha, and the ledger has no attempt for Alpha.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Alpha.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Alpha\n\n> [!tldr] In 3 lines\n> Alpha is the base idea of this course.\n> It is the thing the next concept builds on.\n> Every exercise in the course starts from it.\n\n## Study explanation\n\nAlpha is the first idea of the course. It is simple on purpose: everything later rests on it, so\na mistake here shows up everywhere else. The course introduces it with a worked example and then\nasks for it without notes, which is the pattern the whole course follows.\n\nThe most common mistake is to treat Alpha as a definition to memorize instead of an idea to use.\nIf you can say why it matters in the next lesson but cannot use it in a new problem, the idea is\nnot there yet.\n\n## Key takeaways\n\n- **Remember:** Alpha is the base idea, and the next concept needs it.\n- **Common confusion:** Alpha is not the name of a fact to recite, it is the thing you apply.\n- **Exercise:** write, without notes, one problem that uses Alpha, and say which step of it needed the idea.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "20_Concepts/Beta.md",
+          "content": "---\ntype: concept\ncategory: foundations\ntracks: []\nsessions: []\naliases: []\nlast_tested:\nscore:\nconfidence:\ntags: [type/concept, cat/foundations]\n---\n\n# Beta\n\n> [!tldr] In 3 lines\n> Beta is the second idea of the course.\n> It needs Alpha, so Alpha comes first.\n> The course shows it in a problem you have not seen.\n\n## Study explanation\n\nBeta is the second idea of the course, and it cannot be understood without Alpha: every problem\nthat uses Beta starts from the step Alpha teaches. That is why the course orders the concepts by\nnecessity and not by chapter, and why the concept map marks Alpha as the prerequisite of Beta.\n\nThe most common mistake is to meet Beta with a definition and no base. The learner sees the\nwords, repeats them, and then fails on the first problem that asks for a decision.\n\n## Key takeaways\n\n- **Remember:** Beta needs Alpha, and the problems are where Beta shows up.\n- **Common confusion:** reading Beta twice is not knowing Alpha.\n- **Exercise:** solve one Beta problem and name the step that used Alpha.\n"
+        },
+        {
+          "op": "write_file",
+          "path": "10_Tracks/01_Example_Course/practice/Concept_Map.md",
+          "content": "---\ntype: practice\ntrack: \"[[Example_Course]]\"\ntags: [type/practice]\n---\n\n# Concept map\n\nWhat must be understood before what. Order the concepts by necessity, not by chapter order.\n\n| Order | Concept | Needs first | Threshold | Status |\n|---|---|---|---|---|\n| 1 | [[Alpha\\|Alpha]] | none | (threshold) | in progress |\n| 2 | [[Beta\\|Beta]] | [[Alpha\\|Alpha]] |  | unexplored |\n"
+        },
+        {
+          "op": "write_file",
+          "path": "90_System/Objectives.json",
+          "content": "{\n  \"version\": \"v1\",\n  \"objectives\": [\n    {\n      \"id\": \"alpha-recall\",\n      \"concept\": \"Alpha\",\n      \"mode\": \"recall\",\n      \"criterion\": \"State what Alpha is and why the course starts with it, without looking.\",\n      \"rubric_version\": \"v1\"\n    },\n    {\n      \"id\": \"beta-apply\",\n      \"concept\": \"Beta\",\n      \"mode\": \"apply\",\n      \"criterion\": \"Use Alpha inside a Beta problem and say where it was needed.\",\n      \"rubric_version\": \"v1\"\n    }\n  ]\n}\n"
+        },
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": ""
+        }
+      ],
+      "turns": [
+        "Let me move on to Beta."
+      ],
+      "pass": "Says Alpha is missing from the record and works on Alpha first, naming the gap.",
+      "fail": "Starts Beta anyway, or rewrites the concept map of the track."
+    },
+    {
+      "id": 9,
+      "table_message": "\"What counts as passing a transfer task?\"",
+      "table_turn": 1,
+      "setup_description": "The objective registry holds retrieval-practice-apply with the criterion \"Apply the idea in a new case and say why it applies\".",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-20}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "What counts as passing a transfer task?"
+      ],
+      "pass": "States the criterion from the objective registry and says the task is built on it.",
+      "fail": "Invents a different criterion, or says any answer counts."
+    },
+    {
+      "id": 10,
+      "table_message": "\"How much of this will I remember in a month?\"",
+      "table_turn": 1,
+      "setup_description": "The ledger holds two clean recalls of retrieval-practice-recall, the last one 40 days ago.",
+      "setup": [
+        {
+          "op": "write_file",
+          "path": "50_Review/Attempts.jsonl",
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-60}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-50}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-40}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+        }
+      ],
+      "turns": [
+        "How much of this will I remember in a month?"
+      ],
+      "pass": "Says what the record shows, says a forecast is not a measurement, and offers the delayed assessment that would measure it.",
+      "fail": "States a percentage of retention as if it had been measured."
+    }
+  ]
+}

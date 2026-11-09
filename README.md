@@ -42,6 +42,26 @@ python3 -I 90_System/Scripts/retention_audit.py         # what passed 7, 30 or 9
 
 The plan ranks by how weak and how stale each item is, and a wrong last attempt comes first. The audit names the objectives whose delay has arrived and still has nothing measured, so a new task can be written for them. The [interventions spec](90_System/Evals/Learning_interventions.md) explains each one and says what it does not prove.
 
+From the same record come the four things a study session does with it: a transfer task for an idea you only repeated, a drill for the two ideas you keep mixing, a worked example when the record is empty, and a variation of the question you got wrong.
+
+```bash
+python3 -I 90_System/Scripts/transfer_lab.py         # the objectives that were studied and never applied
+python3 -I 90_System/Scripts/misconception_report.py # the objectives that were wrong more than once
+python3 -I 90_System/Scripts/dependency_check.py     # what has to come first, and where the gap is
+python3 -I 90_System/Scripts/schedule_review.py --errors   # the items whose last attempt was wrong
+```
+
+## Test whether the agent measures the learning, not only the rules
+
+The tutor test asks whether the agent behaves as a tutor. A second benchmark asks whether it uses the learner's own record: it reads the ledger, picks the objective that is really due, writes a task the learner has not seen, and never states a measurement it did not make.
+
+```bash
+python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd "my-agent -p" \
+  --label my-agent --agent-family my-family --judge-cmd "other-agent -p" --judge-family other-family
+```
+
+Its 10 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here.
+
 ## Screenshots
 
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)
