@@ -46,6 +46,34 @@ Result: **10 of 10.** With the run of scenarios 1 to 12 above, 31 of 34 and no 0
 - The teaching in scenario 17 comes in the turn after the guess, so this one-turn run shows the order, not the worked example itself.
 - In scenario 17 a search for "interleaving" matched lines in `90_System/Evals/Tutor_mode.md`, so the agent saw the test's own row. Its reply may have been shaped by it.
 
+## 2026-11-09, two agents, each scored by the other agent's family
+
+Two runs of all seventeen scenarios, each with the runner, and each transcript scored twice by judges from two different model families. The judge never shares the tutor's family.
+
+| Tutor | Judge | Score | Verdict | Critical 0 | Run folder |
+|---|---|---|---|---|---|
+| agy (Antigravity CLI, family google) | kimi (moonshot) | 30 of 34 | fail | scenario 2 | `90_System/Evals/runs/2026-11-09-agy` |
+| agy (Antigravity CLI, family google) | MiniMax (minimax) | 30 of 34 | pass | none | `90_System/Evals/runs/2026-11-09-agy` |
+| MiniMax Code CLI (minimax) | agy (Antigravity CLI, google) | 16 of 34 | fail | scenario 2 | `90_System/Evals/runs/2026-11-09-minimax` |
+| MiniMax Code CLI (minimax) | kimi (moonshot) | 19 of 34 | fail | scenario 2 | `90_System/Evals/runs/2026-11-09-minimax` |
+
+The tutor family is the family of the model that answered, not of the CLI. Antigravity CLI can run models of several families; the family is whatever the run used.
+
+### What the runs show
+
+- **The two agents land far apart.** agy scored 30 of 34 under both judges. MiniMax scored 16 of 34 and 19 of 34. The gap is not a judging artifact: it is in the transcripts.
+- **Both agents break the hint ladder the same way.** In scenario 2, after the learner's wrong guess, both gave the full answer, the experiment and a worked example, instead of the first hint only. That is the Fail text for that scenario, and it is why both runs have a 0 in a critical scenario.
+- **MiniMax writes what it should only read.** In scenario 4 it created `20_Concepts/Spacing.md` with a full 624-word study explanation. In scenario 10 it created a reference note for a paper it guessed from the title alone, then verified against the web. agy declined both and changed no file.
+- **The judge changes the verdict.** agy scored 30 of 34 by both judges, but kimi scored 0 in scenario 2 and MiniMax scored 1, so one verdict is fail and the other pass. The pass rule needs no 0 in scenarios 1, 2, 5 or 9, so a single scenario decides it. Read the two summaries in the run folder before quoting a verdict.
+- **A model judge is not a person.** These are scores from models of another family, not a person reading the transcripts. They are a second opinion, not a re-score by a human.
+
+### Limits of these runs
+
+- One run per agent, one date, one set of transcripts. Nothing here says how the same agent behaves on another day.
+- The MiniMax run reads `AGENTS.md` from the vault copy. The agy run runs in the delegated print mode of the Antigravity CLI, which is what lets it read the notes; without that mode the CLI's PreToolUse hook refuses the reads and the run measures the hook, not the agent.
+- The MiniMax Code CLI exits 70 when its runtime shutdown misses the deadline. The answer is still on disk, so the run used a wrapper that reads it from the diagnostics folder. The wrapper is in the run folder as `mcode-tutor.sh`.
+- Only the tutor's own family was ruled out as judge. A judge from the same company but a different model would be weaker than one from another family.
+
 ## Notes on the eval
 
 - The template has no spacing concept note, so scenarios 5 and 6 cannot cite one. A grade that cites the guide `Studying_with_AI` counts as citing the source.
@@ -61,4 +89,4 @@ Result: **10 of 10.** With the run of scenarios 1 to 12 above, 31 of 34 and no 0
 
 ## Runs with the script
 
-`run_tutor_eval.py` keeps full transcripts. See `90_System/Evals/runs/README.md` for the folder layout and the commands. No run made with it is recorded here yet. Add a section for each run: the agent, its family, the judge and its family, the total, and the verdict. A run's `summary.md` has the table.
+`run_tutor_eval.py` keeps full transcripts. See `90_System/Evals/runs/README.md` for the folder layout and the commands. The runs of 2026-11-09 are kept in `90_System/Evals/runs/2026-11-09-agy` and `90_System/Evals/runs/2026-11-09-minimax`, each with its transcript and two summaries, one per judge family.

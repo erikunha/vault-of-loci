@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-09",
+  "label": "agy",
+  "agent": "agy",
+  "agent_family": "google",
+  "command": "AI_DEV_RUNTIME_AGY_DELEGATED=1 agy --print \"$(cat)\"",
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "timeout": 600,
+  "inline_instructions": false,
+  "started": "2026-11-09T20:47:25+00:00",
+  "finished": "2026-11-09T21:12:30+00:00",
+  "errors": []
+}
