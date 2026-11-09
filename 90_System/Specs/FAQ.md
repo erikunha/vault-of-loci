@@ -142,7 +142,7 @@ No. The evidence does not support matching teaching to visual, auditory or kines
 
 ## What are the checkpoint, pretest and mistake skills?
 
-Skills for agents that follow tutor mode. `pretest` writes questions you guess before a session. `no-ai-checkpoint` quizzes you closed book on concepts older than 14 days and logs `last_tested` and `score`. `teach-the-agent` lists the gaps in your explanation. `mistake-review` turns logged mistakes into corrected cards with a source. `review-queue` lists what to study next. The guide `40_References/Guides/Studying_with_AI.md` has the protocol and the evidence.
+Skills for agents that follow tutor mode. `pretest` writes questions you guess before a session. `no-ai-checkpoint` quizzes you closed book on concepts older than 14 days and logs `last_tested` and `score`. `teach-the-agent` lists the gaps in your explanation. `mistake-review` turns logged mistakes into corrected cards with a source. `review-queue` lists what to study next. `record-attempt` appends one graded attempt to the learning ledger, so retention can be measured later. The guide `40_References/Guides/Studying_with_AI.md` has the protocol and the evidence.
 
 ## Should I switch the Spaced Repetition plugin to FSRS?
 

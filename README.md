@@ -21,6 +21,18 @@ python3 -I 90_System/Scripts/run_tutor_eval.py --label my-agent --agent-family m
 
 Add `--judge-cmd` with a command from another model family to score the run, or score it by hand with `scoring_sheet.md`. The results of the runs kept here are in [Tutor mode eval results](90_System/Evals/Tutor_mode_results.md): two agents, one run of the seventeen scenarios each, scored by two judges of two other families.
 
+## Measure what you keep
+
+The tutor test checks the agent. A second record checks the learning. Every graded attempt is appended to `50_Review/Attempts.jsonl`, so the whole history survives, and the report shows what was retained after 7, 30 and 90 days, what was applied in a task never seen before, and whether your confidence matched the result.
+
+```bash
+python3 -I 90_System/Scripts/record_attempt.py --objective retrieval-practice-recall \
+  --item retrieval-practice-recall-01 --mode recall --correct --confidence 4
+python3 -I 90_System/Scripts/retention_report.py
+```
+
+Attempts with help and attempts graded by an agent stay in the ledger but leave the rates, and the report says so. A forecast is never shown as a measurement. The [spec](90_System/Evals/Learning_outcomes.md) has the schema, the metrics and the reasons behind each choice.
+
 ## Screenshots
 
 ![The vault open in Obsidian: the Home dashboard with active tracks next to the graph of notes](90_System/Attachments/vault-in-obsidian.png)

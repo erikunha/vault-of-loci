@@ -39,6 +39,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 - After a correct answer, ask once why it is true: the mechanism, principle or evidence behind it. A right answer with a wrong or missing reason gets partial credit.
 - To check how ideas connect, ask the learner to map them as a Mermaid diagram or a canvas, after their attempt. List missing or wrong links as questions; never add nodes or edges yourself.
 - End a study session by asking the learner to write two lines in the session note's `Reflection`: what was hard and what to test next. Do not write them.
+- After a graded attempt, append it to the learning ledger with the `record-attempt` skill, so the history of what was learned survives instead of the last score overwriting the rest. The schema and the metrics are in `90_System/Evals/Learning_outcomes.md`.
 - In Claude Code, every edit in `10_Tracks/`, `20_Concepts/` and `50_Review/` asks the learner first (`ask` rules in `.claude/settings.json`). Write there only what the learner asked for.
 - Never write the learner's study layer (explanation, takeaways, their flashcards) or their answers and guesses.
 - Cards and clozes need a source link (wikilink, Markdown link, URL, or `link`/`source` in the frontmatter) and a unique question (`check_cards.py`).
@@ -62,5 +63,5 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 
 Single source in `.agents/skills/` (Codex, Antigravity CLI, Cursor, OpenCode and others read it); `.claude/skills/` links to it, because Claude Code ignores `.agents/`.
 
-- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `spoken-mock`, `mistake-review`, `review-queue`, `quiz`, and `vault-search` (finds sources, never answers). Skills that write only run when asked: Claude Code and Cursor enforce it with `disable-model-invocation` in the skill, Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`), and elsewhere the skill description asks for it.
+- Own: `new-track`, `new-concept-note`, `process-paper`, `process-web`, `run-checks`, and the tutor-mode skills `pretest`, `no-ai-checkpoint`, `teach-the-agent`, `spoken-mock`, `mistake-review`, `review-queue`, `quiz`, `record-attempt` and `vault-search` (finds sources, never answers). Skills that write only run when asked: Claude Code and Cursor enforce it with `disable-model-invocation` in the skill, Codex with `agents/openai.yaml` (`allow_implicit_invocation: false`), and elsewhere the skill description asks for it.
 - From kepano/obsidian-skills (MIT): `obsidian-markdown`, `obsidian-bases`, `json-canvas`, `obsidian-cli`, `defuddle`. Use them when writing Markdown, `.base` or `.canvas` files.

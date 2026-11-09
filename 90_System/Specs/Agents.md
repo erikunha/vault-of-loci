@@ -29,6 +29,7 @@ flowchart LR
 | Looking for a source | "Where in my notes is spacing explained?" | `vault-search` |
 | Before an interview, oral exam or conversation | "Run a 30-minute observed mock" | `spoken-mock` |
 | Every two weeks | "Closed-book checkpoint on what I studied before the 1st" | `no-ai-checkpoint` |
+| After a graded attempt | "Record this attempt in the ledger" | `record-attempt` |
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
 | Before committing | "Run the checks" | `run-checks` |
 
