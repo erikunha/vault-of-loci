@@ -51,6 +51,13 @@ python3 -I 90_System/Scripts/dependency_check.py     # what has to come first, a
 python3 -I 90_System/Scripts/schedule_review.py --errors   # the items whose last attempt was wrong
 ```
 
+Five more interventions come out of the same record. The calibration coach shows how well your confidence tracks the result. The memory palace turns ordered material into a route of places you pick. The visual reconstruction names the relations your drawing lost. The counterfactual asks what changes if one premise of a concept were false, and the compression challenge asks for the same idea three times, so you can see which relations survived.
+
+```bash
+python3 -I 90_System/Scripts/calibration_coach.py        # how well confidence tracks the result, with the sharpest cases
+python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/Home_Route.md   # the route, with the item blank
+```
+
 ## Test whether the agent measures the learning, not only the rules
 
 The tutor test asks whether the agent behaves as a tutor. A second benchmark asks whether it uses the learner's own record: it reads the ledger, picks the objective that is really due, writes a task the learner has not seen, and never states a measurement it did not make.

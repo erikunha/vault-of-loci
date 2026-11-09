@@ -38,6 +38,11 @@ flowchart LR
 | When a topic is new | "Teach me this, I am starting" | `adaptive-scaffold` |
 | After a mistake | "Let me fix the question I got wrong" | `error-recovery` |
 | Before a new concept | "Check what I need first" | `dependency-check` |
+| When the confidence is off | "Is my confidence telling me anything?" | `calibration-coach` |
+| To remember an ordered list | "Turn this list into a route I can walk" | `memory-palace` |
+| After drawing a diagram | "Check my drawing against the source" | `visual-reconstruction` |
+| To go deeper on an idea | "What changes if this premise were false?" | `counterfactual` |
+| To test whether an idea survived being shortened | "Say it in full, as an analogy and as briefly as it holds" | `compression-challenge` |
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
 | Before committing | "Run the checks" | `run-checks` |
 

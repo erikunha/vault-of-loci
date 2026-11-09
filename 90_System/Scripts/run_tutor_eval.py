@@ -329,9 +329,9 @@ def parse_judge(text):
 def evaluate(data, scores, scenario_ids):
     """Verdict from {id: score or None} for the scenarios that ran.
 
-    The pass rule is defined for a group of scenarios (all seventeen, or 1 to 12). A run of any other subset has
-    totals but no verdict. A scenario with no score makes the verdict incomplete, unless a 0 in a critical scenario
-    or a total that no remaining score could lift to the pass mark already fails the run.
+    The pass rule is defined for a group of scenarios: the whole benchmark or the critical group. A run of any other
+    subset has totals but no verdict. A scenario with no score makes the verdict incomplete, unless a 0 in a critical
+    scenario or a total that no remaining score could lift to the pass mark already fails the run.
     """
     rule = data["pass_rule"]
     ids = sorted(scenario_ids)
@@ -342,7 +342,7 @@ def evaluate(data, scores, scenario_ids):
               "unscored": unscored, "verdict": "no verdict", "rule": None}
     group = next((g for g in rule["groups"] if sorted(parse_ids(g["scenarios"])) == ids), None)
     if group is None:
-        result["note"] = "the pass rule covers all seventeen scenarios or scenarios 1 to 12; this subset has totals only"
+        result["note"] = "the pass rule covers the whole benchmark or the critical group; this subset has totals only"
         return result
     result["rule"] = f"{group['pass']} of {group['total']}, no 0 in scenarios " + ", ".join(map(str, rule["critical"]))
     if zeros or total + 2 * len(unscored) < group["pass"]:

@@ -50,16 +50,23 @@ A copy made with "Use this template" keeps these files. Delete `.github/` in you
 python3 -I 90_System/Scripts/search_vault.py "spaced review" --top 10   # sections ranked by relevance (BM25), as path:line and heading
 python3 -I 90_System/Scripts/kb_lint.py                                 # orphans, unused or unverified references, concepts in no track, old open questions and clippings
 python3 -I 90_System/Scripts/calibration_report.py                      # confidence against score per concept, stale and untested concepts
+python3 -I 90_System/Scripts/calibration_coach.py                       # from the ledger: how well confidence tracks the result, with the sharpest cases
 python3 -I 90_System/Scripts/retention_report.py                         # retention, transfer and calibration from the attempt ledger
 python3 -I 90_System/Scripts/schedule_review.py                          # the review plan for today, ranked by weakness and staleness
 python3 -I 90_System/Scripts/retention_audit.py                         # objectives that owe a delayed attempt, and those never tested
 python3 -I 90_System/Scripts/transfer_lab.py                             # objectives that were studied and never applied in a new task
 python3 -I 90_System/Scripts/misconception_report.py                    # objectives that were wrong more than once, and the drill they need
 python3 -I 90_System/Scripts/dependency_check.py                         # what has to be understood first, and where the gap is
+python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/Home_Route.md   # the route of a memory palace, in walking order, with the item blank
 python3 -I 90_System/Scripts/pdf_to_text.py paper.pdf --out /tmp/paper.txt --note 40_References/Papers/X.md   # PDF text once per file, recorded in 90_System/ingest_manifest.json
 ```
 
-All four read only, except `pdf_to_text.py`, which writes the text file and the manifest. Search and the reports work offline with the standard library; `pdf_to_text.py` needs `pdftotext` from poppler, a local program.
+Every one of them reads only, except `pdf_to_text.py`, which writes the text file and the manifest. Search and the reports work offline with the standard library; `pdf_to_text.py` needs `pdftotext` from poppler, a local program.
+
+Two calibration reports, two questions. `calibration_report.py` reads the frontmatter of the
+concept notes and answers what the learner wrote down about a concept. `calibration_coach.py`
+reads every graded attempt in the ledger and answers how the confidence behaved. The ledger is
+the record the metrics use.
 
 ## The attempt ledger
 
