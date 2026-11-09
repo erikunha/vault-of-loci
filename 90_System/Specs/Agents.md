@@ -33,6 +33,11 @@ flowchart LR
 | Before an interview, oral exam or conversation | "Run a 30-minute observed mock" | `spoken-mock` |
 | Every two weeks | "Closed-book checkpoint on what I studied before the 1st" | `no-ai-checkpoint` |
 | After a graded attempt | "Record this attempt in the ledger" | `record-attempt` |
+| To apply an idea | "Give me a case I have not seen" | `transfer-lab` |
+| When two ideas mix | "Drill the two I keep confusing" | `misconception-drill` |
+| When a topic is new | "Teach me this, I am starting" | `adaptive-scaffold` |
+| After a mistake | "Let me fix the question I got wrong" | `error-recovery` |
+| Before a new concept | "Check what I need first" | `dependency-check` |
 | Building material | "Add a concept note on spacing", "process this paper", "save this page" | `new-concept-note`, `process-paper`, `process-web` |
 | Before committing | "Run the checks" | `run-checks` |
 

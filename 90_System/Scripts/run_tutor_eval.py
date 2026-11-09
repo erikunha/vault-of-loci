@@ -1,7 +1,11 @@
-"""Run the tutor mode eval against any agent command and keep the transcripts.
+"""Run an eval against any agent command and keep the transcripts.
 
-The 17 scenarios live in 90_System/Evals/tutor_scenarios.json (data) and 90_System/Evals/Tutor_mode.md (the
-table people read). Each scenario runs in a fresh temporary copy of the vault, so nothing in your vault changes.
+Two benchmarks share this runner. The tutor one (the default) asks whether the agent behaves as
+a tutor: its 17 scenarios live in 90_System/Evals/tutor_scenarios.json (data) and
+90_System/Evals/Tutor_mode.md (the table people read). The learning one asks whether the agent
+uses the learner's own record to measure what was learned: its scenarios live in
+90_System/Evals/learning_scenarios.json and 90_System/Evals/Learning_evals.md. Each scenario runs
+in a fresh temporary copy of the vault, so nothing in your vault changes.
 The agent is any shell command that reads a prompt on stdin and prints its reply on stdout.
 
 Multi-turn scenarios send the whole conversation so far (learner messages and the agent's real earlier replies)
@@ -12,6 +16,8 @@ Usage:
   python3 -I 90_System/Scripts/run_tutor_eval.py --agent-cmd "ollama run qwen3.8:27b" --label qwen --scenarios 1,2,5
   python3 -I 90_System/Scripts/run_tutor_eval.py --agent-cmd "codex exec -" --judge-cmd "gemini -p" \
       --agent-family openai --judge-family google
+  python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd "claude -p" --label claude-code \
+      --agent-family anthropic
   python3 -I 90_System/Scripts/run_tutor_eval.py --score-run 90_System/Evals/runs/2026-11-10-qwen \
       --judge-cmd "codex exec -" --judge-family openai
   python3 -I 90_System/Scripts/run_tutor_eval.py --summarize 90_System/Evals/runs/2026-11-10-qwen
@@ -32,13 +38,30 @@ import subprocess
 import sys
 import tempfile
 import time
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCENARIOS_REL = Path("90_System") / "Evals" / "tutor_scenarios.json"
 MARKDOWN_REL = Path("90_System") / "Evals" / "Tutor_mode.md"
 RUNS_REL = Path("90_System") / "Evals" / "runs"
+
+# Two benchmarks share this runner. The tutor one asks whether the agent behaves as a tutor.
+# The learning one asks whether the agent uses the learner's record to measure what was learned.
+BENCHMARKS = {
+    "tutor": {
+        "scenarios": SCENARIOS_REL,
+        "markdown": MARKDOWN_REL,
+        "run_prefix": "",
+        "title": "Tutor eval run",
+    },
+    "learning": {
+        "scenarios": Path("90_System") / "Evals" / "learning_scenarios.json",
+        "markdown": Path("90_System") / "Evals" / "Learning_evals.md",
+        "run_prefix": "learning-",
+        "title": "Learning eval run",
+    },
+}
 
 # Left out of the working copy: the eval itself (so the agent cannot read the test), git history, local state
 # and secrets (AGENTS.md: never read .env files or plugin data.json files).
@@ -169,13 +192,30 @@ def make_copy(root, parent=None):
     return dest
 
 
+DATE_TOKEN = re.compile(r"\{\{today-(\d+)\}\}")
+
+
+def fill_dates(text):
+    """Replace `{{today-N}}` with the date N days before today.
+
+    A scenario that ages the learner's record needs a date that moves with the clock, and the
+    setup is written as JSON, so the token is filled when the copy is prepared.
+    """
+    today = date.today()
+
+    def replace(match):
+        return (today - timedelta(days=int(match.group(1)))).isoformat()
+
+    return DATE_TOKEN.sub(replace, text)
+
+
 def apply_setup(vault, ops):
     for op in ops:
         path = vault / op["path"]
         kind = op["op"]
         if kind == "write_file":
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(op["content"], encoding="utf-8")
+            path.write_text(fill_dates(op["content"]), encoding="utf-8")
         elif kind == "set_frontmatter":
             lines = path.read_text(encoding="utf-8").split("\n")
             end = lines.index("---", 1)
@@ -321,8 +361,13 @@ def fence_for(text):
     return "`" * max(3, longest + 1)
 
 
+def bench_of(meta):
+    """The benchmark a run belongs to, with its title and its Markdown table."""
+    return BENCHMARKS.get(meta.get("benchmark", "tutor"), BENCHMARKS["tutor"])
+
+
 def write_transcript_md(path, meta, records):
-    lines = ["---", "type: log", f"summary: Tutor eval transcript of {meta['agent']} on {meta['date']}.", "tags: [type/log]",
+    lines = ["---", "type: log", f"summary: {bench_of(meta)['title']} transcript of {meta['agent']} on {meta['date']}.", "tags: [type/log]",
              "---", "", f"# Transcript: {meta['agent']}, {meta['date']}", "",
              f"Agent command: `{meta['command']}`. Each message is in a code block, as the agent wrote it.", ""]
     by_scenario = {}
@@ -343,10 +388,10 @@ def write_transcript_md(path, meta, records):
 
 def write_sheet(path, data, meta, ids):
     by_id = {s["id"]: s for s in data["scenarios"]}
-    lines = ["---", "type: log", f"summary: Scoring sheet for the tutor eval run of {meta['agent']} on {meta['date']}.",
+    lines = ["---", "type: log", f"summary: Scoring sheet for the {bench_of(meta)['title'].lower()} of {meta['agent']} on {meta['date']}.",
              "tags: [type/log]", "---", "", f"# Scoring sheet: {meta['agent']}, {meta['date']}", "",
              "Read each scenario in `transcript.md`, then score the agent's last reply 0, 1 or 2 with the rubric in "
-             "`90_System/Evals/Tutor_mode.md`. Write the score in the table.", "",
+             f"`90_System/Evals/{bench_of(meta)['markdown'].name}`. Write the score in the table.", "",
              "| # | Pass | Fail | Score | Why |", "|---|---|---|---|---|"]
     for i in ids:
         s = by_id[i]
@@ -359,7 +404,7 @@ def write_sheet(path, data, meta, ids):
 
 def write_summary(path, data, meta, scored, verdict):
     by_id = {s["id"]: s for s in data["scenarios"]}
-    lines = ["---", "type: log", f"summary: Tutor eval scores of {meta['agent']} on {meta['date']}, judged by {scored['judge_family']}.",
+    lines = ["---", "type: log", f"summary: {bench_of(meta)['title']} scores of {meta['agent']} on {meta['date']}, judged by {scored['judge_family']}.",
              "tags: [type/log]", "---", "", f"# Scores: {meta['agent']}, {meta['date']}", "",
              f"Agent family: {meta.get('agent_family') or 'not recorded'}. Judge family: {scored['judge_family']}. "
              f"Judge command: `{scored['judge_command']}`.", ""]
@@ -385,8 +430,8 @@ def write_summary(path, data, meta, scored, verdict):
 
 
 def write_readme(path, meta, note):
-    lines = ["---", "type: log", f"summary: Tutor eval run of {meta['agent']} on {meta['date']}: what was run and how.",
-             "tags: [type/log]", "---", "", f"# Tutor eval run: {meta['agent']}, {meta['date']}", "",
+    lines = ["---", "type: log", f"summary: {bench_of(meta)['title']} of {meta['agent']} on {meta['date']}: what was run and how.",
+             "tags: [type/log]", "---", "", f"# {bench_of(meta)['title']}: {meta['agent']}, {meta['date']}", "",
              f"- Agent: {meta['agent']} (family: {meta.get('agent_family') or 'not recorded'}).",
              f"- Command: `{meta['command']}`. The prompt goes to the command on stdin.",
              f"- Scenarios run: {', '.join(map(str, meta['scenarios']))}.",
@@ -528,7 +573,8 @@ def build_parser():
                     help="paste AGENTS.md into every prompt, for a model with no file access")
     ap.add_argument("--note", help="text for the Notes section of the run README")
     ap.add_argument("--dry-run", action="store_true", help="print the first prompt of each scenario and run nothing")
-    ap.add_argument("--check-drift", action="store_true", help="compare tutor_scenarios.json with Tutor_mode.md and exit")
+    ap.add_argument("--check-drift", action="store_true", help="compare the scenarios with the Markdown table and exit")
+    ap.add_argument("--benchmark", choices=sorted(BENCHMARKS), default="tutor", help="which benchmark to run")
     ap.add_argument("--force", action="store_true", help="overwrite an existing run folder or scores")
     ap.add_argument("--root", default=str(ROOT), help="vault root (default: this vault)")
     ap.add_argument("--date", help="date for the run folder (default: today)")
@@ -538,15 +584,17 @@ def build_parser():
 def main(argv=None):
     args = build_parser().parse_args(argv)
     root = Path(args.root).resolve()
-    data = load_scenarios(root / SCENARIOS_REL)
-    problems = check_drift(data, (root / MARKDOWN_REL).read_text(encoding="utf-8"))
+    bench = BENCHMARKS[args.benchmark]
+    data = load_scenarios(root / bench["scenarios"])
+    problems = check_drift(data, (root / bench["markdown"]).read_text(encoding="utf-8"))
     if args.check_drift:
         for p in problems:
             print("drift:", p)
-        print("tutor_scenarios.json and Tutor_mode.md match" if not problems else f"{len(problems)} differences")
+        name = f"{bench['scenarios'].name} and {bench['markdown'].name}"
+        print(f"{name} match" if not problems else f"{len(problems)} differences")
         return 1 if problems else 0
     if problems:
-        print("warning: tutor_scenarios.json and Tutor_mode.md differ:", "; ".join(problems), file=sys.stderr)
+        print(f"warning: {bench['scenarios'].name} and {bench['markdown'].name} differ:", "; ".join(problems), file=sys.stderr)
 
     if args.summarize:
         run_dir = Path(args.summarize)
@@ -609,13 +657,13 @@ def main(argv=None):
         return 0
 
     stamp = args.date or date.today().isoformat()
-    run_dir = root / RUNS_REL / f"{stamp}-{args.label}"
+    run_dir = root / RUNS_REL / f"{stamp}-{bench['run_prefix']}{args.label}"
     if run_dir.exists() and not args.force:
         print(f"refused: {run_dir} exists; pick another --label or pass --force", file=sys.stderr)
         return 2
     run_dir.mkdir(parents=True, exist_ok=True)
-    meta = {"date": stamp, "label": args.label, "agent": args.agent_name or args.label, "agent_family": args.agent_family,
-            "command": args.agent_cmd, "scenarios": ids, "timeout": args.timeout,
+    meta = {"date": stamp, "label": args.label, "benchmark": args.benchmark, "agent": args.agent_name or args.label,
+            "agent_family": args.agent_family, "command": args.agent_cmd, "scenarios": ids, "timeout": args.timeout,
             "inline_instructions": bool(args.inline_instructions), "started": now()}
     records, statuses = run_scenarios(args, data, root, run_dir, meta)
     meta["finished"] = now()

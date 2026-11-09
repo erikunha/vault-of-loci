@@ -203,6 +203,39 @@ def recovery_plan(events, cap=5, inactivity=INACTIVITY_DAYS, today=None):
     }
 
 
+def error_items(events, today=None):
+    """The items whose last attempt was wrong.
+
+    A mistake that was never recovered is the most useful thing to revisit, and repeating the
+    same wording is not enough: the next try has to be a variation of the same task, so the
+    learner works with the idea and not with the memory of the sentence.
+    """
+    today = today or date.today()
+    history = item_history([event for event in events
+                             if event.get("mode") != "study"
+                             and event.get("grading_method") == "learner_confirmed"
+                             and event.get("first_attempt_correct") is not None])
+    rows = []
+    for (objective, item), attempts in history.items():
+        last = attempts[-1]
+        if last.get("first_attempt_correct") is not False:
+            continue
+        when = parse_when(last.get("occurred_at"))
+        variants = sum(1 for event in attempts
+                       if str(event.get("item_id", "")).startswith(f"{item}-v"))
+        rows.append({
+            "objective_id": objective,
+            "item_id": item,
+            "variant_id": f"{item}-v{variants + 1}",
+            "attempts": len(attempts),
+            "days_since": (today - when).days if when else None,
+            "mode": last.get("mode"),
+            "why": "the last attempt was wrong",
+        })
+    rows.sort(key=lambda row: (-(row["days_since"] or 0), str(row["item_id"])))
+    return rows
+
+
 if __name__ == "__main__":
     print(__doc__)
     sys.exit(0)
