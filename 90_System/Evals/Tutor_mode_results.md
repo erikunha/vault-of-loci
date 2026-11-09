@@ -58,3 +58,7 @@ Result: **10 of 10.** With the run of scenarios 1 to 12 above, 31 of 34 and no 0
 - In scenarios 2, 3, 7, 8, 9 and 14 the earlier turns in the prompt were written by that session, not taken from real agent replies. Scenario 2 was launched one second after scenario 1, so it does not continue the real scenario 1 reply.
 - The scorer notes for scenarios 5 and 6 above were added after those replies were seen.
 - An independent re-score by a model from another family is planned and will be logged here.
+
+## Runs with the script
+
+`run_tutor_eval.py` keeps full transcripts. See `90_System/Evals/runs/README.md` for the folder layout and the commands. No run made with it is recorded here yet. Add a section for each run: the agent, its family, the judge and its family, the total, and the verdict. A run's `summary.md` has the table.
