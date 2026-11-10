@@ -1,6 +1,6 @@
 ---
 name: review-queue
-description: List what to review next (weakest concepts, concepts not tested in 14 days, unresolved links) with the Obsidian CLI, or from files when the app is not running, within a daily review cap and with a catch-up mode for a backlog. Optionally for one track. Use when the learner asks what to study today. Reads by default and sets properties only on request.
+description: List what is next to review from the note frontmatter and the Obsidian Bases (weakest concepts, concepts not tested in 14 days, unresolved links), within a daily review cap and with a catch-up mode for a backlog, optionally for one track. Use when the learner asks what to review next or which concept is weakest or overdue. Reads by default and sets properties only on request.
 disable-model-invocation: true
 ---
 

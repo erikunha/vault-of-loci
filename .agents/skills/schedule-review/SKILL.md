@@ -1,6 +1,6 @@
 ---
 name: schedule-review
-description: Run the ranked review plan for today from the learning ledger, tell the learner which items are worth another try and why, work through them one by one with the hint ladder and confidence check, and record every confirmed attempt in the ledger. Use when the learner asks what to study today. Writes a file, so only run when asked.
+description: Run the ranked review plan for the day from the learning ledger, tell the learner which items are worth another try and why, work through them one by one with the hint ladder and confidence check, and record every confirmed attempt in the ledger. Use when the learner asks for the ranked plan of what to try today. Writes a file, so only run when asked.
 disable-model-invocation: true
 ---
 
