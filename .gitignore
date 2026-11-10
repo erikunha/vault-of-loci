@@ -21,3 +21,4 @@ node_modules/
 !90_System/Specs/
 !90_System/Specs/**
 .claude/worktrees/
+.obsidian/app.json

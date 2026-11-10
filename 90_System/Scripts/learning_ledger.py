@@ -33,7 +33,7 @@ retention and transfer. Anything else is recorded, and the report says it was ex
 """
 import json
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 VAULT = Path(__file__).resolve().parents[2]
@@ -62,6 +62,35 @@ def parse_when(value):
         return None
 
 
+def parse_moment(value):
+    """The instant of an ISO 8601 timestamp with an offset, or None when there is no such thing.
+
+    The date of a timestamp and the instant it points at are two different things. An attempt at
+    2026-11-11T02:00:00+14:00 is the same moment as 2026-11-10T09:00:00-03:00, and the second one
+    is already here. Comparing the dates of the two would call the first one a future attempt.
+    """
+    try:
+        moment = datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    return moment if moment.tzinfo is not None else None
+
+
+def sort_by_moment(events):
+    """The events in the order they happened.
+
+    The timestamp is a text with an offset, and two events written in different offsets do not
+    sort by their text: 2026-11-08T08:00:00-05:00 is one hour later than
+    2026-11-08T09:00:00-03:00. The instant decides the order, and the text is the tie break.
+    """
+    def key(event):
+        moment = parse_moment(event.get("occurred_at"))
+        return (moment if moment is not None else datetime.min.replace(tzinfo=timezone.utc),
+                str(event.get("occurred_at")), str(event.get("event_id")))
+
+    return sorted(events, key=key)
+
+
 def next_event_id(existing):
     """An event id that is not in `existing`, built from today's date."""
     today = date.today().isoformat()
@@ -80,7 +109,12 @@ def load_objectives(path=OBJECTIVES):
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-    return {str(item["id"]): item for item in data.get("objectives", []) if isinstance(item, dict) and item.get("id")}
+    if not isinstance(data, dict):
+        return {}
+    entries = data.get("objectives")
+    if not isinstance(entries, list):
+        return {}
+    return {str(item["id"]): item for item in entries if isinstance(item, dict) and item.get("id")}
 
 
 def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_objective=False):
@@ -102,10 +136,12 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     elif not isinstance(correct, bool):
         problems.append("first_attempt_correct must be true or false for a graded mode")
     confidence = event.get("confidence")
-    if confidence is not None and not (isinstance(confidence, int) and 1 <= confidence <= 5):
+    if confidence is not None and not (isinstance(confidence, int) and not isinstance(confidence, bool)
+                                       and 1 <= confidence <= 5):
         problems.append("confidence must be an integer from 1 to 5, or null")
     probability = event.get("confidence_probability")
-    if probability is not None and not (isinstance(probability, (int, float)) and 0 <= probability <= 1):
+    if probability is not None and not (isinstance(probability, (int, float)) and not isinstance(probability, bool)
+                                        and 0 <= probability <= 1):
         problems.append("confidence_probability must be a number from 0 to 1, or null")
     hints = event.get("hints_used", 0)
     if not isinstance(hints, int) or hints < 0:
@@ -115,10 +151,10 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     minutes = event.get("duration_minutes")
     if minutes is not None and (not isinstance(minutes, (int, float)) or minutes < 0):
         problems.append("duration_minutes must be 0 or more, or null")
-    when = parse_when(event.get("occurred_at"))
-    if when is None:
+    moment = parse_moment(event.get("occurred_at"))
+    if moment is None:
         problems.append("occurred_at must be an ISO 8601 timestamp with an offset")
-    elif when > date.today():
+    elif moment > datetime.now().astimezone():
         problems.append("occurred_at is in the future")
     if known_objectives is not None and not allow_unknown_objective:
         if event.get("objective_id") not in known_objectives:
@@ -128,12 +164,28 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     return problems
 
 
+def problem_lines(problems):
+    """The lines that tell the reader which lines of the ledger could not be read.
+
+    Every report that reads the ledger shows these, so a line that could not be parsed never
+    disappears silently and the report never counts an attempt that was not read.
+    """
+    if not problems:
+        return []
+    return ["", "Ledger lines that could not be read:"] + [f"  - {problem}" for problem in problems]
+
+
 def read_ledger(path=LEDGER):
-    """The events of the ledger and the problems of the lines that could not be read."""
+    """The events of the ledger and the problems of the lines that could not be read.
+
+    A file that is not there is a problem of its own: an empty ledger and a ledger that could not
+    be opened are two different things, and a report that says the same about both hides one.
+    """
     events, problems = [], []
     try:
         text = Path(path).read_text(encoding="utf-8")
-    except OSError:
+    except OSError as problem:
+        problems.append(f"the ledger file could not be read: {problem}")
         return events, problems
     for number, line in enumerate(text.splitlines(), start=1):
         if not line.strip():
@@ -148,7 +200,7 @@ def read_ledger(path=LEDGER):
             continue
         event["_line"] = number
         events.append(event)
-    events.sort(key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id"))))
+    events = sort_by_moment(events)
     return events, problems
 
 
@@ -192,7 +244,9 @@ def learned_objectives(events):
     """The objectives that meet the rule the vault already states: recalled twice on different
     days without notes, and used once in a task the learner had not seen.
 
-    The rule lives in `90_System/Specs/Track_kinds.md`. Here it is computed from the ledger.
+    The rule lives in `90_System/Specs/Track_kinds.md`. Here it is computed from the ledger. Only
+    an attempt the learner confirmed counts, the same as in the metrics: an attempt the agent
+    graded is evidence about the agent, not about the learner.
     """
     by_objective = {}
     for event in events:
@@ -201,15 +255,16 @@ def learned_objectives(events):
     for objective, items in sorted(by_objective.items(), key=lambda pair: str(pair[0])):
         recall_days, novel_use = set(), False
         seen_items = set()
-        for event in sorted(items, key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id")))):
+        for event in sort_by_moment(items):
             item_id = event.get("item_id")
             correct = event.get("first_attempt_correct") is True
             helped = event.get("assistance") != "none"
-            if event.get("mode") in RETENTION_MODES and correct and not helped:
+            graded_by_agent = event.get("grading_method") != "learner_confirmed"
+            if event.get("mode") in RETENTION_MODES and correct and not helped and not graded_by_agent:
                 when = parse_when(event.get("occurred_at"))
                 if when:
                     recall_days.add(when)
-            if event.get("mode") in TRANSFER_MODES and correct and not helped and item_id not in seen_items:
+            if event.get("mode") in TRANSFER_MODES and correct and not helped and not graded_by_agent and item_id not in seen_items:
                 novel_use = True
             seen_items.add(item_id)
         if len(recall_days) >= 2 and novel_use:
@@ -217,17 +272,38 @@ def learned_objectives(events):
     return learned
 
 
-def metrics(events, horizons=HORIZONS):
+def in_current_series(event, objectives):
+    """True when the attempt belongs to the series of the rubric that grades the objective now.
+
+    A new rubric version starts a new series and never mixes with the old one, so an attempt
+    graded by an older rubric is not part of the rate of the current one. An objective that is
+    not in the registry is not filtered: the registry is what says which rubric is current.
+    """
+    entry = objectives.get(str(event.get("objective_id")))
+    if not entry:
+        return True
+    current = entry.get("rubric_version")
+    if not current:
+        return True
+    return str(event.get("rubric_version")) == str(current)
+
+
+def metrics(events, horizons=HORIZONS, objectives=None):
     """Retention, transfer, calibration and the learned rule, for every objective and overall.
 
     A retention attempt at horizon h is a recall or explain attempt, on the first try, with no
-    help, graded by the learner, made h days or more after the item was first seen. Transfer is
-    the same, with an apply or discriminate task instead.
+    help, graded by the learner, made h days or more after the objective was first seen. Transfer is
+    the same, with an apply or discriminate task instead. An attempt with no verdict says nothing
+    about what was remembered, so it is not eligible for any horizon. An attempt graded by an
+    older rubric is not part of the current series of the objective, so it is not eligible either.
     """
+    registry = load_objectives() if objectives is None else objectives
     exposure, item_days, inferred = first_exposure(events)
+    shortest = min(horizons) if horizons else None
     graded = [event for event in events if event.get("mode") != "study"]
     objectives = sorted({str(event.get("objective_id")) for event in events})
     report = {
+        "events": len(events),
         "attempts": len(graded),
         "items": len({event.get("item_id") for event in events}),
         "objectives": objectives,
@@ -236,7 +312,7 @@ def metrics(events, horizons=HORIZONS):
         "calibration": {},
         "learned": learned_objectives(events),
         "exposure": {str(name): day.isoformat() for name, day in exposure.items()},
-        "excluded": {"help": 0, "agent_graded": 0, "too_recent": 0},
+        "excluded": {"help": 0, "agent_graded": 0, "too_recent": 0, "other_rubric": 0},
         "inferred_exposure": len(inferred),
     }
     for horizon in horizons:
@@ -248,6 +324,14 @@ def metrics(events, horizons=HORIZONS):
                 if event.get("assistance") != "none":
                     continue
                 if event.get("grading_method") != "learner_confirmed":
+                    continue
+                if event.get("first_attempt_correct") is None:
+                    # A graded attempt with no verdict says nothing about what was remembered.
+                    # Counting it would print a rate that no event supports.
+                    continue
+                if not in_current_series(event, registry):
+                    # An attempt graded by an older rubric is another series, and the series
+                    # never mix.
                     continue
                 key = event.get("objective_id")
                 first = exposure.get(key)
@@ -264,10 +348,12 @@ def metrics(events, horizons=HORIZONS):
             report["excluded"]["help"] += 1
         elif event.get("grading_method") != "learner_confirmed":
             report["excluded"]["agent_graded"] += 1
+        elif not in_current_series(event, registry):
+            report["excluded"]["other_rubric"] += 1
         else:
             first = exposure.get(event.get("objective_id"))
             when = parse_when(event.get("occurred_at"))
-            if first is not None and when is not None and (when - first).days < min(horizons):
+            if shortest is not None and first is not None and when is not None and (when - first).days < shortest:
                 report["excluded"]["too_recent"] += 1
     explicit, ordinal = [], []
     for event in graded:
@@ -278,9 +364,11 @@ def metrics(events, horizons=HORIZONS):
             continue
         probability = event.get("confidence_probability")
         confidence = event.get("confidence")
-        if isinstance(probability, (int, float)):
+        # A boolean is not a number here: `true` is not a probability of 1 and not a confidence
+        # of 1. The calibration module reads the same two fields the same way.
+        if isinstance(probability, (int, float)) and not isinstance(probability, bool):
             explicit.append((float(probability), 1.0 if outcome else 0.0))
-        elif isinstance(confidence, int) and 1 <= confidence <= 5:
+        elif isinstance(confidence, int) and not isinstance(confidence, bool) and 1 <= confidence <= 5:
             ordinal.append(((confidence - 1) / 4, 1.0 if outcome else 0.0))
     report["calibration"] = {
         "brier_explicit": _brier(explicit),
@@ -295,13 +383,14 @@ def metrics(events, horizons=HORIZONS):
     return report
 
 
-def by_objective(events, horizons=HORIZONS):
+def by_objective(events, horizons=HORIZONS, objectives=None):
     """The same metrics, one entry per objective."""
-    objectives = sorted({str(event.get("objective_id")) for event in events})
+    names = sorted({str(event.get("objective_id")) for event in events})
+    registry = load_objectives() if objectives is None else objectives
     result = {}
-    for objective in objectives:
+    for objective in names:
         subset = [event for event in events if str(event.get("objective_id")) == objective]
-        result[objective] = metrics(subset, horizons)
+        result[objective] = metrics(subset, horizons, registry)
     return result
 
 

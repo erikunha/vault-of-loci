@@ -14,7 +14,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, OBJECTIVES, load_objectives, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, OBJECTIVES, load_objectives, problem_lines, read_ledger  # noqa: E402
 from transfer import transfer_plan, transfer_status  # noqa: E402
 
 
@@ -29,14 +29,17 @@ def parse_args(argv):
 
 def main(argv=None):
     args = parse_args(argv)
-    events, _ = read_ledger(args.ledger)
+    events, problems = read_ledger(args.ledger)
     objectives = load_objectives(args.objectives)
     status = transfer_status(events, objectives, date.today())
     plan = transfer_plan(events, objectives, date.today(), args.limit)
     if args.as_json:
-        print(json.dumps({"status": status, "plan": plan}, ensure_ascii=False, indent=2, sort_keys=True))
+        print(json.dumps({"status": status, "plan": plan, "problems": problems},
+                         ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     print("Transfer lab")
+    for line in problem_lines(problems):
+        print(line)
     if not status:
         print("no objective has been studied yet.")
         return 0

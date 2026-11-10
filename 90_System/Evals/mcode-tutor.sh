@@ -7,8 +7,7 @@
 # keep running long after the reply is already produced, so the caller only
 # sees a timeout and throws the answer away. In both cases the reply is on
 # disk: the diagnostics directory holds the session id, and the session
-# directory holds the messages, where the chosen answer is the last assistant
-# message with text.
+# directory holds the messages.
 #
 # So: run the CLI in the background, watch the session for the answer, and
 # print it as soon as it is there. The CLI is killed when the answer is found
@@ -17,7 +16,9 @@
 # The reply is tied to the "answer_selected" event the CLI writes, and not to
 # the last message on disk. The agent writes text while it works, so the last
 # message can be a half-finished one. The event carries the size in bytes of
-# the reply the CLI chose, which identifies it exactly.
+# the reply the CLI chose, which identifies it exactly. A session that holds
+# messages and no event names no answer, and the wrapper prints nothing rather
+# than print a message that nobody chose.
 #
 # The deadline comes from MCODE_TUTOR_TIMEOUT, in seconds. It defaults to 600.
 # The runner sets it to its own timeout, so the reply is not cut inside the
@@ -38,7 +39,8 @@ poll=${MCODE_TUTOR_POLL:-2}
 # The reply the CLI chose, read from the session it wrote.
 #
 # Exit codes: 0 the reply was printed, 1 there is no session yet, 2 the CLI
-# chose an answer but the reply is not on disk yet.
+# chose an answer but the reply is not on disk yet, 3 the session holds
+# messages and the CLI chose no answer.
 read_reply() {
   python3 - "$diag" "$work/session_dir" <<'PY'
 import json, sys
@@ -127,8 +129,9 @@ if answer_bytes is not None:
     # answering with an earlier message would answer with the wrong text.
     sys.exit(2)
 if texts:
-    print(texts[-1])
-    sys.exit(0)
+    # The session holds messages and the CLI chose no answer. Answering with the last of
+    # them would answer with a half-finished text, so nothing is printed.
+    sys.exit(3)
 sys.exit(1)
 PY
 }
@@ -138,31 +141,34 @@ mcode exec --input - --output-format text --diagnostics-dir "$diag" \
 pid=$!
 
 answer=""
+status=1
 start=$SECONDS
 exited_at=""
 while [ $((SECONDS - start)) -lt "$deadline" ]; do
-  if [ -s "$work/stdout.txt" ]; then
-    answer=$(cat "$work/stdout.txt")
-    break
-  fi
+  # The reply the CLI chose is read before what the CLI printed, because the CLI can
+  # print a line of progress before the answer, and the run would score that line.
+  answer=$(read_reply)
+  status=$?
+  case $status in
+    0) break ;;
+    2) ;;  # the reply is chosen but not written yet, keep waiting
+  esac
+
   if [ -s "$diag/failure-answer.txt" ]; then
     answer=$(cat "$diag/failure-answer.txt")
     break
   fi
-
-  # The reply on disk is checked before the liveness of the CLI, because the
-  # CLI can exit right after writing the reply, and the reply is what matters.
-  answer=$(read_reply)
-  case $? in
-    0) break ;;
-    2) ;;  # the reply is chosen but not written yet, keep waiting
-  esac
 
   if ! kill -0 "$pid" 2>/dev/null; then
     if [ -z "$exited_at" ]; then
       exited_at=$SECONDS
     fi
     if [ $((SECONDS - exited_at)) -ge "$grace" ]; then
+      # The CLI is gone and left no session of its own, so what it printed is the answer.
+      # A session that holds messages is not this case: there the CLI chose no answer.
+      if [ "$status" = "1" ] && [ -s "$work/stdout.txt" ]; then
+        answer=$(cat "$work/stdout.txt")
+      fi
       break
     fi
   fi

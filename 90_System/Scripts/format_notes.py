@@ -46,11 +46,15 @@ def needs_gap(a, b):
 def format_text(text):
     lines = text.split("\n")
     out, i = [], 0
+    prev = "start"
     if lines and lines[0] == "---":
         end = next((k for k in range(1, len(lines)) if lines[k] == "---"), None)
-        if end is not None:
-            out, i = lines[: end + 1], end + 1
-    prev = "start"
+        if end is None:
+            # The frontmatter never closes. The note is broken, and a broken note is left as it
+            # is: treating the `---` as a rule would put a blank line inside the frontmatter.
+            return text
+        out, i = lines[: end + 1], end + 1
+        prev = "front"
     while i < len(lines):
         ln = lines[i]
         fence = re.match(r"\s*(`{3,}|~{3,})", ln)
@@ -91,7 +95,8 @@ def format_text(text):
         else:
             if out and out[-1].strip() and prev != "start" and needs_gap(prev, k):
                 out.append("")
-            out.append(ln.rstrip() if k != "paragraph" or not ln.endswith("  ") else ln)
+            # Two spaces at the end of a line are a hard break in Markdown, and they are kept.
+            out.append(ln if ln.endswith("  ") else ln.rstrip())
             prev = k
         i += 1
     while out and not out[-1].strip():

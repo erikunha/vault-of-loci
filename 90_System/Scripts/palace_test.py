@@ -7,7 +7,9 @@ blank, and the agent asks one place at a time, in walking order.
 The palace note is `50_Review/Palaces/<Name>.md` and its table has the columns Place, Item and
 Source. The rows of that table are the route. The objective id of the palace is `palace-<name>`
 and the item id of a place is `palace-<name>-<place number>`, so each place is recorded on its
-own with `record_attempt.py --objective palace-<name> --item palace-<name>-<n> --mode recall`.
+own with `record_attempt.py --objective palace-<name> --item palace-<name>-<n> --mode recall
+--allow-unknown-objective`. The flag is needed because a palace objective is not in
+`90_System/Objectives.json`.
 
 Usage: python3 -I 90_System/Scripts/palace_test.py --palace PATH [--places N] [--start N]
        [--ledger PATH] [--with-items] [--json]
@@ -22,7 +24,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import read_ledger  # noqa: E402
+from learning_ledger import problem_lines, read_ledger  # noqa: E402
 from palace import (  # noqa: E402
     LEDGER,
     attempts_by_item,
@@ -48,7 +50,7 @@ def build_route(args):
     """The route of the palace, the places this walk covers and the ledger counts of each."""
     palace = read_palace(args.palace)
     places = select_places(palace["places"], args.start, args.places)
-    events, _ = read_ledger(args.ledger)
+    events, problems = read_ledger(args.ledger)
     counts = attempts_by_item(events, palace["objective_id"])
     rows = []
     for place in places:
@@ -65,13 +67,13 @@ def build_route(args):
         if args.with_items:
             row["item"] = place["item"]
         rows.append(row)
-    return palace, rows
+    return palace, rows, problems
 
 
 def main(argv=None):
     args = parse_args(argv)
     try:
-        palace, rows = build_route(args)
+        palace, rows, problems = build_route(args)
     except FileNotFoundError as problem:
         print(f"palace not found: {problem}")
         return 1
@@ -84,10 +86,13 @@ def main(argv=None):
             "shown": len(rows),
             "start": args.start,
             "places": rows,
+            "problems": problems,
         }, ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     print(f"Palace: {palace['name']}")
     print(f"Objective id: {palace['objective_id']}")
+    for line in problem_lines(problems):
+        print(line)
     if not palace["places"]:
         print()
         print("this palace has no places yet. Fill the table in the note first.")

@@ -71,7 +71,7 @@ The tutor family is the family of the model that answered, not of the CLI. Antig
 
 - One run per agent, one date, one set of transcripts. Nothing here says how the same agent behaves on another day.
 - The MiniMax run reads `AGENTS.md` from the vault copy. The agy run runs in the delegated print mode of the Antigravity CLI, which is what lets it read the notes; without that mode the CLI's PreToolUse hook refuses the reads and the run measures the hook, not the agent.
-- The MiniMax Code CLI exits 70 when its runtime shutdown misses the deadline. The answer is still on disk, so the run used a wrapper that reads it from the diagnostics folder. The wrapper is in the run folder as `mcode-tutor.sh`.
+- The MiniMax Code CLI exits 70 when its runtime shutdown misses the deadline. The answer is still on disk, so the run used a wrapper that reads it from the diagnostics folder. The wrapper is `90_System/Evals/mcode-tutor.sh`.
 - Only the tutor's own family was ruled out as judge. A judge from the same company but a different model would be weaker than one from another family.
 
 ## Notes on the eval

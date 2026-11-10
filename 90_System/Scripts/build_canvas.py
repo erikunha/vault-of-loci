@@ -50,7 +50,9 @@ def canvas(root, track_dir):
         if track_note:
             edges.append({"id": node_id(rel(track_note) + rel(s)), "fromNode": node_id(rel(track_note)), "toNode": node_id(rel(s))})
         for name in dict.fromkeys(LINK.findall(s.read_text(encoding="utf-8"))):
-            target = concepts.get(name.strip())
+            # A link can name the concept with its folder, `[[20_Concepts/Alpha]]`, and that is
+            # the same concept as `[[Alpha]]`.
+            target = concepts.get(Path(name.strip()).name)
             if not target:
                 continue
             key = rel(target)

@@ -3,12 +3,16 @@ import json
 import subprocess
 import sys
 import tempfile
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parents[1] / "record_attempt.py"
-YESTERDAY = (date.today() - timedelta(days=1)).isoformat()
-TOMORROW = (date.today() + timedelta(days=1)).isoformat()
+# The ledger schema asks for an ISO 8601 timestamp with an offset, so the test uses one.
+OFFSET = datetime.now().astimezone().strftime("%z")
+OFFSET = OFFSET[:3] + ":" + OFFSET[3:]
+YESTERDAY = f"{(date.today() - timedelta(days=1)).isoformat()}T10:00:00{OFFSET}"
+TOMORROW = f"{(date.today() + timedelta(days=1)).isoformat()}T10:00:00{OFFSET}"
+NO_OFFSET = (date.today() - timedelta(days=1)).isoformat() + "T10:00:00"
 
 OBJECTIVES = {
     "version": "v1",
@@ -74,6 +78,12 @@ with tempfile.TemporaryDirectory() as tmp:
                         "--mode", "recall", "--correct", "--hints", "2", "--at", YESTERDAY)
     assert contradiction.returncode == 1, "hints with no assistance is refused: " + contradiction.stdout
     assert "contradiction" in contradiction.stdout, contradiction.stdout
+
+    # The schema asks for a timestamp with an offset, so one without it is refused.
+    naive = run(root, "--objective", "retrieval-practice-recall", "--item", "item-08",
+                "--mode", "recall", "--correct", "--at", NO_OFFSET)
+    assert naive.returncode == 1, "a timestamp without an offset is refused: " + naive.stdout
+    assert "with an offset" in naive.stdout, naive.stdout
 
     future = run(root, "--objective", "retrieval-practice-recall", "--item", "item-07",
                  "--mode", "recall", "--correct", "--at", TOMORROW)

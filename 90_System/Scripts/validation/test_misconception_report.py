@@ -96,4 +96,28 @@ with tempfile.TemporaryDirectory() as tmp:
     listed = run(root)
     assert "retrieval-practice-recall" in listed.stdout, listed.stdout
     assert "two items that look alike" in listed.stdout, listed.stdout
-print("ok: 11 checks")
+
+    # An attempt the agent graded is not the learner's mistake, so it does not count.
+    graded = [event(event_id="g1", grading_method="agent_graded"),
+              event(event_id="g2", grading_method="agent_graded", occurred_at=days_ago(2))]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in graded), encoding="utf-8")
+    only_graded = json.loads(run(root, "--json").stdout)
+    assert not only_graded["confusions"], only_graded
+
+    # A line that could not be read is reported, not dropped in silence.
+    ledger.write_text("{not json\n" + json.dumps(events[0]) + "\n", encoding="utf-8")
+    corrupt = json.loads(run(root, "--json").stdout)
+    assert corrupt["problems"], corrupt
+    assert "not valid JSON" in corrupt["problems"][0], corrupt["problems"]
+
+    # A mistakes note that is not there is a problem, not a log with no open mistake.
+    missing_note = root / "No_Mistakes.md"
+    ledger.write_text(json.dumps(events[0]) + "\n", encoding="utf-8")
+    absent = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger),
+                              "--mistakes", str(missing_note), "--json"],
+                             capture_output=True, text=True)
+    assert absent.returncode == 0, absent.stderr
+    absent_report = json.loads(absent.stdout)
+    assert absent_report["problems"], absent_report
+    assert "mistakes note" in absent_report["problems"][0], absent_report["problems"]
+print("ok: 18 checks")

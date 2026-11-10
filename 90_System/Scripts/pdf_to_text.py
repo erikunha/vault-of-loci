@@ -20,6 +20,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def read_manifest(path):
+    """The entries of the manifest, or an empty one when the file is empty or not readable.
+
+    A manifest that cannot be read is not a manifest with the entries in it, and it must not
+    stop the script with a traceback.
+    """
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("pdf", type=Path)
@@ -29,7 +42,7 @@ def main():
     ap.add_argument("--text-cmd", default="pdftotext")
     args = ap.parse_args()
     digest = hashlib.sha256(args.pdf.read_bytes()).hexdigest()
-    manifest = json.loads(args.manifest.read_text(encoding="utf-8")) if args.manifest.exists() else {}
+    manifest = read_manifest(args.manifest)
     if digest in manifest:
         print(f"already processed: {args.pdf.name} is {manifest[digest]['file']}, note {manifest[digest]['note'] or 'not recorded'}")
         return 3

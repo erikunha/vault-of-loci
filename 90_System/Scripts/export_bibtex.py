@@ -1,9 +1,13 @@
 """Export reference notes to BibTeX and CSL JSON for Zotero, Pandoc or LaTeX.
 
 Reads every note with `type: reference` and uses its frontmatter: `subtype` (paper, book,
-repository, web), `authors` (comma separated), `year`, `venue`, `doi`, `arxiv`, `link`,
+repository, web), `authors`, `year`, `venue`, `doi`, `arxiv`, `link`,
 `verified`. The title is the note's `# heading` without a trailing `(Author, year)`. A note with `verified: false` gets
 `note = {not verified}`. Keys are the first author's last name plus the year.
+
+The authors are separated by a comma and by " and ". A name written with a comma inside it,
+"Surname, Given name", is one author, and the vault writes that form when the name is the first
+of a pair joined by " and ". The same list of authors goes to the BibTeX and to the CSL JSON.
 
 Dry run by default: prints the BibTeX. `--out refs.bib` and `--csl-out refs.json` write files.
 
@@ -32,8 +36,41 @@ def frontmatter(text):
     return data, text[end + 4:]
 
 
+def authors_of(value):
+    """The authors of a reference, in the order the note writes them.
+
+    The vault separates the authors with a comma and with " and ". A name written with a comma
+    inside it, "Surname, Given name", is one author, and the vault writes that form when the
+    name is the first of a pair joined by " and ". The same list goes to the BibTeX and to the
+    CSL JSON, so the two never name a different set of people.
+    """
+    value = str(value).strip()
+    if value.startswith("["):
+        try:
+            items = json.loads(value)
+        except ValueError:
+            items = []
+        if isinstance(items, list) and items:
+            return [str(item).strip().strip("'\"") for item in items if str(item).strip()]
+    groups = [group.strip() for group in re.split(r"\s+and\s+", value) if group.strip()]
+    authors = []
+    for number, group in enumerate(groups):
+        parts = [part.strip() for part in group.split(",") if part.strip()]
+        if len(parts) == 2 and number == 0 and len(groups) > 1:
+            authors.append(f"{parts[0]}, {parts[1]}")
+        else:
+            authors.extend(parts)
+    return authors
+
+
 def last_name(author):
-    words = [w for w in author.split() if w.casefold() not in SUFFIXES]
+    """The surname of an author, the way the key of the entry is built from it.
+
+    A name written "Surname, Given name" carries the surname first, and a name written
+    "Given name Surname" carries it last. The suffix of a name is not part of it.
+    """
+    name = str(author).split(",")[0].strip()
+    words = [w for w in name.split() if w.casefold() not in SUFFIXES]
     return words[-1] if words else "anon"
 
 
@@ -45,7 +82,7 @@ def references(root):
             continue
         title = next((l[2:].strip() for l in body.splitlines() if l.startswith("# ")), path.stem)
         title = re.sub(r"\s*\([^()]*,\s*\d{4}\)$", "", title)
-        authors = [a.strip() for a in meta.get("authors", "").split(",") if a.strip()]
+        authors = authors_of(meta.get("authors", ""))
         year = meta.get("year", "")
         base = re.sub(r"\W", "", last_name(authors[0]) if authors else path.stem).lower() + year
         key, n = base, 1

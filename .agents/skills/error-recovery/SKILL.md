@@ -1,6 +1,6 @@
 ---
 name: error-recovery
-description: Take an item whose last attempt was wrong and write a variation of the same task under the id the plan prints, so the learner works with the idea and not with the memory of the sentence, then record the graded attempt in the learning ledger; use it when a mistake was never recovered, and it writes a file, so run it only when asked.
+description: Take an item whose mistake was never recovered without help and write a variation of the same task under the id the plan prints, so the learner works with the idea and not with the memory of the sentence, then record the graded attempt in the learning ledger; use it when a mistake was never recovered, and it writes a file, so run it only when asked.
 disable-model-invocation: true
 ---
 
@@ -29,7 +29,8 @@ python3 -I 90_System/Scripts/schedule_review.py --errors
    time: hint, strong hint, partial example, answer. Never skip a step.
 7. Ask for confidence from 1 to 5 before the reveal. Then reveal and grade the learner's words
    against the source.
-8. Record the attempt with the id of the variation, not with the id of the original item.
+8. Record the attempt only after the learner confirms the result. Use the id of the variation,
+   not the id of the original item.
 
 ```bash
 python3 -I 90_System/Scripts/record_attempt.py --objective <id> --item <id> --mode <mode> \

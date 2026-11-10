@@ -7,6 +7,7 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parents[1] / "export_anki_tsv.py"
 NOTE = """---
 type: concept
+tags: [flashcards]
 ---
 
 # Spacing
@@ -39,4 +40,12 @@ with tempfile.TemporaryDirectory() as tmp:
     assert len(rows) == 2, f"two cards, templates and fences skipped: {rows}"
     assert rows[0] == ["Basic", "Vault of Loci::01_Bio", "What is spacing?", "Reviewing over time with `gap > 1`, see the paper.", "S1"], rows[0]
     assert rows[1][0] == "Cloze" and "{{c1::massed}}" in rows[1][2] and "{{c2::long-term}}" in rows[1][2], rows[1]
-print("ok: 6 checks")
+    # A cloze in a note that is not tagged `flashcards` is not a card, the same rule the
+    # flashcards check reads.
+    (root / "10_Tracks" / "01_Bio" / "sessions" / "S2.md").write_text(
+        "---\ntype: log\n---\n\n# Log\n\nSpacing beats ==massed== practice.\n", encoding="utf-8")
+    out2 = root / "cards2.tsv"
+    subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--out", str(out2)], check=True, capture_output=True)
+    rows2 = [line.split("\t") for line in out2.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
+    assert not [row for row in rows2 if row[0] == "Cloze" and row[4] == "S2"], rows2
+print("ok: 7 checks")

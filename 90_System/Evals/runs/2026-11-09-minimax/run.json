@@ -3,7 +3,7 @@
   "label": "minimax",
   "agent": "minimax",
   "agent_family": "minimax",
-  "command": "90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh",
+  "command": "90_System/Evals/mcode-tutor.sh",
   "scenarios": [
     1,
     2,

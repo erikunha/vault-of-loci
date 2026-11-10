@@ -40,8 +40,8 @@ eval in `90_System/Evals/Tutor_mode.md` tests the agent. These interventions tes
 - strength starts at 0.5, because nothing is known before the first attempt. A correct try adds
   40% of what is missing, a wrong one removes 40% of what is there.
 - priority is (1 - strength) times (1 + days since the last attempt / 30). Weak and stale first.
-- an item whose last attempt was wrong is doubled, because a mistake that was never recovered is
-  the most useful thing to revisit.
+- an item whose mistake was never recovered without help is doubled, because a mistake that was
+  never recovered is the most useful thing to revisit.
 - the day holds 15 reviews and about 2 new cards. When the queue is over the cap the oldest and
   weakest come first and no new cards are added until the queue is under it.
 
@@ -52,7 +52,7 @@ Decisions and alternatives:
 | A transparent formula | FSRS, with stability and difficulty per item | FSRS predicts the next review for a card. The vault has objectives and tasks, not cards, and the plugin already runs FSRS for the flashcards. A second scheduler would predict twice |
 | A priority, never a probability | A "chance of remembering" per item | The spec for the outcomes says a forecast is not a measurement. A number that looks like a probability would be read as one |
 | The ledger, not the plugin schedule | Read the Spaced Repetition plugin data | The safety rules forbid every agent from reading plugin data files. The ledger is the vault's own record |
-| Wrong last attempt doubled | Every item weighted the same | A mistake that was never recovered is the strongest signal that something is not learned yet |
+| An unrecovered mistake is doubled | Every item weighted the same | A mistake that was never recovered is the strongest signal that something is not learned yet |
 
 ## Delayed retention assessment
 
@@ -161,8 +161,8 @@ Decisions and alternatives:
 
 ## Error recovery
 
-`schedule_review.py --errors` lists the items whose last attempt was wrong, each with the id a
-variation of the task must carry, for example `rp-r-01-v2`. The variation keeps the mechanism and
+`schedule_review.py --errors` lists the items whose mistake was never recovered without help, each
+with the id a variation of the task must carry, for example `rp-r-01-v2`. The variation keeps the mechanism and
 changes the surface, so the learner works with the idea and not with the memory of the sentence.
 
 A mistake is closed only after it comes back right, without help, from memory. That is the rule
@@ -174,14 +174,14 @@ Decisions and alternatives:
 |---|---|---|
 | A variation of the same task | The same task again | The second try should test the idea, not the wording |
 | The mistake stays open until a clean success | Close it after the correction is written | Writing the correction is not remembering it |
-| The plan doubles the priority of a wrong last attempt | Weight every item the same | A mistake that was never recovered is the most useful thing to revisit |
+| The plan doubles the priority of an unrecovered mistake | Weight every item the same | A mistake that was never recovered is the most useful thing to revisit |
 
 ## Dependency check
 
 `dependency_check.py` reads what must be understood before what, from the concept map of each
 track and from the edges of the canvases, and joins it with the ledger. A prerequisite is a gap
-when it was never tested without help, when the last attempt was wrong, or when it has not been
-tested for a while.
+when it was never tested without help, when the mistake was never recovered without help, or
+when it has not been tested for a while.
 
 Decisions and alternatives:
 

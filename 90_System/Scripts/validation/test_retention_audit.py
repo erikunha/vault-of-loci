@@ -235,4 +235,24 @@ with tempfile.TemporaryDirectory() as tmp:
     assert [entry["id"] for entry in empty_report["registered_without_events"]] == ["o-agent", "o-never"], empty_report
     assert empty_report["registered_without_events"][1]["criterion"] == "State the one result.", empty_report
 
-print("ok: 47 checks")
+    # --plan prints only what is due, because that is the one question it answers.
+    due = [
+        event(event_id="p1", objective_id="o-plan", item_id="item-p", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="p2", objective_id="o-plan", item_id="item-p", occurred_at=days_ago(93)),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in due), encoding="utf-8")
+    plan = run(root, "--plan")
+    assert plan.returncode == 0, plan.stderr
+    assert "Due now" in plan.stdout, plan.stdout
+    assert "o-plan at 30 days" in plan.stdout, plan.stdout
+    assert "Never measured without help" not in plan.stdout, plan.stdout
+
+    # A registry that is not a JSON object is refused instead of crashing.
+    bad_registry = root / "bad.json"
+    bad_registry.write_text("[]", encoding="utf-8")
+    broken = run_with_objectives(root, bad_registry)
+    assert broken.returncode == 0, broken.stdout + broken.stderr
+    assert "Traceback" not in broken.stderr, broken.stderr
+
+print("ok: 51 checks")

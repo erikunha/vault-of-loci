@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Tutor eval runs
 
-Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`. Run the commands below from the root of the vault, then commit the folder you want to keep.
+Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`, with the prefix of the benchmark in the label: a run of the learning benchmark is `<YYYY-MM-DD>-learning-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, and they are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
 
 A run folder holds:
 
@@ -14,7 +14,7 @@ A run folder holds:
 - `transcript.md`: the same transcript, readable.
 - `run.json` and `README.md`: the settings and a short description of the run.
 - `scoring_sheet.md`: a table a person fills in.
-- `scores.json` and `summary.md`: written when a judge scores the run. A second judge from another family adds `scores-judge-<family>.json` and `summary-judge-<family>.md` next to them.
+- `scores.json` and `summary.md`: written when a judge scores the run. The runner writes one pair of files. A second judge is scored by hand: its scores are saved next to them as `scores-judge-<judge>.json`, with the family and the model of the judge, so two judges of the same family do not share one name, and `judge_agreement.py` compares the two files.
 
 The scenarios, the rubric and the pass rule are in [[Tutor_mode|Tutor mode eval]]. Results are summarized in [[Tutor_mode_results|Tutor mode eval results]].
 
@@ -41,7 +41,7 @@ Add `--scenarios 1,2,5` to try a few scenarios first, or `--dry-run` to print th
 Two things changed in the runs of 2026-11-09, both about the CLI rather than the model:
 
 - **Antigravity needs the delegated print mode to read the vault.** In the plain print mode its PreToolUse hook refuses to read files inside the vault copy, so the agent answers from the prompt alone and the run measures the hook. `AI_DEV_RUNTIME_AGY_DELEGATED=1` is the mode that lets ordinary reads through. The run of 2026-11-09 used it.
-- **The MiniMax Code CLI can lose the answer on exit.** When its runtime shutdown misses the deadline it exits 70 and prints nothing, even though the reply was produced. The wrapper `mcode-tutor.sh` in the run folder `2026-11-09-minimax` runs the CLI with `--diagnostics-dir` and prints the message it finds there. Use it as `--agent-cmd` or as `--judge-cmd`.
+- **The MiniMax Code CLI can lose the answer on exit.** When its runtime shutdown misses the deadline it exits 70 and prints nothing, even though the reply was produced. The wrapper `90_System/Evals/mcode-tutor.sh` runs the CLI with `--diagnostics-dir` and prints the message it finds there. Use it as `--agent-cmd` or as `--judge-cmd`.
 
 ## Add a judge from another family
 

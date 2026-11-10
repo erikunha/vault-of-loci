@@ -2,8 +2,8 @@
 
 The ledger is `50_Review/Attempts.jsonl`, written by `record_attempt.py`. This script only reads
 it. A retention number at a horizon counts first attempts, without help, graded by the learner,
-made that many days or more after the item was first seen. Transfer is the same, with an apply
-or discriminate task instead of a recall.
+made that many days or more after the objective was first seen. Transfer is the same, with an
+apply or discriminate task instead of a recall.
 
 A forecast is not a measurement, so nothing here predicts retention. Every number is what the
 learner already did.
@@ -20,7 +20,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from learning_ledger import (  # noqa: E402
     LEDGER,
     HORIZONS,
+    OBJECTIVES,
     by_objective,
+    load_objectives,
     metrics,
     now_iso,
     read_ledger,
@@ -42,6 +44,7 @@ def parse_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--ledger", type=Path, default=LEDGER, help="path of the ledger")
     ap.add_argument("--horizons", default=",".join(str(h) for h in HORIZONS), help="days, for example 7,30,90")
+    ap.add_argument("--objectives", type=Path, default=OBJECTIVES, help="path of the objective registry")
     ap.add_argument("--objective", help="report only this objective")
     ap.add_argument("--json", dest="as_json", action="store_true", help="print the report as JSON")
     return ap.parse_args(argv)
@@ -58,7 +61,8 @@ def lines(report, events, problems, horizons, objective=None):
     out.append(f"generated: {now_iso()}")
     if objective:
         out.append(f"objective: {objective}")
-    out.append(f"attempts recorded: {report['attempts']}   items: {report['items']}   objectives: {len(report['objectives'])}")
+    out.append(f"events recorded: {report['events']}   graded attempts: {report['attempts']}   "
+               f"items: {report['items']}   objectives: {len(report['objectives'])}")
     if problems:
         out.append("")
         out.append("Ledger lines that could not be read:")
@@ -66,7 +70,13 @@ def lines(report, events, problems, horizons, objective=None):
             out.append(f"  - {problem}")
     if not report["attempts"]:
         out.append("")
-        out.append("no attempt recorded yet. Run record_attempt.py after a graded attempt.")
+        if report["events"]:
+            # The ledger holds events, but none of them is a graded attempt. Saying "no attempt
+            # recorded" would hide the events that are there.
+            out.append(f"{report['events']} event(s) recorded, none of them a graded attempt yet. "
+                       "Run record_attempt.py after a graded attempt.")
+        else:
+            out.append("no attempt recorded yet. Run record_attempt.py after a graded attempt.")
         return out
     out.append("")
     out.append("Retention: first attempt, no help, graded by the learner")
@@ -105,6 +115,8 @@ def lines(report, events, problems, horizons, objective=None):
     out.append(f"  {excluded['help']} attempt(s) with help")
     out.append(f"  {excluded['agent_graded']} attempt(s) graded by an agent")
     out.append(f"  {excluded['too_recent']} attempt(s) too recent for the shortest horizon")
+    if excluded.get("other_rubric"):
+        out.append(f"  {excluded['other_rubric']} attempt(s) graded by an older rubric, another series")
     if report["inferred_exposure"]:
         out.append(f"  {report['inferred_exposure']} item(s) have no study event, so their first attempt set the exposure day")
     out.append("")
@@ -122,7 +134,7 @@ def main(argv=None):
     events, problems = read_ledger(args.ledger)
     if args.objective:
         events = [event for event in events if str(event.get("objective_id")) == args.objective]
-    report = metrics(events, horizons)
+    report = metrics(events, horizons, load_objectives(args.objectives))
     if args.as_json:
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return 0

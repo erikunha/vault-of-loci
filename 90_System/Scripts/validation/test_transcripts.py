@@ -32,12 +32,21 @@ with tempfile.TemporaryDirectory() as tmp:
 
     vtt = root / "lesson.vtt"
     vtt.write_text("WEBVTT\n\n1\n00:00:01.000 --> 00:00:03.000\n<v Ana>Hello and\n\n2\n00:00:03.000 --> 00:00:05.000\n<v Ana>welcome.\n\n"
-                   "3\n00:11:00.000 --> 00:11:02.000\nBob: A question?\n\n4\n00:22:00.000 --> 00:22:02.000\nThanks.\n", encoding="utf-8")
+                   "3\n00:11:00.000 --> 00:11:02.000\nBob: A question?\n\n"
+                   "3b\n00:12:00.000 --> 00:12:02.000\nBob: An answer.\n\n"
+                   "4\n00:22:00.000 --> 00:22:02.000\nThanks.\n", encoding="utf-8")
     out = run(SCRIPTS / "vtt_to_note.py", vtt, "--track", "01_T", "--root", root, "--write")
     assert out.returncode == 0, out.stdout + out.stderr
     made = (folder / "lesson.md").read_text(encoding="utf-8")
     assert "**[0:00:01] Ana:** Hello and welcome." in made, made
     assert "**[0:11:00] Bob:** A question?" in made and "**[0:22:00]** Thanks." in made, made
+    caption = root / "caption.vtt"
+    caption.write_text("WEBVTT\n\n1\n00:00:01.000 --> 00:00:03.000\nNote: the spacing effect is about one day.\n\n"
+                        "2\n00:00:04.000 --> 00:00:06.000\nNote: the effect is about one day.\n\n", encoding="utf-8")
+    run(SCRIPTS / "vtt_to_note.py", caption, "--track", "01_T", "--root", root, "--write")
+    note_text = (folder / "caption.md").read_text(encoding="utf-8")
+    assert "Note: the spacing effect" in note_text, note_text
+    assert "**[0:00:01] Note:**" not in note_text, note_text
     assert "## 00:00:01" in made and "## 00:11:00" in made and "type: transcript" in made, made
     assert run(SCRIPTS / "vtt_to_note.py", vtt, "--track", "01_T", "--root", root, "--write").returncode == 1, "never overwrite"
 print("ok: 9 checks")

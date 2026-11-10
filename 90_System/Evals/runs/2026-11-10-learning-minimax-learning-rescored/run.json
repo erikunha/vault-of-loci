@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-10",
+  "label": "minimax-learning-rescored",
+  "benchmark": "learning",
+  "agent": "minimax-learning",
+  "agent_family": "minimax",
+  "command": "90_System/Evals/mcode-tutor.sh",
+  "scenarios": [
+    1,
+    2,
+    3,
+    10,
+    11
+  ],
+  "timeout": 600,
+  "inline_instructions": false,
+  "started": "2026-11-10T11:54:03+00:00",
+  "finished": "2026-11-10T12:20:40+00:00",
+  "errors": [
+    1
+  ],
+  "rescored_from": "2026-11-10-learning-minimax-learning",
+  "rescore_note": "The same transcripts of the first run, scored again with the judge prompt and the scenarios of the current benchmark. No agent ran here."
+}

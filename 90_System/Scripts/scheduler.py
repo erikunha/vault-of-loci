@@ -10,20 +10,21 @@ How the priority is built:
   missing, a wrong one removes 40% of what is there. After several attempts it settles where the
   record settles.
 - priority is (1 - strength) times (1 + days since the last attempt / 30). Weak and stale first.
-- an item whose last attempt was wrong is doubled, because a mistake that was never recovered is
-  the most useful thing to revisit.
+- an item whose mistake was never recovered without help is doubled, because a mistake that was
+  never recovered is the most useful thing to revisit.
 
 The rules of the vault set the rest: a day is 10 to 20 reviews with about 2 new cards, and when
 the queue is longer than the cap the oldest and weakest come first with no new cards.
 
 Standard library only.
 """
+import re
 import sys
 from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, GRADING, parse_when, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, GRADING, parse_when, read_ledger, sort_by_moment  # noqa: E402
 
 DAILY_CAP = 15
 NEW_PER_DAY = 2
@@ -39,6 +40,28 @@ def clean_attempts(events):
             and event.get("assistance") == "none"
             and event.get("grading_method") == "learner_confirmed"
             and event.get("first_attempt_correct") is not None]
+
+
+def last_mistake(attempts):
+    """The wrong attempt that no clean success came after, or None when there is no open mistake.
+
+    A mistake is closed only after it comes back right, without help, from memory. So the
+    question is not what the last attempt was, but whether a clean success came after the last
+    wrong one. An attempt made with help never closes a mistake, because it measures the help.
+    """
+    pending = None
+    for event in attempts:
+        outcome = event.get("first_attempt_correct")
+        if outcome is False:
+            pending = event
+        elif outcome is True and event.get("assistance") == "none":
+            pending = None
+    return pending
+
+
+def mistake_open(attempts):
+    """True when the item has a mistake that was never recovered without help."""
+    return last_mistake(attempts) is not None
 
 
 def strength_of(attempts):
@@ -59,7 +82,7 @@ def item_history(events):
         key = (event.get("objective_id"), event.get("item_id"))
         history.setdefault(key, []).append(event)
     for attempts in history.values():
-        attempts.sort(key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id"))))
+        attempts[:] = sort_by_moment(attempts)
     return history
 
 
@@ -76,10 +99,11 @@ def objectives_seen(events):
     return seen
 
 
-def plan(events, cap=DAILY_CAP, new_per_day=NEW_PER_DAY, today=None):
-    """The ranked review plan for one day.
+def ranked_entries(events, today=None):
+    """Every item of the queue, ranked, with no cap of a day applied to it.
 
-    Returns a dict with the entries, the counts and the reason the plan is what it is.
+    The plan of a day takes the top of this list, and the diagnostic after a break reads it as a
+    whole, because the explanation and the application it asks for can be far down the queue.
     """
     today = today or date.today()
     clean = clean_attempts(events)
@@ -100,14 +124,16 @@ def plan(events, cap=DAILY_CAP, new_per_day=NEW_PER_DAY, today=None):
         if item_clean:
             strength = strength_of(item_clean)
             priority = (1 - strength) * (1 + days / HALF_LIFE)
-            if not last.get("first_attempt_correct") and not item_clean[-1].get("first_attempt_correct"):
-                priority *= 2
-                reasons.append("the last attempt was wrong")
         else:
             # Every attempt so far needed help, so nothing was measured without it.
             strength = 0.0
             priority = 1 + days / HALF_LIFE
             reasons.append("every attempt so far needed help")
+        if mistake_open(attempts):
+            # The same rule the error list uses: a mistake is open until it comes back right
+            # without help, so the plan and the list never tell two different stories.
+            priority *= 2
+            reasons.append("the mistake was never recovered without help")
         if days:
             reasons.append(f"not seen for {days} days")
         else:
@@ -144,6 +170,16 @@ def plan(events, cap=DAILY_CAP, new_per_day=NEW_PER_DAY, today=None):
         })
     entries.extend(fresh)
     entries.sort(key=lambda entry: (-entry["priority"], entry["objective_id"] or "", entry["item_id"] or ""))
+    return entries, seen, clean
+
+
+def plan(events, cap=DAILY_CAP, new_per_day=NEW_PER_DAY, today=None):
+    """The ranked review plan for one day.
+
+    Returns a dict with the entries, the counts and the reason the plan is what it is.
+    """
+    today = today or date.today()
+    entries, seen, clean = ranked_entries(events, today)
     backlog = len(entries)
     catch_up = backlog > cap
     reviews = [entry for entry in entries if not entry["new"]][:cap]
@@ -182,10 +218,12 @@ def recovery_plan(events, cap=5, inactivity=INACTIVITY_DAYS, today=None):
     away = days_since_last(events, today)
     if away is None or away < inactivity:
         return None
-    ranked = plan(events, cap=cap, today=today)
-    entries = ranked["entries"]
+    entries, _seen, _clean = ranked_entries(events, today)
+    backlog = len(entries)
     chosen = []
     modes = set()
+    # The explanation and the application are looked for in the whole queue, not in the first
+    # five items by priority: a diagnostic that never asks for one of them is not a diagnostic.
     for entry in entries:
         if entry["mode"] in ("apply", "discriminate", "explain") and entry["mode"] not in modes:
             modes.add(entry["mode"])
@@ -197,14 +235,14 @@ def recovery_plan(events, cap=5, inactivity=INACTIVITY_DAYS, today=None):
             chosen.append(entry)
     return {
         "days_away": away,
-        "backlog": ranked["backlog"],
+        "backlog": backlog,
         "entries": chosen[:cap],
         "why": f"{away} days since the last attempt, so this is a diagnostic and not the whole queue",
     }
 
 
 def error_items(events, today=None):
-    """The items whose last attempt was wrong.
+    """The items whose mistake was never recovered without help.
 
     A mistake that was never recovered is the most useful thing to revisit, and repeating the
     same wording is not enough: the next try has to be a variation of the same task, so the
@@ -215,25 +253,40 @@ def error_items(events, today=None):
                              if event.get("mode") != "study"
                              and event.get("grading_method") == "learner_confirmed"
                              and event.get("first_attempt_correct") is not None])
+    # The variants that already exist in the whole ledger, not in this item's own attempts. The
+    # next variation has to be an id nobody used, because one id means one task.
+    used = {str(event.get("item_id", "")) for event in events}
     rows = []
     for (objective, item), attempts in history.items():
-        last = attempts[-1]
-        if last.get("first_attempt_correct") is not False:
+        mistake = last_mistake(attempts)
+        if mistake is None:
             continue
-        when = parse_when(last.get("occurred_at"))
-        variants = sum(1 for event in attempts
-                       if str(event.get("item_id", "")).startswith(f"{item}-v"))
+        when = parse_when(mistake.get("occurred_at"))
         rows.append({
             "objective_id": objective,
             "item_id": item,
-            "variant_id": f"{item}-v{variants + 1}",
+            "variant_id": next_variant_id(item, used),
             "attempts": len(attempts),
             "days_since": (today - when).days if when else None,
-            "mode": last.get("mode"),
-            "why": "the last attempt was wrong",
+            "mode": mistake.get("mode"),
+            "why": "the mistake was never recovered without help",
         })
     rows.sort(key=lambda row: (-(row["days_since"] or 0), str(row["item_id"])))
     return rows
+
+
+def next_variant_id(item, used):
+    """The id a variation of a task must carry, one that nobody used.
+
+    The number is one above the highest number the ids of the variations already carry, so a
+    gap in the sequence does not hand out an id that is already in the ledger.
+    """
+    numbers = [0]
+    for name in used:
+        match = re.fullmatch(rf"{re.escape(str(item))}-v(\d+)", str(name))
+        if match:
+            numbers.append(int(match.group(1)))
+    return f"{item}-v{max(numbers) + 1}"
 
 
 if __name__ == "__main__":

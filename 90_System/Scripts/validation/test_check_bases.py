@@ -21,4 +21,10 @@ with tempfile.TemporaryDirectory() as tmp:
     assert run(root) == 0, "base with the exclusion must pass"
     base.write_text('filters:\n  and:\n    - file.hasTag("x")\nviews:\n  - type: table\n', encoding="utf-8")
     assert run(root) == 0, "base without a type filter is out of scope"
-print("ok: 3 checks")
+    base.write_text('filters:\n  and:\n    - file.hasTag("type/track")\nviews:\n  - type: table\n    filters:\n      and:\n        - type == "track"\n', encoding="utf-8")
+    assert run(root) == 1, "a view that filters by type needs the exclusion too"
+    base.write_text('filters:\n  and:\n    - type == "track"\n    - file.inFolder("90_System/Templates") == false\nviews:\n  - type: table\n', encoding="utf-8")
+    assert run(root) == 0, "the exclusion in another form still excludes the templates"
+    base.write_text('filters:\n  and:\n    - type == "track"\n    - not:\n        - file.inFolder("90_System/Templates")\nviews:\n  - type: table\n', encoding="utf-8")
+    assert run(root) == 0, "the exclusion under not: still excludes the templates"
+print("ok: 6 checks")

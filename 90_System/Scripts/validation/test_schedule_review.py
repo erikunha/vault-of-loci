@@ -68,7 +68,7 @@ with tempfile.TemporaryDirectory() as tmp:
     plan = json.loads(out.stdout)
     entries = {entry["item_id"] or entry["objective_id"]: entry for entry in plan["entries"]}
     assert "item-b" in entries, plan["entries"]
-    assert "the last attempt was wrong" in entries["item-b"]["why"], entries["item-b"]
+    assert "the mistake was never recovered without help" in entries["item-b"]["why"], entries["item-b"]
     assert entries["item-b"]["priority"] > entries["item-a"]["priority"], "a wrong last try comes first"
     assert "not seen for 75 days" in entries["item-c"]["why"], entries["item-c"]
     assert entries["item-c"]["priority"] > entries["item-a"]["priority"], "the stale item comes before the solid one"
@@ -113,4 +113,68 @@ with tempfile.TemporaryDirectory() as tmp:
     ledger.write_text(json.dumps(event(event_id="n1", occurred_at=days_ago(1))) + "\n", encoding="utf-8")
     fresh = run(root, "--recovery")
     assert "no break to recover from" in fresh.stdout, fresh.stdout
-print("ok: 15 checks")
+
+    # The diagnostic asks for one explanation and one application, and it looks for them in the
+    # whole queue, not in the first five items by priority.
+    mixed = [event(event_id="m1", item_id="item-recall", occurred_at=days_ago(40), first_attempt_correct=False)]
+    for number in range(6):
+        mixed.append(event(event_id=f"m{number + 2}", item_id=f"item-recall-{number}",
+                          occurred_at=days_ago(40 + number), first_attempt_correct=False))
+    mixed.append(event(event_id="m9", item_id="item-explain", mode="explain", occurred_at=days_ago(41)))
+    mixed.append(event(event_id="m10", item_id="item-apply", mode="apply", occurred_at=days_ago(41)))
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in mixed), encoding="utf-8")
+    diagnostic = json.loads(run(root, "--recovery", "--json").stdout)
+    modes = {entry["mode"] for entry in diagnostic["entries"]}
+    assert "explain" in modes, diagnostic["entries"]
+    assert "apply" in modes, diagnostic["entries"]
+
+    # A mistake is closed only when it comes back right, without help. An attempt made with
+    # help does not close it, so the plan and the error list tell the same story.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="c1", item_id="item-clean", occurred_at=days_ago(3), first_attempt_correct=False),
+        event(event_id="c2", item_id="item-clean", occurred_at=days_ago(2), first_attempt_correct=True,
+              assistance="hint", hints_used=1)]), encoding="utf-8")
+    helped = json.loads(run(root, "--json").stdout)
+    entries = {entry["item_id"]: entry for entry in helped["entries"]}
+    assert "the mistake was never recovered without help" in entries["item-clean"]["why"], entries["item-clean"]
+    errors = json.loads(run(root, "--errors", "--json").stdout)["errors"]
+    assert [row["item_id"] for row in errors] == ["item-clean"], errors
+
+    # A clean success closes the mistake: the item is neither doubled nor in the error list.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="c3", item_id="item-clean", occurred_at=days_ago(3), first_attempt_correct=False),
+        event(event_id="c4", item_id="item-clean", occurred_at=days_ago(2), first_attempt_correct=True)]),
+        encoding="utf-8")
+    closed = json.loads(run(root, "--json").stdout)
+    entries = {entry["item_id"]: entry for entry in closed["entries"]}
+    assert "the mistake was never recovered without help" not in entries["item-clean"]["why"], entries["item-clean"]
+    assert json.loads(run(root, "--errors", "--json").stdout)["errors"] == []
+
+    # The id of a variation is one nobody used, even when the ids of the ledger have a gap.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="v1", item_id="item-task", occurred_at=days_ago(5), first_attempt_correct=False),
+        event(event_id="v2", item_id="item-task-v1", occurred_at=days_ago(4), first_attempt_correct=False),
+        event(event_id="v3", item_id="item-task-v2", occurred_at=days_ago(3), first_attempt_correct=False),
+        event(event_id="v4", item_id="item-task-v4", occurred_at=days_ago(2), first_attempt_correct=False)]),
+        encoding="utf-8")
+    variations = json.loads(run(root, "--errors", "--json").stdout)["errors"]
+    assert variations[0]["variant_id"] == "item-task-v5", variations
+
+    # Two attempts written in different offsets are ordered by the moment they happened, not by
+    # the text of the timestamp.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="z1", item_id="item-zone", occurred_at="2026-11-08T09:00:00-03:00",
+              first_attempt_correct=False),
+        event(event_id="z2", item_id="item-zone", occurred_at="2026-11-08T08:00:00-05:00",
+              first_attempt_correct=True)]), encoding="utf-8")
+    zones = json.loads(run(root, "--errors", "--json").stdout)["errors"]
+    assert zones == [], zones
+
+    # A line of the ledger that could not be read is named, and the plan is still printed.
+    ledger.write_text(json.dumps(event(event_id="p1")) + "\nthis is not json\n", encoding="utf-8")
+    broken = run(root)
+    assert "Ledger lines that could not be read" in broken.stdout, broken.stdout
+    assert "not valid JSON" in broken.stdout, broken.stdout
+    broken_json = json.loads(run(root, "--json").stdout)
+    assert broken_json["problems"], broken_json
+print("ok: 22 checks")

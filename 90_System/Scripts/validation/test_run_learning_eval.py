@@ -101,6 +101,44 @@ check("tutor" in mod.BENCHMARKS and "learning" in mod.BENCHMARKS, "the runner kn
 check(mod.BENCHMARKS["tutor"]["run_prefix"] == "", "the tutor run folders keep their name")
 check(mod.BENCHMARKS["learning"]["run_prefix"] == "learning-", "the learning run folders are named apart")
 
+# The pass rule has two conditions and both have to hold: 24 of 30 points and 8 of 10 in the
+# critical group, with no 0 in scenarios 1, 2, 3, 10 or 11 (Learning_evals.md). A run that meets
+# one and misses the other does not pass.
+everyone = list(range(1, 16))
+check(mod.critical_mark(data["pass_rule"]) == data["pass_rule"]["groups"][1],
+      "the critical group has a mark of its own")
+all_two = {i: 2 for i in everyone}
+result = mod.evaluate(data, all_two, everyone)
+check(result["verdict"] == "pass" and result["total"] == 30, f"30 of 30 passes: {result}")
+check("24 of 30" in result["rule"] and "8 of 10" in result["rule"],
+      f"the rule states both conditions: {result['rule']}")
+# 24 of 30 points, but only 5 of 10 in the critical group: the total is met and the critical
+# group is not, so the run fails.
+low_critical = {i: 2 for i in everyone}
+for i in (1, 2, 3, 10, 11):
+    low_critical[i] = 1
+low_critical[15] = 1
+result = mod.evaluate(data, low_critical, everyone)
+check(result["total"] == 24, f"the total is 24: {result}")
+check(result["verdict"] == "fail", f"24 of 30 with 5 of 10 in the critical group fails: {result}")
+# 24 of 30 points and 8 of 10 in the critical group: both are met, so the run passes.
+both = {i: 2 for i in everyone}
+for i in (10, 11):
+    both[i] = 1
+for i in (4, 5, 6, 7):
+    both[i] = 1
+result = mod.evaluate(data, both, everyone)
+check(result["total"] == 24, f"the total is 24: {result}")
+check(result["verdict"] == "pass", f"24 of 30 with 8 of 10 in the critical group passes: {result}")
+# The critical group alone is still judged by its own mark of 8 of 10.
+critical_only = [1, 2, 3, 10, 11]
+result = mod.evaluate(data, {i: 2 for i in critical_only}, critical_only)
+check(result["verdict"] == "pass" and result["rule"] == "8 of 10, no 0 in scenarios 1, 2, 3, 10, 11",
+      f"the critical group on its own: {result}")
+# A 0 in a critical scenario still fails the run even with 29 of 30.
+check(mod.evaluate(data, {**all_two, **{3: 0}}, everyone)["verdict"] == "fail",
+      "a 0 in a critical scenario fails even with 29 of 30")
+
 # The judge has to name the benchmark it is scoring. The two benchmarks in this repo share the
 # same 0 to 2 scale, and a judge reading the wrong rubric scores the wrong thing.
 check("Benchmark: " in mod.judge_prompt(data, data["scenarios"][0], []),
@@ -313,6 +351,83 @@ with tempfile.TemporaryDirectory() as tmp:
                                    capture_output=True, text=True, env=os.environ, timeout=300)
     check(empty_summary.returncode == 2, f"a run folder with no scores is refused: {empty_summary.stdout} {empty_summary.stderr}")
     check("Traceback" not in empty_summary.stderr, f"the refusal is clean: {empty_summary.stderr}")
+
+    # A run folder that is missing a file the path needs is refused with a message, not a traceback.
+    # --score-run with no run.json.
+    no_meta = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-no-meta"
+    no_meta.mkdir(parents=True)
+    no_meta_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                  "--benchmark", "learning", "--score-run", str(no_meta),
+                                  "--judge-cmd", f"{sys.executable} {probe}", "--judge-family", "other"],
+                                 capture_output=True, text=True, env=os.environ, timeout=300)
+    check(no_meta_run.returncode == 1, f"a run folder with no run.json is refused: {no_meta_run.stdout} {no_meta_run.stderr}")
+    check("Traceback" not in no_meta_run.stderr, f"the refusal is clean: {no_meta_run.stderr}")
+    check("run.json" in no_meta_run.stderr and str(no_meta) in no_meta_run.stderr,
+          f"the refusal names what is missing and the path: {no_meta_run.stderr}")
+
+    # --summarize with no run.json.
+    no_meta_summary = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-no-meta-sum"
+    no_meta_summary.mkdir(parents=True)
+    (no_meta_summary / "scores.json").write_text(json.dumps({"scores": {}}), encoding="utf-8")
+    no_meta_sum = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                  "--benchmark", "learning", "--summarize", str(no_meta_summary)],
+                                 capture_output=True, text=True, env=os.environ, timeout=300)
+    check(no_meta_sum.returncode == 1, f"--summarize with no run.json is refused: {no_meta_sum.stdout} {no_meta_sum.stderr}")
+    check("Traceback" not in no_meta_sum.stderr, f"the refusal is clean: {no_meta_sum.stderr}")
+    check("run.json" in no_meta_sum.stderr and str(no_meta_summary) in no_meta_sum.stderr,
+          f"the refusal names what is missing and the path: {no_meta_sum.stderr}")
+
+    # --summarize with a scores.json that holds no scores.
+    empty_scores = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-empty-scores"
+    empty_scores.mkdir(parents=True)
+    (empty_scores / "run.json").write_text(json.dumps(alien_meta, indent=2), encoding="utf-8")
+    (empty_scores / "scores.json").write_text(json.dumps({"judge_family": "other"}), encoding="utf-8")
+    empty_scores_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                       "--benchmark", "learning", "--summarize", str(empty_scores)],
+                                      capture_output=True, text=True, env=os.environ, timeout=300)
+    check(empty_scores_run.returncode == 1, f"a scores.json with no scores is refused: {empty_scores_run.stdout} {empty_scores_run.stderr}")
+    check("Traceback" not in empty_scores_run.stderr, f"the refusal is clean: {empty_scores_run.stderr}")
+    check("scores.json" in empty_scores_run.stderr and str(empty_scores) in empty_scores_run.stderr,
+          f"the refusal names what is missing and the path: {empty_scores_run.stderr}")
+
+    # --summarize with a score outside the scale of 0, 1 or 2. The run must refuse it, and it
+    # must not print a total that no scenario can hold.
+    off_scale = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-off-scale"
+    off_scale.mkdir(parents=True)
+    (off_scale / "run.json").write_text(json.dumps(alien_meta, indent=2), encoding="utf-8")
+    (off_scale / "scores.json").write_text(json.dumps(
+        {"judge_family": "other", "scores": {"99": {"score": 13, "why": "edited by hand"}}}), encoding="utf-8")
+    off_scale_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                   "--benchmark", "learning", "--summarize", str(off_scale)],
+                                  capture_output=True, text=True, env=os.environ, timeout=300)
+    check(off_scale_run.returncode == 1, f"a score outside the scale is refused: {off_scale_run.stdout} {off_scale_run.stderr}")
+    check("Traceback" not in off_scale_run.stderr, f"the refusal is clean: {off_scale_run.stderr}")
+    check("13 of 10" not in off_scale_run.stdout, f"no total outside the scale: {off_scale_run.stdout}")
+
+    # --summarize with a run.json that is not valid JSON.
+    broken_json = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-broken-json"
+    broken_json.mkdir(parents=True)
+    (broken_json / "run.json").write_text("{not json", encoding="utf-8")
+    (broken_json / "scores.json").write_text(json.dumps({"scores": {"99": {"score": 1}}}), encoding="utf-8")
+    broken_json_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                      "--benchmark", "learning", "--summarize", str(broken_json)],
+                                     capture_output=True, text=True, env=os.environ, timeout=300)
+    check(broken_json_run.returncode == 1, f"a run.json that is not JSON is refused: {broken_json_run.stdout} {broken_json_run.stderr}")
+    check("Traceback" not in broken_json_run.stderr, f"the refusal is clean: {broken_json_run.stderr}")
+    check("run.json" in broken_json_run.stderr, f"the refusal names the file: {broken_json_run.stderr}")
+
+    # --score-run with no transcript.jsonl.
+    no_transcript = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-no-transcript"
+    no_transcript.mkdir(parents=True)
+    (no_transcript / "run.json").write_text(json.dumps(alien_meta, indent=2), encoding="utf-8")
+    no_transcript_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                        "--benchmark", "learning", "--score-run", str(no_transcript),
+                                        "--judge-cmd", f"{sys.executable} {probe}", "--judge-family", "other"],
+                                       capture_output=True, text=True, env=os.environ, timeout=300)
+    check(no_transcript_run.returncode == 1, f"a run folder with no transcript is refused: {no_transcript_run.stdout} {no_transcript_run.stderr}")
+    check("Traceback" not in no_transcript_run.stderr, f"the refusal is clean: {no_transcript_run.stderr}")
+    check("transcript.jsonl" in no_transcript_run.stderr and str(no_transcript) in no_transcript_run.stderr,
+          f"the refusal names what is missing and the path: {no_transcript_run.stderr}")
 
     # The reason kept is the reason of the score kept.
     reasoner = base / "reasoner.py"

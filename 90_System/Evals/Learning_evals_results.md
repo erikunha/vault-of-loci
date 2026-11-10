@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Learning eval results
 
-Each run follows [[Learning_evals|Learning eval]]: the agent answers a learner's question using the vault's own record, and a judge from another model family scores the reply from 0 to 2 against the rubric. The critical group is scenarios 1, 2, 3, 10 and 11, and the pass rule for that group is 8 of 10 with no 0 in any of them.
+Each run follows [[Learning_evals|Learning eval]]: the agent answers a learner's question using the vault's own record, and a judge from another model family scores the reply from 0 to 2 against the rubric. The critical group is scenarios 1, 2, 3, 10 and 11, and the pass rule for that group is 8 of 10 with no 0 in any of them. The rule for a run of the whole benchmark asks for two things at once, 24 of 30 points and 8 of 10 in the critical group, and the runs here cover the critical group only, so the rule that applies to them is the 8 of 10.
 
 These runs use the learning ledger as the fixture. Each scenario writes a ledger with dated events into a fresh copy of the vault, so the agent reads a record the scenario controls and the real `50_Review/Attempts.jsonl` is never touched.
 
@@ -28,7 +28,7 @@ The run folder is `90_System/Evals/runs/2026-11-10-learning-minimax-learning-v2`
 
 ### What changed against the first run
 
-The first run of this benchmark scored 5 of 10 and never finished scenario 1, so it was compared twice: with the old transcripts and the old rubric, and with the old transcripts and the new rubric.
+The first run of this benchmark scored 5 of 10 and never finished scenario 1, so it was compared twice: with the old transcripts and the old rubric, and with the old transcripts and the new rubric. Both halves of the comparison have a file behind them. The first is `runs/2026-11-10-learning-minimax-learning/scores.json`: one judgement per scenario, with the judge prompt of that moment. The second is `runs/2026-11-10-learning-minimax-learning-rescored/scores.json`: the same transcripts, scored again with the prompt and the scenarios of the current benchmark, three judgements per scenario.
 
 | Run | 1 | 2 | 3 | 10 | 11 | Total |
 |---|---|---|---|---|---|---|
@@ -38,13 +38,13 @@ The first run of this benchmark scored 5 of 10 and never finished scenario 1, so
 
 Reading the table:
 
-- **The rubric change lowered one score on the same transcripts.** Scenario 11 was 2 under the old rubric and 1 under the new one, on the same reply. The old rubric had no rule against handing over what the learner was supposed to produce, so the judge let the reply quote the one week result and still call it 2. The new rubric says a reply that hands over the content the learner was supposed to recall loses the point for that, and the judge applies it. This is a fairer reading of the same behaviour, not a different behaviour.
-- **The product change moved scenario 1 from missing to 2.** The old run answered the question with the review plan, which lists the apply items, so the judge scored it 0 against the rubric that asks for the 90 day recall item. Three changes fixed that: the audit now says a horizon that has not arrived is not due, `AGENTS.md` and the two skills now say which script answers which question, and the audit names the objectives that are registered with no event at all. The agent now answers with the audit and names the right objective, the right horizon and the right new item id.
-- **Scenario 3 is still 0.** It was 0 under both rubrics and on both transcripts, and the judge was stable on it. The agent builds a quiz that asks again what the learner has already shown, and it does not say what counts as applying the idea. Nothing in the product changed this, and the rubric was not loosened to move it.
+- **The rubric change lowered one score on the same transcripts.** Scenario 11 was 2 under the old rubric and 1 under the new one, on the same reply. The judge that scored it again named the rule that decided it: just before the recall question, the reply quotes the note saying rereading "fools you", which gives away which group came out ahead. The old prompt had no rule against handing over what the learner was supposed to produce, so the old judgement read the reply as clean. The new prompt has one, and the judge applied it on all three judgements. This is a fairer reading of the same behaviour, not a different behaviour. The reply of this run leaked in another way: it gave the one week result itself, the 61% against 40%, and lost the point for that. The reply of the first run never gave those numbers.
+- **The product change moved scenario 1 from missing to 2.** The first run never finished scenario 1: the agent run timed out, there is no score for it, and that is why the table above says "not scored". The retry of that scenario, in `runs/2026-11-10-learning-minimax-learning-s1-fixed`, is the one the judge scored 0: the reply answered the question with the review plan, which lists the apply items, and the rubric asks for the 90 day recall item. Three changes fixed that: the audit now says a horizon that has not arrived is not due, `AGENTS.md` and the two skills now say which script answers which question, and the audit names the objectives that are registered with no event at all. The agent now answers with the audit and names the right objective, the right horizon and the right new item id.
+- **Scenario 3 is still 0.** It was 0 under both rubrics and on both transcripts. The judge agreed on 0 in the three judgements of the re-scored transcript, and on the transcript of this run it gave 0 twice and 1 once. The agent builds a quiz that asks again what the learner has already shown, and it does not say what counts as applying the idea. Nothing in the product changed this, and the rubric was not loosened to move it.
 
 ### Two judges on the same run
 
-The same run was scored twice, by two different Claude models. Codex had no quota until 2026-11-11, Kimi's monthly quota was spent and Antigravity was rate limited, so the two judges are both from the anthropic family.
+The same run was scored twice, by two different Claude models. Codex had no quota until 2026-11-11, Kimi's monthly quota was spent and Antigravity was rate limited, so the two judges are both from the anthropic family. The scores of the first judge are in `scores.json` and the scores of the second in `scores-judge-anthropic-sonnet.json`, next to them in the run folder.
 
 | Scenario | Judge A (opus) | Judge B (sonnet) | Same |
 |---|---|---|---|
@@ -74,6 +74,7 @@ The behaviour is locked by `90_System/Scripts/validation/test_mcode_tutor_wrappe
 
 - One run per agent, one date, one set of transcripts. Nothing here says how the same agent behaves on another day.
 - The judge is a model, not a person. The scores are a second opinion on the transcripts, not a human grade.
+- The first scoring of the first run was one judgement per scenario, and the re-scoring of the same transcripts is the mode of three. The two halves of the comparison are not judged the same number of times, so the 5 of 10 and the 4 of 10 differ by one point on one scenario, and the judge agreed on 1 on all three judgements of that scenario.
 - The two judges share a family, which weakens the independence of the agreement number.
 - The MiniMax Code CLI produced the reply and then kept running past it. The wrapper reads the reply from the session the CLI wrote and kills the CLI, so the run takes minutes per scenario instead of ending in a timeout.
 - Only the critical group ran. The other ten scenarios of the benchmark are untested here.

@@ -61,13 +61,20 @@ def problem(text):
     """None when the note is fine, else a short reason."""
     front = re.match(r"---\n(.*?)\n---", text, flags=re.DOTALL)
     kind = re.search(r"(?m)^type:\s*(\S+)", front.group(1)) if front else None
-    if kind and kind.group(1) not in CHECKED_TYPES:
+    # The type can be written with quotes, and "concept" is the concept note.
+    if kind and kind.group(1).strip("'\"") not in CHECKED_TYPES:
         return None
     body = re.sub(r"(?ms)^(`{3,}|~{3,}).*?^\1\s*$", "", text[front.end():] if front else text)
     sections = re.findall(r"(?m)^## .*$", body)
     if EXPLAIN not in sections:
         return "missing"
-    return None if sections[:2] == [EXPLAIN, TAKEAWAYS] else "out of order"
+    if sections[:2] != [EXPLAIN, TAKEAWAYS]:
+        return "out of order"
+    # The first item of the order is the callout of three lines, right after the title.
+    head = body.split("## ", 1)[0]
+    if not re.search(r"(?m)^>\s*\[!tldr\]", head):
+        return "no tldr callout"
+    return None
 
 
 bad = []

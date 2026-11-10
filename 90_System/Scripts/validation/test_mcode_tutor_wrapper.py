@@ -11,7 +11,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-WRAPPER = Path(__file__).resolve().parents[2] / "Evals" / "runs" / "2026-11-09-minimax" / "mcode-tutor.sh"
+WRAPPER = Path(__file__).resolve().parents[2] / "Evals" / "mcode-tutor.sh"
 
 # The reply the fake session holds, and the size in bytes the CLI reports when it chooses it.
 ANSWER = "THE REAL ANSWER"
@@ -85,6 +85,21 @@ case "$mode" in
     write_progress "$sid"
     exit 0
     ;;
+  no_event)
+    sid="probe-noevent-$$"
+    make_session "$sid" yes
+    printf '{"timestampMs":1,"kind":"execution_started","sessionId":"%s"}\n' "$sid" > "$diag/progress.jsonl"
+    printf '{"sessionId":"%s"}\n' "$sid" > "$diag/execution.json"
+    echo "PARTIAL WORKING TEXT, the agent was still writing"
+    exit 0
+    ;;
+  stdout_noise)
+    sid="probe-noise-$$"
+    make_session "$sid" yes
+    write_progress "$sid"
+    echo "STREAMED PROGRESS LINE FROM THE CLI"
+    exit 0
+    ;;
   crash)
     echo "mcode exec failed: simulated crash" >&2
     exit 3
@@ -153,5 +168,21 @@ with tempfile.TemporaryDirectory() as tmp:
     assert code == 1, (code, out)
     assert PREAMBLE not in out, out
     assert out.strip() == "", out
+
+    # The session holds messages and the CLI chose no answer. The wrapper must print nothing:
+    # the last message on disk can be a half-finished text, and the run would score it.
+    code, out, err, leaked = run_wrapper("no_event", tmp)
+    assert code != 0, (code, out)
+    assert out.strip() == "", out
+    assert "PARTIAL WORKING TEXT" not in out, out
+    assert leaked == [], leaked
+
+    # The CLI prints a line of progress and the reply it chose is on disk. The reply the CLI
+    # chose is the answer, and the line of progress is not.
+    code, out, err, leaked = run_wrapper("stdout_noise", tmp)
+    assert code == 0, (code, err)
+    assert out.strip() == ANSWER, out
+    assert "STREAMED PROGRESS" not in out, out
+    assert leaked == [], leaked
 
 print("mcode-tutor.sh: the reply survives the CLI in every way it can lose it")

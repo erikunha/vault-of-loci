@@ -128,4 +128,94 @@ with tempfile.TemporaryDirectory() as tmp:
     one = json.loads(only.stdout)
     assert one["objectives"] == ["o-apply"], one["objectives"]
     assert one["transfer"]["30"] == {"correct": 1, "eligible": 1, "rate": 1.0}, one["transfer"]
-print("ok: 18 checks")
+
+    # An attempt with no verdict says nothing about what was remembered. Counting it would print
+    # a rate that no event supports.
+    no_verdict = [
+        event(event_id="n1", objective_id="o-none", item_id="item-n", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="n2", objective_id="o-none", item_id="item-n", occurred_at=days_ago(30),
+              first_attempt_correct=None),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in no_verdict), encoding="utf-8")
+    ungraded = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+                              capture_output=True, text=True)
+    assert ungraded.returncode == 0, ungraded.stderr
+    report = json.loads(ungraded.stdout)
+    assert report["retention"]["7"]["eligible"] == 0, report["retention"]
+    assert report["retention"]["7"]["rate"] is None, report["retention"]
+
+    # An attempt the agent graded is evidence about the agent, not about the learner. It cannot
+    # make an objective learned.
+    by_agent = [
+        event(event_id="g1", objective_id="o-agent", item_id="item-g", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="g2", objective_id="o-agent", item_id="item-g", occurred_at=days_ago(30),
+              grading_method="agent_graded"),
+        event(event_id="g3", objective_id="o-agent", item_id="item-h", occurred_at=days_ago(22),
+              grading_method="agent_graded"),
+        event(event_id="g4", objective_id="o-agent", item_id="item-i", mode="apply",
+              occurred_at=days_ago(15), grading_method="agent_graded"),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in by_agent), encoding="utf-8")
+    graded = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+                            capture_output=True, text=True)
+    assert graded.returncode == 0, graded.stderr
+    report = json.loads(graded.stdout)
+    assert report["learned"] == [], report["learned"]
+    assert report["excluded"]["agent_graded"] == 3, report["excluded"]
+
+    # A ledger that holds events but no graded attempt is not a ledger with nothing in it. The
+    # report says how many events there are, so the reader does not read "0 attempts" as "no
+    # record at all".
+    study_only = [
+        event(event_id="s1", objective_id="o-study", item_id="item-s", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="s2", objective_id="o-study", item_id="item-s2", mode="study",
+              occurred_at=days_ago(50), first_attempt_correct=None, confidence=None),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in study_only), encoding="utf-8")
+    studied = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger)],
+                             capture_output=True, text=True)
+    assert studied.returncode == 0, studied.stderr
+    assert "events recorded: 2" in studied.stdout, studied.stdout
+    assert "graded attempts: 0" in studied.stdout, studied.stdout
+    assert "2 event(s) recorded, none of them a graded attempt yet" in studied.stdout, studied.stdout
+    assert "no attempt recorded yet" not in studied.stdout, studied.stdout
+
+    # A boolean is not a confidence and not a probability. The ledger and the calibration
+    # module read these two fields the same way, so a true in the file is not a number.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="bool-scale", item_id="item-bool", occurred_at=days_ago(100), confidence=True),
+        event(event_id="bool-probability", item_id="item-bool-2", occurred_at=days_ago(100),
+              confidence=None, confidence_probability=True)]), encoding="utf-8")
+    booleans = json.loads(subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+        capture_output=True, text=True).stdout)
+    assert booleans["calibration"]["n_explicit"] == 0, booleans["calibration"]
+    assert booleans["calibration"]["n_ordinal"] == 0, booleans["calibration"]
+    assert booleans["calibration"]["brier_explicit"] is None, booleans["calibration"]
+    assert booleans["calibration"]["brier_ordinal"] is None, booleans["calibration"]
+    # A new rubric version starts a new series, and the series never mix: an attempt graded by
+    # an older rubric is not part of the rate of the current one.
+    mixed = [
+        event(event_id="m-study", objective_id="o-mixed", item_id="item-m", mode="study",
+              occurred_at=days_ago(200), first_attempt_correct=None, confidence=None),
+        event(event_id="m-old", objective_id="o-mixed", item_id="item-m", occurred_at=days_ago(190),
+              rubric_version="v1", first_attempt_correct=False),
+        event(event_id="m-new", objective_id="o-mixed", item_id="item-m2", occurred_at=days_ago(100),
+              rubric_version="v2", first_attempt_correct=True),
+    ]
+    registry = root / "objectives.json"
+    registry.write_text(json.dumps({"objectives": [
+        {"id": "o-mixed", "concept": "Mixed", "mode": "recall", "criterion": "c", "rubric_version": "v2"}]}),
+        encoding="utf-8")
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in mixed), encoding="utf-8")
+    mixed_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger),
+                                "--objectives", str(registry), "--json"],
+                                capture_output=True, text=True)
+    assert mixed_run.returncode == 0, mixed_run.stderr
+    series = json.loads(mixed_run.stdout)
+    assert series["retention"]["7"]["eligible"] == 1, series["retention"]
+    assert series["excluded"]["other_rubric"] == 1, series["excluded"]
+print("ok: 37 checks")

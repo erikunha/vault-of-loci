@@ -2,9 +2,10 @@
 
 Reads `confidence` (1 to 5), `score` (0 to 100, percent right on the first try) and `last_tested`
 from every concept note, as the learner logged them after a checkpoint. Confidence 1 to 5 maps to
-an expected 20 to 100 percent. A gap of 30 points or more is reported as over- or underconfident.
-Concepts not tested for `--days` days are stale; concepts with no test are untested. Thresholds are
-defaults to adjust, not research results. It reads only and never sets a property.
+an expected 0 to 100 percent by the rule the vault uses everywhere else, (confidence - 1) / 4. A
+gap of 30 points or more is reported as over- or underconfident. Concepts not tested for `--days`
+days are stale; concepts with no test are untested. Thresholds are defaults to adjust, not research
+results. It reads only and never sets a property.
 
 Usage: python3 -I 90_System/Scripts/calibration_report.py [--root PATH] [--days 30] [--gap 30]
 """
@@ -32,7 +33,7 @@ def report(root, days, gap_limit):
         name, conf, score = rel.stem, number(front.get("confidence")), number(front.get("score"))
         tested = front.get("last_tested") or ""
         if conf is not None and score is not None:
-            gap = conf * 20 - score
+            gap = (conf - 1) * 25 - score
             gaps.append(gap)
             if gap >= gap_limit:
                 lines.append(f"overconfident: {name}  (confidence {conf:g}, score {score:g})")

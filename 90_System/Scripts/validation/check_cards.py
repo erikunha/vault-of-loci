@@ -40,12 +40,52 @@ def normalize(question):
     return " ".join(re.sub(r"[^\w\s]", " ", question.casefold()).split())
 
 
+def frontmatter_tags(head):
+    """The tags of the frontmatter, in the inline form and in the list form.
+
+    The vault writes the tags as a list in one line, and the properties the vault ships
+    document the other form, a key with the items under it. A cloze in a note tagged
+    `flashcards` is a card in either form.
+    """
+    tags = set()
+    lines = head.splitlines()
+    for index, line in enumerate(lines):
+        match = re.match(r"^tags:[ \t]*(.*)$", line)
+        if not match:
+            continue
+        value = match.group(1).strip()
+        if value.startswith("[") and value.endswith("]"):
+            tags.update(item.strip().strip("'\"") for item in value[1:-1].split(","))
+        elif value:
+            tags.add(value.strip("'\""))
+        else:
+            for follow in lines[index + 1:]:
+                item = re.match(r"^[ \t]*-[ \t]*(.*)$", follow)
+                if not item:
+                    break
+                tags.add(item.group(1).strip().strip("'\""))
+    return tags
+
+
+def frontmatter_source(head):
+    """True when the frontmatter fills `link` or `source` with a value that is there.
+
+    An empty value is not a source. The key with nothing after it says the note has no source,
+    the same as the key that is not there.
+    """
+    for match in re.finditer(r"^(link|source):[ \t]*(.*)$", head, flags=re.M):
+        value = match.group(2).strip().strip("'\"")
+        if value:
+            return True
+    return False
+
+
 def parse(text):
     """Return (cards, sections): cards are (line number, question, line); sections map a heading
     index to its text, so a card knows the text of its own section."""
     front = re.match(r"---\n.*?\n---\n?", text, flags=re.DOTALL)
     head = front.group(0) if front else ""
-    deck = bool(re.search(r"^tags:.*\bflashcards\b", head, flags=re.M))
+    deck = "flashcards" in frontmatter_tags(head)
     skipped = text[: front.end()].count("\n") if front else 0
     lines = text.splitlines()[skipped:]
     sections, cards, fence = [{"title": "", "lines": []}], [], None
@@ -70,7 +110,7 @@ def parse(text):
             cards.append((number, card.group("q").strip(), line, len(sections) - 1))
         elif deck and CLOZE.search(line):
             cards.append((number, line.strip(), line, len(sections) - 1))
-    return cards, sections, re.search(r"^(link|source):[ \t]*\S", head, flags=re.M) is not None
+    return cards, sections, frontmatter_source(head)
 
 
 problems, seen = [], {}
