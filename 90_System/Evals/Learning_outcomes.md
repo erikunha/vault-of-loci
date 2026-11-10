@@ -110,7 +110,7 @@ reason.
 - **T(h)**, transfer at horizon h: the same, with apply or discriminate attempts instead of
   recall and explain.
 - **Calibration**: the Brier score, the mean of (probability of being right minus what happened)
-  squared. Lower is better. Two numbers are shown: one when the learner gave a probability, and
+  squared ([[Brier_Score_(Brier,_1950)\|Brier 1950]]). Lower is better. Two numbers are shown: one when the learner gave a probability, and
   one when the learner only gave the 1 to 5 scale, which is mapped to a probability by
   (confidence - 1) / 4. The second is an approximation and says so.
 - **Learned**: the rule the vault already states in `90_System/Specs/Track_kinds.md`, now
