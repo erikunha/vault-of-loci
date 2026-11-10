@@ -40,7 +40,7 @@ python3 -I 90_System/Scripts/schedule_review.py        # what to review now, and
 python3 -I 90_System/Scripts/retention_audit.py         # what passed 7, 30 or 90 days without a test
 ```
 
-The plan ranks by how weak and how stale each item is, and a wrong last attempt comes first. The audit names the objectives whose delay has arrived and still has nothing measured, so a new task can be written for them. The [interventions spec](90_System/Evals/Learning_interventions.md) explains each one and says what it does not prove.
+The plan ranks by how weak and how stale each item is, and a mistake that was never recovered comes first. The audit names the objectives whose delay has arrived and still has nothing measured, so a new task can be written for them. The [interventions spec](90_System/Evals/Learning_interventions.md) explains each one and says what it does not prove.
 
 From the same record come the four things a study session does with it: a transfer task for an idea you only repeated, a drill for the two ideas you keep mixing, a worked example when the record is empty, and a variation of the question you got wrong.
 
@@ -48,7 +48,7 @@ From the same record come the four things a study session does with it: a transf
 python3 -I 90_System/Scripts/transfer_lab.py         # the objectives that were studied and never applied
 python3 -I 90_System/Scripts/misconception_report.py # the objectives that were wrong more than once
 python3 -I 90_System/Scripts/dependency_check.py     # what has to come first, and where the gap is
-python3 -I 90_System/Scripts/schedule_review.py --errors   # the items whose last attempt was wrong
+python3 -I 90_System/Scripts/schedule_review.py --errors   # the items whose mistake was never recovered
 ```
 
 Five more interventions come out of the same record. The calibration coach shows how well your confidence tracks the result. The memory palace turns ordered material into a route of places you pick. The visual reconstruction names the relations your drawing lost. The counterfactual asks what changes if one premise of a concept were false, and the compression challenge asks for the same idea three times, so you can see which relations survived.

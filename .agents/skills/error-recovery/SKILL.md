@@ -1,6 +1,6 @@
 ---
 name: error-recovery
-description: Take an item whose last attempt was wrong and write a variation of the same task under the id the plan prints, so the learner works with the idea and not with the memory of the sentence, then record the graded attempt in the learning ledger; use it when a mistake was never recovered, and it writes a file, so run it only when asked.
+description: Take an item whose mistake was never recovered without help and write a variation of the same task under the id the plan prints, so the learner works with the idea and not with the memory of the sentence, then record the graded attempt in the learning ledger; use it when a mistake was never recovered, and it writes a file, so run it only when asked.
 disable-model-invocation: true
 ---
 

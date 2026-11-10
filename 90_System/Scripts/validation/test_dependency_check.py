@@ -106,7 +106,7 @@ with tempfile.TemporaryDirectory() as tmp:
     wrong = json.loads(run(root, "--json").stdout)
     rows = {row["concept"]: row for row in wrong["concepts"]}
     assert rows["Beta"]["ready"] is False, rows["Beta"]
-    assert rows["Beta"]["gaps"][0]["state"] == "last attempt was wrong", rows["Beta"]
+    assert rows["Beta"]["gaps"][0]["state"] == "mistake not recovered", rows["Beta"]
 
     # Only one concept can be checked at a time.
     only = json.loads(run(root, "--json", "--target", "Beta").stdout)

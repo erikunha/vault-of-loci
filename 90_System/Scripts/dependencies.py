@@ -4,7 +4,7 @@ The vault already says what must be understood before what, in the concept map o
 (`10_Tracks/*/practice/Concept_Map.md`) and in the edges of the canvases in `30_Maps/`. This
 module reads both, then asks the ledger what state each prerequisite is in.
 
-A prerequisite is a gap when it was never tested without help, when the last attempt was wrong,
+A prerequisite is a gap when it was never tested without help, when the mistake was never recovered,
 or when it has not been tested for a while. The point is to stop before the concept that needs
 it, instead of finding out at the end that the gap was there all along.
 
@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from learning_ledger import load_objectives, parse_when  # noqa: E402
-from scheduler import clean_attempts, days_since_last  # noqa: E402
+from scheduler import clean_attempts, days_since_last, mistake_open  # noqa: E402
 
 VAULT = Path(__file__).resolve().parents[2]
 CONCEPT_DIR = "20_Concepts"
@@ -184,8 +184,8 @@ def state_of(concept, events, objectives, today=None):
     last = clean[-1]
     when = parse_when(last.get("occurred_at"))
     days = (today - when).days if when else None
-    if last.get("first_attempt_correct") is False:
-        state = "last attempt was wrong"
+    if mistake_open(graded):
+        state = "mistake not recovered"
     elif days is not None and days > 30:
         state = f"not tested for {days} days"
     else:

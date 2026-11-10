@@ -19,7 +19,7 @@ python3 -I 90_System/Scripts/dependency_check.py
    (`10_Tracks/<NN>_<Track>/practice/Concept_Map.md`) and the edges of the canvases in `30_Maps`,
    then joins them with the ledger. For each concept it prints the prerequisites and the state of
    each one: `never studied`, `never tested`, `only tested with help`, `only graded by the agent`,
-   `last attempt was wrong`, `not tested for N days` or `ok`, and the next step each state asks
+   `mistake not recovered`, `not tested for N days` or `ok`, and the next step each state asks
    for. A concept with a gap is not ready.
 
 ```bash
@@ -41,7 +41,8 @@ python3 -I 90_System/Scripts/dependency_check.py --json
    - `only graded by the agent`: the attempt does not count because the learner never confirmed
      it. Ask the learner what they produced and confirm the result with them. The agent does not
      grade it for them.
-   - `last attempt was wrong`: practise a variation of the same task.
+   - `mistake not recovered`: the mistake was never recovered without help. Practise a variation of
+     the same task.
    - `not tested for N days`: the delayed attempt, which is the `retention-audit` skill.
 5. If the answer is wrong, or the learner asks to try again, use the hint ladder one step at a
    time: hint, strong hint, partial example, answer. Never skip a step.
