@@ -24,7 +24,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, GRADING, parse_when, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, GRADING, parse_when, read_ledger, sort_by_moment  # noqa: E402
 
 DAILY_CAP = 15
 NEW_PER_DAY = 2
@@ -82,7 +82,7 @@ def item_history(events):
         key = (event.get("objective_id"), event.get("item_id"))
         history.setdefault(key, []).append(event)
     for attempts in history.values():
-        attempts.sort(key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id"))))
+        attempts[:] = sort_by_moment(attempts)
     return history
 
 

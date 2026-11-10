@@ -33,7 +33,7 @@ retention and transfer. Anything else is recorded, and the report says it was ex
 """
 import json
 import sys
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 VAULT = Path(__file__).resolve().parents[2]
@@ -74,6 +74,21 @@ def parse_moment(value):
     except (TypeError, ValueError):
         return None
     return moment if moment.tzinfo is not None else None
+
+
+def sort_by_moment(events):
+    """The events in the order they happened.
+
+    The timestamp is a text with an offset, and two events written in different offsets do not
+    sort by their text: 2026-11-08T08:00:00-05:00 is one hour later than
+    2026-11-08T09:00:00-03:00. The instant decides the order, and the text is the tie break.
+    """
+    def key(event):
+        moment = parse_moment(event.get("occurred_at"))
+        return (moment if moment is not None else datetime.min.replace(tzinfo=timezone.utc),
+                str(event.get("occurred_at")), str(event.get("event_id")))
+
+    return sorted(events, key=key)
 
 
 def next_event_id(existing):
@@ -183,7 +198,7 @@ def read_ledger(path=LEDGER):
             continue
         event["_line"] = number
         events.append(event)
-    events.sort(key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id"))))
+    events = sort_by_moment(events)
     return events, problems
 
 
@@ -238,7 +253,7 @@ def learned_objectives(events):
     for objective, items in sorted(by_objective.items(), key=lambda pair: str(pair[0])):
         recall_days, novel_use = set(), False
         seen_items = set()
-        for event in sorted(items, key=lambda item: (str(item.get("occurred_at")), str(item.get("event_id")))):
+        for event in sort_by_moment(items):
             item_id = event.get("item_id")
             correct = event.get("first_attempt_correct") is True
             helped = event.get("assistance") != "none"

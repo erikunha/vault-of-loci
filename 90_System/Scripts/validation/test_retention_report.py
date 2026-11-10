@@ -182,4 +182,5 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "graded attempts: 0" in studied.stdout, studied.stdout
     assert "2 event(s) recorded, none of them a graded attempt yet" in studied.stdout, studied.stdout
     assert "no attempt recorded yet" not in studied.stdout, studied.stdout
+
 print("ok: 30 checks")

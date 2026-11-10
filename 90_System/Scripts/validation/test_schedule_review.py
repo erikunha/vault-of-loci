@@ -160,6 +160,16 @@ with tempfile.TemporaryDirectory() as tmp:
     variations = json.loads(run(root, "--errors", "--json").stdout)["errors"]
     assert variations[0]["variant_id"] == "item-task-v5", variations
 
+    # Two attempts written in different offsets are ordered by the moment they happened, not by
+    # the text of the timestamp.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="z1", item_id="item-zone", occurred_at="2026-11-08T09:00:00-03:00",
+              first_attempt_correct=False),
+        event(event_id="z2", item_id="item-zone", occurred_at="2026-11-08T08:00:00-05:00",
+              first_attempt_correct=True)]), encoding="utf-8")
+    zones = json.loads(run(root, "--errors", "--json").stdout)["errors"]
+    assert zones == [], zones
+
     # A line of the ledger that could not be read is named, and the plan is still printed.
     ledger.write_text(json.dumps(event(event_id="p1")) + "\nthis is not json\n", encoding="utf-8")
     broken = run(root)

@@ -18,7 +18,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, problem_lines, read_ledger  # noqa: E402
 from scheduler import DAILY_CAP, NEW_PER_DAY, error_items, plan, recovery_plan  # noqa: E402
 
 
@@ -29,7 +29,7 @@ def parse_args(argv):
     ap.add_argument("--new", type=int, default=NEW_PER_DAY, help="new cards per day (about 2)")
     ap.add_argument("--objective", help="plan only this objective")
     ap.add_argument("--recovery", action="store_true", help="the diagnostic after a break")
-    ap.add_argument("--errors", action="store_true", help="only the items whose last attempt was wrong")
+    ap.add_argument("--errors", action="store_true", help="only the items whose mistake was never recovered")
     ap.add_argument("--json", dest="as_json", action="store_true", help="print the plan as JSON")
     return ap.parse_args(argv)
 
@@ -53,10 +53,13 @@ def main(argv=None):
             print("no break to recover from: the last attempt is recent.")
             return 0
         if args.as_json:
+            recovery["problems"] = problems
             print(json.dumps(recovery, ensure_ascii=False, indent=2, sort_keys=True))
             return 0
         print(f"Recovery after {recovery['days_away']} days away")
         print(f"backlog: {recovery['backlog']} items, and this is not the whole queue")
+        for line in problem_lines(problems):
+            print(line)
         for number, entry in enumerate(recovery["entries"], start=1):
             print(f" {number}. {describe(entry)}")
         print(recovery["why"])
@@ -65,9 +68,12 @@ def main(argv=None):
     if args.errors:
         errors = error_items(events, date.today())
         if args.as_json:
-            print(json.dumps({"errors": errors}, ensure_ascii=False, indent=2, sort_keys=True))
+            print(json.dumps({"errors": errors, "problems": problems},
+                             ensure_ascii=False, indent=2, sort_keys=True))
             return 0
-        print("Items whose last attempt was wrong")
+        print("Items whose mistake was never recovered without help")
+        for line in problem_lines(problems):
+            print(line)
         if not errors:
             print("none.")
             return 0
@@ -77,6 +83,7 @@ def main(argv=None):
             print(f"    write a variation of the task with the id {row['variant_id']}")
         return 0
     if args.as_json:
+        ranked["problems"] = problems
         print(json.dumps(ranked, ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     print(f"Review plan for {date.today().isoformat()}")
@@ -84,6 +91,8 @@ def main(argv=None):
           f"new per day: {ranked['new_per_day']}")
     away = ranked["days_since_last"]
     print("days since the last attempt: " + ("none yet" if away is None else str(away)))
+    for line in problem_lines(problems):
+        print(line)
     if ranked["catch_up"]:
         print("catch-up mode: the queue is over the cap, so no new cards until it is under it.")
     if not ranked["entries"]:
