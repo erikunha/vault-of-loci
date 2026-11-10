@@ -94,6 +94,8 @@ def main(argv=None):
         print(f" {number}. {describe(entry)}")
     print()
     print("The priority is a ranking for the day, not a probability of remembering.")
+    print("This is the review plan: what to practise today, ranked. For what passed 7, 30 or 90 days "
+          "without a test, run retention_audit.py, which is a different question.")
     return 0
 
 

@@ -28,18 +28,30 @@ def audit(events, horizons=HORIZONS, today=None):
         subset = [event for event in events if event.get("objective_id") == objective]
         clean = clean_attempts(subset)
         graded = [event for event in subset if event.get("mode") != "study"]
+        helped = [event for event in graded if event.get("assistance") != "none"]
         measured = metrics(subset, horizons)
         days = days_since_last(subset, today)
+        exposed = (today - seen[objective]).days
         if not graded:
             status = "never tested"
         elif not clean:
-            status = "only tested with help"
+            # Two different reasons why nothing counts, and they lead to different next steps.
+            status = "only tested with help" if helped else "only graded by the agent"
         else:
             status = "measured"
             for horizon in horizons:
-                row = measured["retention"].get(str(horizon), {})
-                if row.get("eligible", 0) == 0:
-                    status = f"due at {horizon} days"
+                # An attempt at a horizon counts whether it was a recall, an explain, an apply or a
+                # discriminate. Reading only the retention column left an objective measured by
+                # transfer alone permanently "due at 7 days", because it has no recall rows.
+                retention = measured["retention"].get(str(horizon), {})
+                transfer = measured["transfer"].get(str(horizon), {})
+                if retention.get("eligible", 0) == 0 and transfer.get("eligible", 0) == 0:
+                    # A horizon that has not arrived yet is not owed. The delay is still to come.
+                    if exposed >= horizon:
+                        status = f"due at {horizon} days"
+                    else:
+                        status = (f"not due yet: the {horizon} day horizon arrives "
+                                  f"in {horizon - exposed} days")
                     break
         report["objectives"].append({
             "objective_id": objective,
@@ -47,6 +59,7 @@ def audit(events, horizons=HORIZONS, today=None):
             "attempts": len(graded),
             "clean_attempts": len(clean),
             "days_since": days,
+            "days_since_exposure": exposed,
             "status": status,
             "retention": measured["retention"],
             "transfer": measured["transfer"],
@@ -54,7 +67,8 @@ def audit(events, horizons=HORIZONS, today=None):
         })
     report["due"] = [row for row in report["objectives"] if row["status"].startswith("due")]
     report["untested"] = [row for row in report["objectives"]
-                          if row["status"] in ("never tested", "only tested with help")]
+                          if row["status"] in ("never tested", "only tested with help",
+                                                "only graded by the agent")]
     return report
 
 

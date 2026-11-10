@@ -115,4 +115,34 @@ with tempfile.TemporaryDirectory() as tmp:
     text = run(root)
     assert "Prerequisite check" in text.stdout, text.stdout
     assert "needs Alpha" in text.stdout, text.stdout
-print("ok: 12 checks")
+
+    # A prerequisite that was studied but never attempted was graded by nobody, so it cannot be
+    # called "only graded by the agent". The label is "never tested".
+    ledger.write_text(json.dumps(event(event_id="s1", mode="study", first_attempt_correct=None,
+                                       confidence=None)) + "\n", encoding="utf-8")
+    studied = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in studied["concepts"]}
+    assert rows["Beta"]["gaps"][0]["state"] == "never tested", rows["Beta"]
+
+    # An attempt the agent graded is not the same as an attempt made with help, and the next step
+    # is not the same either: the learner has to confirm the attempt.
+    ledger.write_text(json.dumps(event(event_id="g1", grading_method="agent_graded")) + "\n", encoding="utf-8")
+    graded = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in graded["concepts"]}
+    assert rows["Beta"]["gaps"][0]["state"] == "only graded by the agent", rows["Beta"]
+
+    ledger.write_text(json.dumps(event(event_id="h1", assistance="hint", hints_used=1,
+                                       first_attempt_correct=False)) + "\n", encoding="utf-8")
+    helped = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in helped["concepts"]}
+    assert rows["Beta"]["gaps"][0]["state"] == "only tested with help", rows["Beta"]
+
+    # The printed next step is different for each of the two reasons nothing counts.
+    helped_text = run(root).stdout
+    ledger.write_text(json.dumps(event(event_id="g2", grading_method="agent_graded")) + "\n", encoding="utf-8")
+    graded_text = run(root).stdout
+    assert "attempt the same task again, without help" in helped_text, helped_text
+    assert "the learner has to confirm the attempt" not in helped_text, helped_text
+    assert "the learner has to confirm the attempt" in graded_text, graded_text
+    assert "attempt the same task again, without help" not in graded_text, graded_text
+print("ok: 19 checks")

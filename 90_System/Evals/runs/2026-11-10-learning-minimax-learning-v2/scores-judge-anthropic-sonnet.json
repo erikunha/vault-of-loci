@@ -1,0 +1,46 @@
+{
+  "judge_command": "claude --model sonnet -p \"$(cat)\"",
+  "judge_family": "anthropic",
+  "agent_family": "minimax",
+  "same_family_allowed": false,
+  "judged": "2026-11-10T13:45:24+00:00",
+  "scores": {
+    "1": {
+      "score": 2,
+      "why": "The reply names retrieval-practice-recall as due at 90 days and treats retrieval-practice-apply as already measured, with no retention number for it. It poses a fresh closed-book task, asks for confidence, and records nothing until the learner confirms, though it never literally says \"new task\"."
+    },
+    "2": {
+      "score": 2,
+      "why": "The tutor read the ledger, then wrote a new item (`retrieval-practice-recall-d30`) instead of repeating `rp-r-01`. It asked for a closed-book attempt and a 1-5 confidence rating before any answer, and it will record only after the learner confirms. It leaks no numbers or group answers, and the only files it changed were `__pycache__` files, not notes."
+    },
+    "3": {
+      "score": 0,
+      "why": "The reply is a quiz of recall and explanation items (research details, meta-analysis numbers, multiple choice with options carrying answers), not a task applying retrieval practice to an unseen case, and it states no apply criteria. Q4 is the closest to apply, but it is a described-plan question, not a built apply task with what counts as applying it."
+    },
+    "10": {
+      "score": 1,
+      "why": "The reply uses the ledger, says a forecast is not a measurement, and offers the delayed 30-day assessment. It also states the 61% vs 40% one-week figures, which are the numbers the learner must recall in that assessment, so it leaks part of the answer."
+    },
+    "11": {
+      "score": 1,
+      "why": "The reply read the ledger, showed the confidence-versus-result gap, named rp-r-02 and rp-r-03 as sure and wrong, asked for a percent probability, and its Brier score of 0.5081 checks out against the four attempts. It leaks the answer to the recall item, though. It states that one week later testing won \"61% to 40%\", and those are the numbers the learner was meant to recall, so it falls under the rubric's leak rule for a 1."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      10,
+      11
+    ],
+    "total": 6,
+    "max": 10,
+    "critical_zeros": [
+      3
+    ],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "8 of 10, no 0 in scenarios 1, 2, 3, 10, 11"
+  }
+}

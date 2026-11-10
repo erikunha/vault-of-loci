@@ -17,6 +17,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from dependencies import VAULT, gap_report  # noqa: E402
 from learning_ledger import LEDGER, OBJECTIVES, load_objectives, read_ledger  # noqa: E402
 
+# What each state asks for next. The two reasons nothing counts are not the same problem: an
+# attempt made with help needs to be made again without it, and an attempt the learner never
+# confirmed needs the learner to say what happened, because the agent cannot grade it.
+NEXT_STEP = {
+    "never studied": "learn it first",
+    "never tested": "attempt it once, without help",
+    "only tested with help": "attempt the same task again, without help",
+    "only graded by the agent": "the learner has to confirm the attempt; the agent cannot grade it",
+    "last attempt was wrong": "practise a variation of the same task",
+}
+
 
 def parse_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -45,6 +56,9 @@ def main(argv=None):
         print(f"{row['concept']} ({state})")
         for need in row["states"]:
             print(f"  needs {need['concept']}: {need['state']} ({need['clean']} clean attempt(s))")
+            step = NEXT_STEP.get(need["state"])
+            if step and not row["ready"]:
+                print(f"    next: {step}")
         if row["gaps"]:
             print("  fix the gap before this concept")
         print()

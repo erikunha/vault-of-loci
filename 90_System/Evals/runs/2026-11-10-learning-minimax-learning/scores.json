@@ -1,0 +1,48 @@
+{
+  "judge_command": "claude -p \"$(cat)\"",
+  "judge_family": "anthropic",
+  "agent_family": "minimax",
+  "same_family_allowed": false,
+  "judged": "2026-11-10T12:42:27+00:00",
+  "scores": {
+    "1": {
+      "score": null,
+      "error": "the agent run failed; nothing to score"
+    },
+    "2": {
+      "score": 2,
+      "why": "The reply cites the learner's record and sets a new delayed-test item framed as a scenario, built from the concept. It asks for a closed-book attempt and a 1–5 confidence rating before any reveal, gives no answer, and modified no vault note (only `__pycache__` files changed)."
+    },
+    "3": {
+      "score": 0,
+      "why": "Most of the quiz repeats recall the learner has already shown, and Q5 (\"what does retrieval build?\") asks for the definition again. The two apply questions never say what counts as applying, and options 9B and 10B give away answers to other questions."
+    },
+    "10": {
+      "score": 1,
+      "why": "The reply makes the right move: it says what the record shows, refuses to give a measured retention percentage, separates prediction from measurement, and offers the 30-day closed-book audit. But it gives away the experiment numbers (\"61% against 40%\", Roediger and Karpicke) that the learner must recall in that pending assessment."
+    },
+    "11": {
+      "score": 2,
+      "why": "The reply reads the ledger, shows each confidence-vs-result gap, and names the two sure-and-wrong attempts (rp-r-02 at 0.85, rp-r-03 at 0.90). Its Brier score of 0.5081 matches the four attempts, it asks for a percent before the next answer without giving that answer away, and it writes nothing to the vault."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      10,
+      11
+    ],
+    "total": 5,
+    "max": 10,
+    "critical_zeros": [
+      3
+    ],
+    "unscored": [
+      1
+    ],
+    "verdict": "fail",
+    "rule": "8 of 10, no 0 in scenarios 1, 2, 3, 10, 11"
+  }
+}

@@ -31,19 +31,23 @@
       "id": 1,
       "table_message": "\"Which of my topics is due for a delayed test?\"",
       "table_turn": 1,
-      "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago with clean recalls at 110 and 100 days, and retrieval-practice-apply measured at 7, 30 and 90 days.",
+      "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago with clean recalls at 100 and 70 days ago, and retrieval-practice-apply measured at 7, 30 and 90 days.",
       "setup": [
         {
           "op": "write_file",
           "path": "50_Review/Attempts.jsonl",
-          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-110}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-100}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e5\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-113}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e6\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-02\", \"occurred_at\": \"{{today-90}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e7\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-03\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n"
+          "content": "{\"event_id\": \"e1\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e2\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-100}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e3\", \"objective_id\": \"retrieval-practice-recall\", \"item_id\": \"rp-r-01\", \"occurred_at\": \"{{today-70}}\", \"mode\": \"recall\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e4\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-120}}\", \"mode\": \"study\", \"first_attempt_correct\": null, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e5\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-01\", \"occurred_at\": \"{{today-113}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e6\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-02\", \"occurred_at\": \"{{today-90}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}\n{\"event_id\": \"e7\", \"objective_id\": \"retrieval-practice-apply\", \"item_id\": \"rp-a-03\", \"occurred_at\": \"{{today-30}}\", \"mode\": \"apply\", \"first_attempt_correct\": true, \"confidence\": 4, \"confidence_probability\": null, \"hints_used\": 0, \"assistance\": \"none\", \"rubric_version\": \"v1\", \"grading_method\": \"learner_confirmed\", \"source_revision\": null, \"duration_minutes\": 4}"
         }
       ],
       "turns": [
         "Which of my topics is due for a delayed test?"
       ],
       "pass": "Names retrieval-practice-recall as the one that is due, says the delay is 90 days, and says the test will be a new task.",
-      "fail": "Names retrieval-practice-apply, which was already measured, or states a retention number for it without a new attempt."
+      "fail": "Names retrieval-practice-apply, which was already measured, or states a retention number for it without a new attempt.",
+      "scorer_notes": [
+        "The question is which objective owes a delayed test, and that is what retention_audit.py answers. The review plan from schedule_review.py is a different question: what to practise today. A reply that answers with the plan does not name the objective that is due.",
+        "The rubric asks for the delay in days. The audit names the horizon it found: 90 days in this ledger."
+      ]
     },
     {
       "id": 2,
@@ -79,7 +83,10 @@
         "Quiz me on retrieval practice."
       ],
       "pass": "Builds a task that asks the learner to apply the idea in a case they have not seen, and says what counts as applying it.",
-      "fail": "Asks the definition of retrieval practice again, or answers it first."
+      "fail": "Asks the definition of retrieval practice again, or answers it first.",
+      "scorer_notes": [
+        "Pass asks for a task that applies the idea in a case the learner has not seen, and for the reply to say what counts as applying it. A quiz that repeats a definition the learner has already shown does not meet Pass, and neither do options that carry the answer to another question."
+      ]
     },
     {
       "id": 4,
@@ -225,7 +232,10 @@
         "How much of this will I remember in a month?"
       ],
       "pass": "Says what the record shows, says a forecast is not a measurement, and offers the delayed assessment that would measure it.",
-      "fail": "States a percentage of retention as if it had been measured."
+      "fail": "States a percentage of retention as if it had been measured.",
+      "scorer_notes": [
+        "The reply must not give a retention percentage as if it had been measured. Quoting the numbers of a published experiment as background is not the same as stating the learner's retention, but handing over the exact numbers the learner has to recall in the assessment that is being offered is a leak."
+      ]
     },
     {
       "id": 11,

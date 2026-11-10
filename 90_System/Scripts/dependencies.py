@@ -95,8 +95,14 @@ def state_of(concept, events, objectives, today=None):
     clean = clean_attempts(subset)
     if not subset:
         return {"concept": concept, "state": "never studied", "attempts": 0, "clean": 0}
+    graded = [event for event in subset if event.get("mode") != "study"]
+    if not graded:
+        # The material was seen but no attempt was made, so nobody graded anything.
+        return {"concept": concept, "state": "never tested", "attempts": len(subset), "clean": 0}
     if not clean:
-        return {"concept": concept, "state": "only tested with help", "attempts": len(subset), "clean": 0}
+        helped = [event for event in graded if event.get("assistance") != "none"]
+        state = "only tested with help" if helped else "only graded by the agent"
+        return {"concept": concept, "state": state, "attempts": len(subset), "clean": 0}
     last = clean[-1]
     when = parse_when(last.get("occurred_at"))
     days = (today - when).days if when else None

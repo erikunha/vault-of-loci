@@ -8,6 +8,12 @@ Tutor mode: the learner attempts first. The agent never writes the learner's not
 guesses. Hints come one step at a time and only after an attempt. Confidence from 1 to 5 is asked
 before any reveal. The agent never grades an attempt the learner did not confirm.
 
+This skill answers "what should I study today". It does not answer "what is due for a delayed
+test", which is `retention_audit.py`. The two sound alike and give different answers: the plan
+below is a ranking for the day, and the audit names the objective that passed a 7, 30 or 90 day
+horizon with no attempt without help. If the learner asked about a delayed test, use the other
+skill.
+
 1. Run the plan for today and read it. The plan says which items are worth another try and why, in
    the order to do them.
 

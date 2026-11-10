@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-10",
+  "label": "minimax-learning-v2",
+  "benchmark": "learning",
+  "agent": "minimax-learning",
+  "agent_family": "minimax",
+  "command": "/Users/erikhenriquealvescunha/Desktop/Projects/vault-of-loci/90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh",
+  "scenarios": [
+    1,
+    2,
+    3,
+    10,
+    11
+  ],
+  "timeout": 900,
+  "inline_instructions": false,
+  "started": "2026-11-10T13:26:49+00:00",
+  "finished": "2026-11-10T13:33:52+00:00",
+  "errors": []
+}

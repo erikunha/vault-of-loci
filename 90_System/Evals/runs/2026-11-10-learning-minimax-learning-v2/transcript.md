@@ -1,0 +1,236 @@
+---
+type: log
+summary: Learning eval run transcript of minimax-learning on 2026-11-10.
+tags: [type/log]
+---
+
+# Transcript: minimax-learning, 2026-11-10
+
+Agent command: `/Users/erikhenriquealvescunha/Desktop/Projects/vault-of-loci/90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh`. Each message is in a code block, as the agent wrote it.
+
+## Scenario 1
+
+**learner**, turn 1
+
+```text
+Which of my topics is due for a delayed test?
+```
+
+**agent**, turn 2
+
+````text
+**Answer: `retrieval practice`, objective `retrieval-practice-recall`.** It is due at the 90-day horizon.
+
+```
+objective attempts  clean  last attempt        status
+retrieval-practice-apply              3      3  2026-10-11          measured
+retrieval-practice-recall             2      2  2026-09-01          due at 90 days
+```
+
+- **Due now:** `retrieval-practice-recall` at 90 days, first seen 2026-07-13. New item id: `retrieval-practice-recall-d90`.
+- **Not due:** `retrieval-practice-apply` was tested cleanly on 2026-10-11, so it is still measured, not delayed.
+- **Separate case:** `retrieval-practice-explain` is registered in `90_System/Objectives.json` but has no attempt in the ledger at all, so it is untested rather than delayed.
+
+The delay has arrived, but your retention at that horizon is still unknown until the attempt happens. An attempt taken with a hint stays out of the rate.
+
+What I read in your record, so you can correct me: the ledger holds two clean recalls for `retrieval-practice-recall`, the last on 2026-09-01, the concept note `Retrieval_Practice.md` has empty `score` and `last_tested`, and `50_Review/Mistakes.md` has no entry for it. Your Session 01 recall note says the direction was right but the numbers from the experiment were missing.
+
+**Your task, closed book.** No notes, no summary, no excerpt before you answer.
+
+> Your exam is in seven days. Tonight you read a chapter, and you can either (A) reread the chapter two more times because it already feels familiar, or (B) close the book, write down everything you remember, then open it and fix the gaps. In the Roediger and Karpicke (2006) experiment, which of these two plans matches the group that remembered more one week later? Give the retention percentage reached by each group after one week, and say which group was ahead.
+
+Take your time. Reply with your answer in your own words, then tell me your confidence from 1 (guess) to 5 (certain). Once you answer I will grade it against the paper note, and I will record it in the ledger only after you confirm the result.
+````
+
+Files changed in the vault copy: `90_System/Scripts/__pycache__/audit.cpython-315.pyc`, `90_System/Scripts/__pycache__/learning_ledger.cpython-315.pyc`, `90_System/Scripts/__pycache__/scheduler.cpython-315.pyc`
+
+## Scenario 2
+
+**learner**, turn 1
+
+```text
+Give me a delayed test on retrieval practice.
+```
+
+**agent**, turn 2
+
+```text
+I read your record first: the concept note `Retrieval_Practice` has an empty `score` and `last_tested`, `50_Review/Mistakes.md` has no entries for it, and the ledger shows three events for `retrieval-practice-recall`, with two clean recalls on item `rp-r-01` at confidence 4. Correct me if any of that is wrong.
+
+You asked what is due for a delayed test, so I ran the retention audit, not the today plan.
+
+**Due now:** `retrieval-practice-recall`, at the 30 day horizon, first seen 2026-07-13, last clean attempt 2026-08-02. The delay has arrived, but retention at that horizon is still unknown until the attempt happens. An attempt taken with a hint stays out of the rate, so a closed book try is worth more to your record than a fast one with help.
+
+Your record is strong on the old item, so this is a fresh task, not a repeat of `rp-r-01`. New item id: `retrieval-practice-recall-d30`.
+
+**Closed book task. Do not open any note before you answer.**
+
+1. In the experiment you studied on testing against rereading, one week after the passage was learned, what percentage did the group that tested itself recall, and what percentage did the group that reread recall? Give both numbers and say which group each number belongs to.
+2. At the shorter delay of five minutes, which of those two groups was ahead? Say only which one, no numbers needed.
+
+Reply with your answer for both parts and a confidence from 1 (guess) to 5 (certain). I grade your words against the source note and the rubric, and I only record it after you confirm.
+
+Two other objectives for this concept are registered but have no attempt at all, `retrieval-practice-explain` and `retrieval-practice-apply`. They are not delayed tests, they are unmeasured, so I left them out of this round. Say the word and I will give you one of those next.
+```
+
+Files changed in the vault copy: `90_System/Scripts/__pycache__/audit.cpython-315.pyc`, `90_System/Scripts/__pycache__/learning_ledger.cpython-315.pyc`, `90_System/Scripts/__pycache__/scheduler.cpython-315.pyc`
+
+## Scenario 3
+
+**learner**, turn 1
+
+```text
+Quiz me on retrieval practice.
+```
+
+**agent**, turn 2
+
+```text
+Quiz written and checked. Here's what I read from your record before setting the difficulty:
+
+- `20_Concepts/Retrieval_Practice.md` has `score`, `confidence` and `last_tested` all **empty**, so `calibration_report.py` reports it as untested.
+- `50_Review/Attempts.jsonl` disagrees: 4 attempts on `retrieval-practice-recall`, three correct recalls at confidence 4, no hints, last one on **2026-10-31** (10 days ago).
+- `50_Review/Mistakes.md` and `Misconceptions.md` are both empty logs.
+- `Objectives.json` has three objectives (recall, explain, apply). Only recall has attempts. Explain and apply have no record.
+
+So I treated your recall as solid (no scaffolding) and pushed into the untested explain and apply objectives, plus reference-level detail the concept note only summarizes. The four failing checks in `run_checks.py` are pre-existing and unrelated: 8 broken links to missing `90_System/Evals/*.md` notes, and two eval tests that need files and a git repo this vault does not have.
+
+**Answer every question in your own words, then give your confidence from 1 (guess) to 5 (certain) for each. Do not open the source notes yet.** The answer key is folded at the bottom of the file, and I will not show it until you have answered.
+
+**Q1** (Roediger and Karpicke, 2006)
+In the 2006 experiment, students either reread a passage or took free-recall tests with no feedback. After five minutes the rereaders scored higher. After one week the order reversed. Explain why the same method can point one way after five minutes and the other way after one week, and say why the benefit cannot be attributed to seeing corrections.
+
+**Q2** (Retrieval practice + Studying with AI)
+A learner rereads a chapter three times, it feels solid, then they score badly on the exam. Name what rereading actually builds, what the note says testing is for besides measuring learning, and the result reported for students who used an unrestricted chatbot on practice problems and then on the exam without it.
+
+**Q3** (Goncalves et al., 2025)
+In the meta-analysis comparing retrieval practice directly against elaborative encoding, how large was the retrieval advantage overall, and which condition decides whether the advantage is there at all?
+
+**Q4** (Retrieval practice + Studying with AI)
+A test in a new subject is tomorrow evening. You have one evening of study time. Describe what you do with it and why, using the effect. Include what you check and what you do with the gaps you find.
+
+**Q5** (Ruitenburg et al., 2026)
+You are building a study routine for a school unit that mixes factual items, conceptual ideas and procedures. Which half gets the retrieval set and which does not, and what did the classroom testing effect show for retention versus for comprehension and transfer?
+
+**Q6** (Mawson and Kang, 2025)
+You have four hours of study time for a test in ten days. Describe the schedule that lands in the part of the evidence where the spacing effect was largest, and name the number in the review that says the spread matters as much as the average.
+
+**Q7** (Akgun and Toker, 2026)
+An AI-assisted adaptive pretest raised understanding for every student. Seven weeks later the students doing structured retrieval finished ahead of the students free to direct their own AI-supported study. Which reading is correct?
+
+- A. Adaptive spacing was the active ingredient, because it produced the highest posttest mean.
+- B. The pretest caused the seven-week retention, because every student started with one.
+- C. Structured retrieval beat free-form AI study, while adaptive and fixed retrieval did not differ from each other.
+- D. The learner-directed group used the AI less, which is what explains the gap.
+
+**Q8** (Lee and Bosch, 2025)
+A student predicts 90 on a pretest and scores 55. Which statement matches the vault's notes?
+
+- A. Fixing that calibration gap would improve the student's learning gain.
+- B. The student's own judgment predicted their later engagement better than the score they earned.
+- C. Overestimating students spent more time on preparatory actions before quizzes.
+- D. The coefficient of -9.100 is a target value the single student should aim at.
+
+Send me your answers with a confidence rating for each and I will grade them against the sources, ask why on the ones you get right, and offer `mistake-review` for the misses.
+
+[Quiz file with the folded answer key](/private/var/folders/qg/mdb1x_fn2gz_mczmdjm4bv8m0000gn/T/tutor-eval-97cr1rau/vault/50_Review/Quizzes/Retrieval_Practice_2026-11-10.md)
+```
+
+Files changed in the vault copy: `50_Review/Quizzes/Retrieval_Practice_2026-11-10.md`, `90_System/Agent_Log/2026-11.md`, `90_System/Scripts/__pycache__/audit.cpython-315.pyc`, `90_System/Scripts/__pycache__/calibration.cpython-315.pyc`, `90_System/Scripts/__pycache__/dependencies.cpython-315.pyc`, `90_System/Scripts/__pycache__/format_notes.cpython-315.pyc`, `90_System/Scripts/__pycache__/learning_ledger.cpython-315.pyc`, `90_System/Scripts/__pycache__/misconceptions.cpython-315.pyc`, `90_System/Scripts/__pycache__/palace.cpython-315.pyc`, `90_System/Scripts/__pycache__/run_tutor_eval.cpython-315.pyc`, `90_System/Scripts/__pycache__/scheduler.cpython-315.pyc`, `90_System/Scripts/__pycache__/transcript_sections.cpython-315.pyc`, `90_System/Scripts/__pycache__/transfer.cpython-315.pyc`, `90_System/Scripts/__pycache__/vault_notes.cpython-315.pyc`, `90_System/index.json`, `INDEX.md`
+
+## Scenario 10
+
+**learner**, turn 1
+
+```text
+How much of this will I remember in a month?
+```
+
+**agent**, turn 2
+
+```text
+I read your learning ledger (`50_Review/Attempts.jsonl`), ran the retention report and the retention audit, and checked your Retrieval Practice note, Mistakes and Misconceptions notes. Your concept note has no `score` or `last_tested` yet, and both review notes are empty.
+
+Your question is the forecast kind ("how much will I remember"), so the answer is not in `schedule_review.py` (that ranks the day). It is the retention report plus the audit.
+
+**Short answer: nobody has measured it, and the vault refuses to guess.** A forecast is not a measurement, so no script in this vault outputs a predicted percentage. Here is what is actually on record.
+
+**Measured**
+
+- 7 day horizon: 2 clean recalls, both correct, so 100% on 2 eligible attempts of one item (`rp-r-01`). That is a small sample and it is a single narrow item: state the one week testing versus rereading result with both numbers.
+- 30 day horizon: no eligible attempt at all. First seen 2026-09-11, last attempt 2026-10-01, which was 20 days in. Today is 40 days later. The audit says `retrieval-practice-recall` is due at 30 days right now.
+- 2 of your 3 objectives have never been attempted. `retrieval-practice-explain` (why the result flips between five minutes and one week) and `retrieval-practice-apply` (what to do the night before a test) are registered with zero events in the ledger. So for two thirds of what you studied, there is no number at all.
+
+**What research says a month usually looks like**
+
+- One week after learning, the group that tested itself kept 61% of a text, the rereaders 40% (Roediger and Karpicke, 2006, in your concept note).
+- At seven weeks, structured retrieval groups finished at 78.19 and 74.55 against 67.28 for free-form AI-supported study, d = 0.92 (Akgun and Toker, 2026).
+- Spacing over time beats massing by d = 0.54 in classrooms, but the spread across studies is enormous (I2 = 92.13%), and longer retention intervals went with larger effects (Mawson and Kang, 2025).
+
+**Two things I can do right now**
+
+1. Run the delayed 30 day attempt that is due, on a new task built from the same objective, so the number finally exists in your record.
+2. You give me a prediction first, before you see any of it: what percentage do you think you will recall in 30 days, plus a confidence from 1 to 5. It goes into the ledger and the calibration report grades it later, so the gap between your forecast and reality becomes visible instead of lost.
+
+Say the number first and I will run the test after, so the prediction stays independent of the result.
+```
+
+Files changed in the vault copy: `90_System/Scripts/__pycache__/audit.cpython-315.pyc`, `90_System/Scripts/__pycache__/learning_ledger.cpython-315.pyc`, `90_System/Scripts/__pycache__/scheduler.cpython-315.pyc`
+
+## Scenario 11
+
+**learner**, turn 1
+
+```text
+Is my confidence telling me anything?
+```
+
+**agent**, turn 2
+
+```text
+Your confidence is telling you something. It is just not telling you the truth about what you know. Your record says the gap runs the wrong way.
+
+## What the ledger shows
+
+Four graded attempts, all on `retrieval-practice-recall` (the criterion: state the one week retention result of testing against rereading, with both numbers, without looking).
+
+| Date | Item | You said | Result | Gap |
+|---|---|---|---|---|
+| 2026-10-21 | rp-r-01 | 90% | right | 10 |
+| 2026-10-26 | rp-r-02 | 85% | **wrong** | 85 |
+| 2026-10-31 | rp-r-03 | 90% | **wrong** | 90 |
+| 2026-11-05 | rp-r-03 | 30% | right | 70 |
+
+The reliability table makes it plain. In the 0.8 to 1.0 bin you were right 1 time out of 3. In the 0.2 to 0.4 bin you were right 1 time out of 1. On this record, being less sure predicted being right.
+
+The Brier score with an explicit probability is **0.5081**. A coin that always said "50 percent" would score 0.25. So your confidence is currently worse than a coin flip at telling you whether you got it right.
+
+The cleanest single case is rp-r-03. On 10-31 you said 90% and got it wrong. On 11-05 you said 30% and got it right. Same item, five days apart. Your confidence moved down while the result moved up.
+
+## What each gap means
+
+- **Sure and wrong** (rp-r-02, rp-r-03). The material is not where you think it is. Reread the concept note for that objective and test it again. This is the gap to chase.
+- **Unsure and right** (rp-r-03, 11-05). The knowledge is there and your confidence is behind it. Keep the same material, use it again later, and let the confidence come up on its own.
+
+One caveat I want to be honest about: four attempts is a small ledger, and three of the five bins are empty. Treat this as a strong lead, not a settled verdict. But it points in the same direction as the material you are studying, which is worth noticing on its own.
+
+## The likely culprit
+
+Your vault already has the answer to why this happens. [Retrieval_Practice.md](/private/var/folders/qg/mdb1x_fn2gz_mczmdjm4bv8m0000gn/T/tutor-eval-so1f4efo/vault/20_Concepts/Retrieval_Practice.md) says rereading builds familiarity, "the feeling that I know this", and that is exactly what confidence measures. Being sure and wrong is familiarity, not recall.
+
+There is also a very specific trap in this source. The same experiment has two results: five minutes after studying, rereading won 83% to 71%. One week later, testing won 61% to 40%. The objective asks for the one week numbers. Answering 83% and 71%, or reversing which group won, would produce exactly your pattern: fluent, confident, wrong. I do not have your answer text, so I cannot tell you that is what happened. It is the first thing to check.
+
+## Two things missing from the record
+
+The [Mistakes.md](/private/var/folders/qg/mdb1x_fn2gz_mczmdjm4bv8m0000gn/T/tutor-eval-so1f4efo/vault/50_Review/Mistakes.md) log is empty and the [Misconceptions.md](/private/var/folders/qg/mdb1x_fn2gz_mczmdjm4bv8m0000gn/T/tutor-eval-so1f4efo/vault/50_Review/Misconceptions.md) log is empty, even though rp-r-02 and rp-r-03 were both wrong with no help. The misconception report flags the objective as wrong 2 times and asks for the drill: two items that look alike, you say which one applies and why. That drill, on the five minute versus one week pair, is the thing that would break this loop. Repeating the same card will not.
+
+## What I propose next
+
+1. Retest the one week result with the five minute result as the decoy, and log the error in the two open logs. I will not write your answer.
+2. From the next reveal on, give me a probability from 0 to 100 alongside the 1 to 5 scale. The number in percent is what makes the gap visible.
+3. Today's review plan already ranks rp-r-02 at the top, priority 2.1, for exactly this reason.
+
+Want me to start with rp-r-02, and do you want both wrong answers written into the mistake and confusion logs first?
+```
+
+Files changed in the vault copy: `90_System/Scripts/__pycache__/calibration.cpython-315.pyc`, `90_System/Scripts/__pycache__/learning_ledger.cpython-315.pyc`, `90_System/Scripts/__pycache__/misconceptions.cpython-315.pyc`, `90_System/Scripts/__pycache__/scheduler.cpython-315.pyc`, `90_System/Scripts/__pycache__/transfer.cpython-315.pyc`

@@ -18,8 +18,9 @@ python3 -I 90_System/Scripts/dependency_check.py
 2. Read the map. The script reads the "Needs first" column of the concept map of each track
    (`10_Tracks/<NN>_<Track>/practice/Concept_Map.md`) and the edges of the canvases in `30_Maps`,
    then joins them with the ledger. For each concept it prints the prerequisites and the state of
-   each one: `never studied`, `only tested with help`, `last attempt was wrong`, `not tested for N
-   days` or `ok`. A concept with a gap is not ready.
+   each one: `never studied`, `never tested`, `only tested with help`, `only graded by the agent`,
+   `last attempt was wrong`, `not tested for N days` or `ok`, and the next step each state asks
+   for. A concept with a gap is not ready.
 
 ```bash
 python3 -I 90_System/Scripts/dependency_check.py --target <name>
@@ -29,10 +30,19 @@ python3 -I 90_System/Scripts/dependency_check.py --json
 3. If there is a gap, say in one line which prerequisite is missing. Then work on that
    prerequisite first and leave the new concept for later. Do not move on to the new concept while
    a gap is open.
-4. Work the prerequisite the way the record asks for it. A prerequisite that was never studied or
-   was only tested with help is taught with a worked example from a source note, step by step,
-   then a similar problem for the learner. A prerequisite whose last attempt was wrong is
-   practised with a variation of the same task.
+4. Work the prerequisite the way the record asks for it. The state names the next step, and the
+   states are not the same problem:
+   - `never studied`: teach it with a worked example from a source note, step by step, then a
+     similar problem for the learner.
+   - `never tested`: the material was seen but never attempted. Give one problem of the kind the
+     objective names and let the learner attempt it without help.
+   - `only tested with help`: every attempt so far had help, so none of them counts. Give the same
+     kind of task again and let the learner attempt it without help.
+   - `only graded by the agent`: the attempt does not count because the learner never confirmed
+     it. Ask the learner what they produced and confirm the result with them. The agent does not
+     grade it for them.
+   - `last attempt was wrong`: practise a variation of the same task.
+   - `not tested for N days`: the delayed attempt, which is the `retention-audit` skill.
 5. If the answer is wrong, or the learner asks to try again, use the hint ladder one step at a
    time: hint, strong hint, partial example, answer. Never skip a step.
 6. Ask for confidence from 1 to 5 before the reveal. Then reveal and grade the learner's words

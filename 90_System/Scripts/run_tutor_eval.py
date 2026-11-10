@@ -46,6 +46,10 @@ SCENARIOS_REL = Path("90_System") / "Evals" / "tutor_scenarios.json"
 MARKDOWN_REL = Path("90_System") / "Evals" / "Tutor_mode.md"
 RUNS_REL = Path("90_System") / "Evals" / "runs"
 
+
+class BenchmarkMismatch(Exception):
+    """The run and the benchmark do not describe the same scenarios."""
+
 # Two benchmarks share this runner. The tutor one asks whether the agent behaves as a tutor.
 # The learning one asks whether the agent uses the learner's record to measure what was learned.
 BENCHMARKS = {
@@ -242,8 +246,14 @@ def apply_setup(vault, ops):
 
 def run_shell(command, prompt, cwd, timeout):
     """Run a shell command with the prompt on stdin. Returns (exit code, stdout, stderr, timed_out)."""
+    env = dict(os.environ)
+    # The agent wrapper has a deadline of its own. It is set to the timeout of
+    # the run, so a reply is never cut inside the wrapper while the run records
+    # a timeout that was never in effect. An explicit value in the environment
+    # wins.
+    env.setdefault("MCODE_TUTOR_TIMEOUT", str(timeout))
     proc = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, cwd=cwd, text=True, start_new_session=True)
+                            stderr=subprocess.PIPE, cwd=cwd, text=True, start_new_session=True, env=env)
     try:
         out, err = proc.communicate(prompt, timeout=timeout)
         return proc.returncode, out, err, False
@@ -294,12 +304,21 @@ def judge_prompt(data, scenario, records):
         "",
         f"SCENARIO_ID: {scenario['id']}",
     ]
+    source = str(data.get("source", "")).strip()
+    if source:
+        # The judge has to know which benchmark it is scoring. Two benchmarks in this repo share
+        # the same 0 to 2 scale, and a judge that reads the wrong one scores the wrong thing.
+        lines.append("Benchmark: " + source.splitlines()[0])
     if scenario.get("setup_description"):
         lines.append("Vault state before the conversation: " + scenario["setup_description"])
     lines += ["", "Rubric:"]
     for key in ("2", "1", "0"):
         lines.append(f"- {key}: {data['rubric'][key]}")
-    lines += ["", "Pass: " + scenario["pass"], "Fail: " + scenario["fail"]]
+    lines += ["",
+              "Length is not quality. A long reply that does what Pass says and nothing in Fail "
+              "scores the same as a short one. A reply that hands over the content the learner was "
+              "supposed to recall or produce loses the point for leaking, however long it is.",
+              "Pass: " + scenario["pass"], "Fail: " + scenario["fail"]]
     for note in scenario.get("scorer_notes", []):
         lines.append("Note: " + note)
     touched = sorted({f for r in records if r["role"] == "agent" for f in r.get("files_changed", [])})
@@ -309,8 +328,8 @@ def judge_prompt(data, scenario, records):
         lines.append(f"[{r['role']}]\n{r['text']}\n")
     lines += ["=== END ===", "",
               "Answer with exactly two lines and nothing else:",
-              "SCORE: 0, 1 or 2",
-              "WHY: one or two short sentences."]
+              "WHY: one or two short sentences, naming the rule that decided it.",
+              "SCORE: 0, 1 or 2"]
     return "\n".join(lines) + "\n"
 
 
@@ -322,6 +341,22 @@ def parse_judge(text):
         return None, ""
     why = WHY_LINE.findall(text)
     return int(scores[-1]), (why[-1].strip() if why else "")
+
+
+def modal_score(scores):
+    """The score the judge gave most often, or None when it gave none.
+
+    A tie goes to the lower score: when the judge cannot decide, the run does not get the
+    benefit of the doubt.
+    """
+    given = [score for score in scores if score is not None]
+    if not given:
+        return None
+    counts = {}
+    for score in given:
+        counts[score] = counts.get(score, 0) + 1
+    best = max(counts.values())
+    return min(score for score, count in counts.items() if count == best)
 
 
 # ---------------------------------------------------------------- pass rule
@@ -364,6 +399,62 @@ def fence_for(text):
 def bench_of(meta):
     """The benchmark a run belongs to, with its title and its Markdown table."""
     return BENCHMARKS.get(meta.get("benchmark", "tutor"), BENCHMARKS["tutor"])
+
+
+def benchmark_of_run(meta, root, fallback=None):
+    """The benchmark of a run folder, taken from the folder itself.
+
+    A run records its benchmark in run.json. Scoring has to use that one: the flag on the
+    command line is only the default, and scoring a learning run against the tutor rubric
+    silently scores the wrong thing, with a judge that quotes the wrong rules.
+
+    A run.json with no benchmark field is treated the same way as one with an unknown name:
+    the fallback the caller gives is used, and benchmark_name tells the caller which one it got.
+    """
+    name = meta.get("benchmark")
+    bench = BENCHMARKS.get(name) if name else None
+    if bench is None:
+        bench = fallback or BENCHMARKS["tutor"]
+    return bench, load_scenarios(Path(root) / bench["scenarios"])
+
+
+def benchmark_name(meta, bench):
+    """The name of the benchmark a run was scored against, for the operator to read."""
+    for name, entry in BENCHMARKS.items():
+        if entry is bench:
+            return name
+    return str(meta.get("benchmark") or "unknown")
+
+
+def announce_benchmark(meta, bench):
+    """Say which benchmark is scoring this run, and warn when it came from the flag.
+
+    A run folder that does not record a benchmark is a run from before the runner recorded one.
+    The flag is the only source left for it, and that is exactly the case where the wrong rubric
+    can reach the judge, so it is said out loud instead of passing unnoticed.
+    """
+    name = benchmark_name(meta, bench)
+    if meta.get("benchmark"):
+        print("benchmark: " + name)
+    else:
+        print(f"the run folder does not record a benchmark; the one from the command line is used: {name}",
+              file=sys.stderr)
+        print("benchmark: " + name)
+
+
+def benchmark_problem(meta):
+    """Why the benchmark recorded in a run folder cannot be used, or None when it can.
+
+    An unknown name in run.json used to fall back to the benchmark of the command line without
+    a word, which reproduces the wrong-rubric defect for a typo. The name is now checked.
+    """
+    name = meta.get("benchmark")
+    if name is None:
+        return None
+    if name not in BENCHMARKS:
+        return (f"the run folder says benchmark '{name}', which does not exist. "
+                f"The known ones are: {', '.join(sorted(BENCHMARKS))}")
+    return None
 
 
 def write_transcript_md(path, meta, records):
@@ -416,7 +507,8 @@ def write_summary(path, data, meta, scored, verdict):
         r = scored["scores"].get(str(i), {})
         sc = r.get("score")
         why = (r.get("why") or r.get("error") or "").replace("|", "/")
-        lines.append(f"| {i} | {'not scored' if sc is None else sc} | {why} |")
+        stable = f" (judge agreed on {r['consistent']})" if r.get("consistent") else ""
+        lines.append(f"| {i} | {'not scored' if sc is None else sc}{stable} | {why} |")
     lines += ["", f"Total: {verdict['total']} of {verdict['max']}.", ""]
     if verdict["rule"]:
         lines.append(f"Pass rule: {verdict['rule']}.")
@@ -514,6 +606,13 @@ def load_records(run_dir):
 
 def judge_run(args, data, run_dir, meta, records, statuses):
     ids = meta["scenarios"]
+    repeats = max(1, int(getattr(args, "judge_repeats", 1) or 1))
+    known = {scenario["id"] for scenario in data["scenarios"]}
+    missing = [sid for sid in ids if sid not in known]
+    if missing:
+        # The scenario is not in this benchmark. Scoring it anyway would judge it with a rubric
+        # that does not describe it.
+        raise BenchmarkMismatch(f"the run has scenario {missing} and the benchmark does not")
     scores = {}
     for sid in ids:
         scenario = next(s for s in data["scenarios"] if s["id"] == sid)
@@ -521,16 +620,40 @@ def judge_run(args, data, run_dir, meta, records, statuses):
         if statuses.get(sid) == "error" or not recs:
             scores[str(sid)] = {"score": None, "error": "the agent run failed; nothing to score"}
             continue
-        with tempfile.TemporaryDirectory(prefix="tutor-judge-") as empty:
-            code, out, err, timed_out = run_shell(args.judge_cmd, judge_prompt(data, scenario, recs), empty, args.judge_timeout)
-        score, why = parse_judge(out) if not timed_out and code == 0 else (None, "")
-        entry = {"score": score, "why": why}
-        if score is None:
-            entry["error"] = ("judge timed out" if timed_out else f"judge exit code {code}" if code != 0
-                              else "no SCORE line in the judge reply")
+        got, reasons, problems = [], [], []
+        for _ in range(repeats):
+            with tempfile.TemporaryDirectory(prefix="tutor-judge-") as empty:
+                code, out, err, timed_out = run_shell(args.judge_cmd, judge_prompt(data, scenario, recs), empty, args.judge_timeout)
+            score, reason = parse_judge(out) if not timed_out and code == 0 else (None, "")
+            got.append(score)
+            reasons.append(reason)
+            if score is None:
+                problems.append("judge timed out" if timed_out else f"judge exit code {code}" if code != 0
+                                else "no SCORE line in the judge reply")
+        final = modal_score(got)
+        # The reason has to be the reason of the score the run keeps. A reason from another repeat
+        # explains a number the run is not showing.
+        why = ""
+        for score, reason in zip(got, reasons):
+            if score == final and reason:
+                why = reason
+                break
+        entry = {"score": final, "why": why}
+        if final is None:
+            entry["error"] = problems[0] if problems else "no score"
             entry["raw"] = clean_reply(out)[-500:]
+        if repeats > 1:
+            # The judge is a model, and the same model can read the same transcript twice and land
+            # on different numbers. Repeating the judgement says how stable this one was. A judge
+            # that gave no number at all is not agreement, so it does not count in the numerator
+            # nor in the denominator.
+            entry["repeats"] = got
+            answered = [score for score in got if score is not None]
+            if answered:
+                entry["consistent"] = f"{sum(1 for score in answered if score == final)}/{len(answered)}"
         scores[str(sid)] = entry
-        print(f"judge scenario {sid}: {score if score is not None else entry['error']}", flush=True)
+        print(f"judge scenario {sid}: {final if final is not None else entry.get('error', 'no score')}"
+              + (f" ({entry['consistent']} same)" if entry.get("consistent") else ""), flush=True)
     scored = {"judge_command": args.judge_cmd, "judge_family": args.judge_family, "agent_family": meta.get("agent_family"),
               "same_family_allowed": bool(args.allow_same_family), "judged": now(), "scores": scores}
     verdict = evaluate(data, {int(k): v["score"] for k, v in scores.items()}, ids)
@@ -562,6 +685,8 @@ def build_parser():
     ap.add_argument("--agent-family", help="model family of the agent, for example anthropic, openai, google, qwen")
     ap.add_argument("--judge-cmd", help="shell command that scores one transcript; optional")
     ap.add_argument("--judge-family", help="model family of the judge")
+    ap.add_argument("--judge-repeats", type=int, default=1,
+                    help="score every scenario this many times, to see how stable the judge is")
     ap.add_argument("--allow-same-family", action="store_true", help="let the judge share the agent's family")
     ap.add_argument("--score-run", metavar="RUN_DIR", help="score an existing run folder with --judge-cmd")
     ap.add_argument("--summarize", metavar="RUN_DIR",
@@ -581,24 +706,29 @@ def build_parser():
     return ap
 
 
-def main(argv=None):
-    args = build_parser().parse_args(argv)
-    root = Path(args.root).resolve()
-    bench = BENCHMARKS[args.benchmark]
-    data = load_scenarios(root / bench["scenarios"])
-    problems = check_drift(data, (root / bench["markdown"]).read_text(encoding="utf-8"))
-    if args.check_drift:
-        for p in problems:
-            print("drift:", p)
-        name = f"{bench['scenarios'].name} and {bench['markdown'].name}"
-        print(f"{name} match" if not problems else f"{len(problems)} differences")
-        return 1 if problems else 0
-    if problems:
-        print(f"warning: {bench['scenarios'].name} and {bench['markdown'].name} differ:", "; ".join(problems), file=sys.stderr)
+def score_existing(args, root, fallback_bench):
+    """Score a run folder with a judge, or rebuild the summary of one that was scored.
 
+    The benchmark comes from the run folder. The benchmark of the flag is only the fallback for a
+    run folder that does not record one. The benchmark used is printed, because the judge is given
+    the rubric of that benchmark and the reader needs to know which one.
+    """
     if args.summarize:
         run_dir = Path(args.summarize)
+        if not (run_dir / "scores.json").exists():
+            print(f"refused: {run_dir} has no scores.json to summarise", file=sys.stderr)
+            return 2
         meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        problem = benchmark_problem(meta)
+        if problem:
+            print("refused:", problem, file=sys.stderr)
+            return 2
+        try:
+            bench, data = benchmark_of_run(meta, root, fallback_bench)
+        except OSError as error:
+            print("refused: the scenarios of the benchmark could not be read:", error, file=sys.stderr)
+            return 2
+        announce_benchmark(meta, bench)
         scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
         verdict = evaluate(data, {int(k): v.get("score") for k, v in scored["scores"].items()}, meta["scenarios"])
         scored["verdict"] = verdict
@@ -607,25 +737,72 @@ def main(argv=None):
         print(f"total {verdict['total']} of {verdict['max']}; verdict: {verdict['verdict']}")
         return 0
 
-    if args.score_run:
-        run_dir = Path(args.score_run)
-        if not args.judge_cmd:
-            print("--score-run needs --judge-cmd", file=sys.stderr)
-            return 2
-        meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
-        error = check_families(args, meta.get("agent_family"))
-        if error:
-            print("refused:", error, file=sys.stderr)
-            return 2
-        if (run_dir / "scores.json").exists() and not args.force:
-            print("refused: scores.json exists; pass --force to score again", file=sys.stderr)
-            return 2
-        records = load_records(run_dir)
-        statuses = {sid: "error" if any(r.get("error") for r in records if r["scenario"] == sid) else "ok"
-                    for sid in meta["scenarios"]}
+    run_dir = Path(args.score_run)
+    if not args.judge_cmd:
+        print("--score-run needs --judge-cmd", file=sys.stderr)
+        return 2
+    meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    problem = benchmark_problem(meta)
+    if problem:
+        print("refused:", problem, file=sys.stderr)
+        return 2
+    try:
+        bench, data = benchmark_of_run(meta, root, fallback_bench)
+    except OSError as error:
+        print("refused: the scenarios of the benchmark could not be read:", error, file=sys.stderr)
+        return 2
+    announce_benchmark(meta, bench)
+    error = check_families(args, meta.get("agent_family"))
+    if error:
+        print("refused:", error, file=sys.stderr)
+        return 2
+    if (run_dir / "scores.json").exists() and not args.force:
+        print("refused: scores.json exists; pass --force to score again", file=sys.stderr)
+        return 2
+    records = load_records(run_dir)
+    statuses = {sid: "error" if any(r.get("error") for r in records if r["scenario"] == sid) else "ok"
+                for sid in meta["scenarios"]}
+    try:
         verdict = judge_run(args, data, run_dir, meta, records, statuses)
-        print(f"total {verdict['total']} of {verdict['max']}; verdict: {verdict['verdict']}")
-        return 0
+    except BenchmarkMismatch as error:
+        print("refused:", error, file=sys.stderr)
+        return 2
+    print(f"total {verdict['total']} of {verdict['max']}; verdict: {verdict['verdict']}")
+    return 0
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    root = Path(args.root).resolve()
+    bench = BENCHMARKS[args.benchmark]
+
+    # Scoring a run and summarising one use the benchmark of the run folder, not the one of the
+    # flag. The flag benchmark is only the default for a new run, so the scenarios of the flag are
+    # not read at all on these paths: a vault that only has the learning benchmark can still score
+    # a learning run.
+    if args.summarize or args.score_run:
+        return score_existing(args, root, bench)
+
+    try:
+        data = load_scenarios(root / bench["scenarios"])
+    except OSError as error:
+        print(f"refused: the scenarios of the {args.benchmark} benchmark could not be read: {error}",
+              file=sys.stderr)
+        return 2
+    try:
+        problems = check_drift(data, (root / bench["markdown"]).read_text(encoding="utf-8"))
+    except OSError as error:
+        print(f"refused: the table of the {args.benchmark} benchmark could not be read: {error}",
+              file=sys.stderr)
+        return 2
+    if args.check_drift:
+        for p in problems:
+            print("drift:", p)
+        name = f"{bench['scenarios'].name} and {bench['markdown'].name}"
+        print(f"{name} match" if not problems else f"{len(problems)} differences")
+        return 1 if problems else 0
+    if problems:
+        print(f"warning: {bench['scenarios'].name} and {bench['markdown'].name} differ:", "; ".join(problems), file=sys.stderr)
 
     if not args.agent_cmd and not args.dry_run:
         print("--agent-cmd is required (or --score-run RUN_DIR, --summarize RUN_DIR, --check-drift)", file=sys.stderr)

@@ -8,6 +8,12 @@ Tutor mode: the learner attempts first, closed book. The agent never writes the 
 answers or guesses. Hints come one step at a time and only after an attempt. Confidence from 1 to 5
 is asked before any reveal. The agent never grades an attempt the learner did not confirm.
 
+This skill answers "what is due for a delayed test". It does not answer "what should I study
+today", which is `schedule_review.py`. The two sound alike and give different answers: this one
+names the objective that passed a 7, 30 or 90 day horizon with no attempt without help, and the
+other ranks what is worth another try. If the learner asked what to study today, use the other
+skill.
+
 1. Run the audit and read it. It reports the objectives that passed a horizon with no attempt
    without help, and the objectives that were never tested.
 
