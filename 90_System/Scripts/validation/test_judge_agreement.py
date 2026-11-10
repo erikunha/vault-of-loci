@@ -86,4 +86,11 @@ with tempfile.TemporaryDirectory() as tmp:
                             capture_output=True, text=True)
     assert broken.returncode == 2, broken
     assert "refused" in broken.stderr, broken.stderr
+    # A score between two categories is refused too: it is not rounded into one of them.
+    half = scores_file(root / "scores-half.json", {"1": 1.5, "2": 1, "3": 1, "4": 1}, "half")
+    broken = subprocess.run([sys.executable, "-I", str(SCRIPT), str(half), str(b), "--json"],
+                            capture_output=True, text=True)
+    assert broken.returncode == 2, broken
+    assert "refused" in broken.stderr, broken.stderr
+    assert "Traceback" not in broken.stderr, broken.stderr
 print("ok: 24 checks")

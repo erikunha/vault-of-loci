@@ -7,7 +7,7 @@ tags: [type/log]
 # Learning eval run: minimax-learning, 2026-11-10
 
 - Agent: minimax-learning (family: minimax).
-- Command: `/Users/erikhenriquealvescunha/Desktop/Projects/vault-of-loci/90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh`. The prompt goes to the command on stdin.
+- Command: `90_System/Evals/mcode-tutor.sh`. The prompt goes to the command on stdin.
 - Scenarios run: 1, 2, 3, 10, 11.
 - Started 2026-11-10T13:26:49+00:00, finished 2026-11-10T13:33:52+00:00.
 - Each scenario ran in a fresh copy of the vault without `.git` and without `90_System/Evals`; the real vault was not changed.

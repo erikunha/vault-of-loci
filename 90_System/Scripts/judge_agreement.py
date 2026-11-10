@@ -43,9 +43,10 @@ def read_scores(path):
         value = entry.get("score")
         if value is None:
             continue
-        value = int(value)
-        if value not in CATEGORIES:
-            raise ValueError(f"scenario {key} has the score {value}, which is not on the scale "
+        if isinstance(value, float) and value.is_integer():
+            value = int(value)
+        if isinstance(value, bool) or not isinstance(value, int) or value not in CATEGORIES:
+            raise ValueError(f"scenario {key} has the score {value!r}, which is not on the scale "
                              f"{list(CATEGORIES)}")
         scores[str(key)] = value
     return scores, data

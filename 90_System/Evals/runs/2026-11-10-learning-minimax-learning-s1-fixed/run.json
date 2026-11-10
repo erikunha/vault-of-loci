@@ -4,7 +4,7 @@
   "benchmark": "learning",
   "agent": "minimax-learning-s1-fixed",
   "agent_family": "minimax",
-  "command": "/Users/erikhenriquealvescunha/Desktop/Projects/vault-of-loci/90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh",
+  "command": "90_System/Evals/mcode-tutor.sh",
   "scenarios": [
     1
   ],

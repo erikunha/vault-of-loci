@@ -390,6 +390,32 @@ with tempfile.TemporaryDirectory() as tmp:
     check("scores.json" in empty_scores_run.stderr and str(empty_scores) in empty_scores_run.stderr,
           f"the refusal names what is missing and the path: {empty_scores_run.stderr}")
 
+    # --summarize with a score outside the scale of 0, 1 or 2. The run must refuse it, and it
+    # must not print a total that no scenario can hold.
+    off_scale = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-off-scale"
+    off_scale.mkdir(parents=True)
+    (off_scale / "run.json").write_text(json.dumps(alien_meta, indent=2), encoding="utf-8")
+    (off_scale / "scores.json").write_text(json.dumps(
+        {"judge_family": "other", "scores": {"99": {"score": 13, "why": "edited by hand"}}}), encoding="utf-8")
+    off_scale_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                   "--benchmark", "learning", "--summarize", str(off_scale)],
+                                  capture_output=True, text=True, env=os.environ, timeout=300)
+    check(off_scale_run.returncode == 1, f"a score outside the scale is refused: {off_scale_run.stdout} {off_scale_run.stderr}")
+    check("Traceback" not in off_scale_run.stderr, f"the refusal is clean: {off_scale_run.stderr}")
+    check("13 of 10" not in off_scale_run.stdout, f"no total outside the scale: {off_scale_run.stdout}")
+
+    # --summarize with a run.json that is not valid JSON.
+    broken_json = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-broken-json"
+    broken_json.mkdir(parents=True)
+    (broken_json / "run.json").write_text("{not json", encoding="utf-8")
+    (broken_json / "scores.json").write_text(json.dumps({"scores": {"99": {"score": 1}}}), encoding="utf-8")
+    broken_json_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--root", str(root), "--date", "2026-01-02",
+                                      "--benchmark", "learning", "--summarize", str(broken_json)],
+                                     capture_output=True, text=True, env=os.environ, timeout=300)
+    check(broken_json_run.returncode == 1, f"a run.json that is not JSON is refused: {broken_json_run.stdout} {broken_json_run.stderr}")
+    check("Traceback" not in broken_json_run.stderr, f"the refusal is clean: {broken_json_run.stderr}")
+    check("run.json" in broken_json_run.stderr, f"the refusal names the file: {broken_json_run.stderr}")
+
     # --score-run with no transcript.jsonl.
     no_transcript = root / "90_System" / "Evals" / "runs" / "2026-01-02-learning-no-transcript"
     no_transcript.mkdir(parents=True)

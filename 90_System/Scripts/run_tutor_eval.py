@@ -375,6 +375,40 @@ def critical_mark(rule):
     return None
 
 
+def outside_scale(scores):
+    """The scores of a run that are not on the scale, one line each.
+
+    Every scenario scores 0, 1 or 2. A score outside the scale means the file was edited by
+    hand and got something wrong, and a run that sums it would print a total that no scenario
+    can hold.
+    """
+    bad = []
+    for key, entry in scores.items():
+        value = entry.get("score") if isinstance(entry, dict) else entry
+        if value is None:
+            continue
+        if isinstance(value, bool) or not isinstance(value, int) or value not in (0, 1, 2):
+            bad.append(f"scenario {key} has the score {value!r}")
+    return bad
+
+
+def read_run_json(run_dir):
+    """The run.json of a run folder, or None when it cannot be read.
+
+    A folder that was edited by hand and does not hold valid JSON is refused with one line,
+    not with a traceback the reader has to read.
+    """
+    try:
+        meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        print(f"refused: {run_dir / 'run.json'} could not be read: {error}", file=sys.stderr)
+        return None
+    if not isinstance(meta, dict) or "scenarios" not in meta:
+        print(f"refused: {run_dir / 'run.json'} does not name the scenarios of the run", file=sys.stderr)
+        return None
+    return meta
+
+
 def evaluate(data, scores, scenario_ids):
     """Verdict from {id: score or None} for the scenarios that ran.
 
@@ -752,7 +786,9 @@ def score_existing(args, root, fallback_bench):
         if not (run_dir / "run.json").exists():
             print(f"refused: {run_dir} has no run.json", file=sys.stderr)
             return 1
-        meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        meta = read_run_json(run_dir)
+        if meta is None:
+            return 1
         problem = benchmark_problem(meta)
         if problem:
             print("refused:", problem, file=sys.stderr)
@@ -762,9 +798,17 @@ def score_existing(args, root, fallback_bench):
         except OSError as error:
             print("refused: the scenarios of the benchmark could not be read:", error, file=sys.stderr)
             return 2
-        scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
-        if not isinstance(scored.get("scores"), dict):
+        try:
+            scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as error:
+            print(f"refused: {run_dir / 'scores.json'} could not be read: {error}", file=sys.stderr)
+            return 1
+        if not isinstance(scored, dict) or not isinstance(scored.get("scores"), dict):
             print(f"refused: {run_dir / 'scores.json'} has no scores to summarise", file=sys.stderr)
+            return 1
+        outside = outside_scale(scored["scores"])
+        if outside:
+            print("refused: the scale of a scenario is 0, 1 or 2, and:", *outside, sep="\n  ", file=sys.stderr)
             return 1
         announce_benchmark(meta, bench)
         verdict = evaluate(data, {int(k): v.get("score") for k, v in scored["scores"].items()}, meta["scenarios"])
@@ -784,7 +828,9 @@ def score_existing(args, root, fallback_bench):
     if not (run_dir / "transcript.jsonl").exists():
         print(f"refused: {run_dir} has no transcript.jsonl to score", file=sys.stderr)
         return 1
-    meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    meta = read_run_json(run_dir)
+    if meta is None:
+        return 1
     problem = benchmark_problem(meta)
     if problem:
         print("refused:", problem, file=sys.stderr)

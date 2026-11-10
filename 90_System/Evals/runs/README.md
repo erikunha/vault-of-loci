@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Tutor eval runs
 
-Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, and they are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
+Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`, with the prefix of the benchmark in the label: a run of the learning benchmark is `<YYYY-MM-DD>-learning-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, and they are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
 
 A run folder holds:
 
@@ -14,7 +14,7 @@ A run folder holds:
 - `transcript.md`: the same transcript, readable.
 - `run.json` and `README.md`: the settings and a short description of the run.
 - `scoring_sheet.md`: a table a person fills in.
-- `scores.json` and `summary.md`: written when a judge scores the run. A second judge from another family adds `scores-judge-<family>.json` and `summary-judge-<family>.md` next to them.
+- `scores.json` and `summary.md`: written when a judge scores the run. The runner writes one pair of files. A second judge is scored by hand: its scores are saved next to them as `scores-judge-<judge>.json`, with the family and the model of the judge, so two judges of the same family do not share one name, and `judge_agreement.py` compares the two files.
 
 The scenarios, the rubric and the pass rule are in [[Tutor_mode|Tutor mode eval]]. Results are summarized in [[Tutor_mode_results|Tutor mode eval results]].
 
