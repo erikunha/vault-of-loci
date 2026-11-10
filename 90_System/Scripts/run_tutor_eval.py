@@ -366,6 +366,18 @@ def bench_of(meta):
     return BENCHMARKS.get(meta.get("benchmark", "tutor"), BENCHMARKS["tutor"])
 
 
+def benchmark_of_run(meta, root, fallback=None):
+    """The benchmark of a run folder, taken from the folder itself.
+
+    A run records its benchmark in run.json. Scoring has to use that one: the flag on the
+    command line is only the default, and scoring a learning run against the tutor rubric
+    silently scores the wrong thing, with a judge that quotes the wrong rules.
+    """
+    name = meta.get("benchmark", "tutor")
+    bench = BENCHMARKS.get(name, fallback or BENCHMARKS["tutor"])
+    return bench, load_scenarios(Path(root) / bench["scenarios"])
+
+
 def write_transcript_md(path, meta, records):
     lines = ["---", "type: log", f"summary: {bench_of(meta)['title']} transcript of {meta['agent']} on {meta['date']}.", "tags: [type/log]",
              "---", "", f"# Transcript: {meta['agent']}, {meta['date']}", "",
@@ -599,6 +611,7 @@ def main(argv=None):
     if args.summarize:
         run_dir = Path(args.summarize)
         meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        bench, data = benchmark_of_run(meta, root, bench)
         scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
         verdict = evaluate(data, {int(k): v.get("score") for k, v in scored["scores"].items()}, meta["scenarios"])
         scored["verdict"] = verdict
@@ -613,6 +626,7 @@ def main(argv=None):
             print("--score-run needs --judge-cmd", file=sys.stderr)
             return 2
         meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+        bench, data = benchmark_of_run(meta, root, bench)
         error = check_families(args, meta.get("agent_family"))
         if error:
             print("refused:", error, file=sys.stderr)
