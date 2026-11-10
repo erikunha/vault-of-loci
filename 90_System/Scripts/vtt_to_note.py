@@ -1,7 +1,9 @@
 """Turn a WebVTT or SRT subtitle file into a transcript note the vault can read by section.
 
 Each cue becomes one paragraph `**[H:MM:SS] Speaker:** text` (the speaker comes from a `<v Name>` tag
-or a `Name:` prefix, and is left out when there is none). Consecutive cues from the same speaker are
+or a `Name:` prefix, and is left out when there is none). A caption that begins with a word of the
+caption and a colon, "Note: the spacing effect...", is not a speaker, and the word stays in the
+text. Consecutive cues from the same speaker are
 merged until a sentence ends. Then `transcript_sections.py` adds a `## HH:MM:SS` heading about every
 10 minutes, so an agent can read one range at a time through `index.json`.
 
@@ -21,6 +23,9 @@ TIME = re.compile(r"(?:(\d+):)?(\d{1,2}):(\d{2})[.,]\d{3}\s+-->")
 VOICE = re.compile(r"^<v(?:\.[^ >]*)?\s+([^>]+)>")
 PREFIX = re.compile(r"^([A-Z][\w .'-]{0,40}):\s+")
 TAG = re.compile(r"<[^>]+>")
+# The words a caption can begin with, before a colon, that are not the name of a speaker.
+CAPTION_WORDS = {"note", "example", "warning", "chapter", "tip", "important", "summary",
+                 "conclusion", "remember", "careful", "attention", "beware", "sorry", "well"}
 
 
 def load_sections():
@@ -42,7 +47,10 @@ def cues(text):
         speaker = ""
         v = VOICE.match(raw) or PREFIX.match(raw)
         if v:
-            speaker, raw = v.group(1).strip(), raw[v.end():]
+            name = v.group(1).strip()
+            # A word of the caption is not a speaker, and it stays in the text of the cue.
+            if not (PREFIX.match(raw) and name.casefold() in CAPTION_WORDS):
+                speaker, raw = name, raw[v.end():]
         words = " ".join(TAG.sub("", raw).split())
         if words:
             yield seconds, speaker, words

@@ -103,7 +103,20 @@ check((root / "skill" / "My Ref.md").exists(), "renamed a vendored file")
 check((root / "skill" / "My Ref.md").read_text() == "# Ref\n[[My Ref]]\n", "rewrote a vendored file")
 check((root / "Third Party" / "a.md").exists(), "renamed a vendored folder")
 
-# 5. untracked files are renamed without git mv
+# 5. a wikilink with the extension of the note, and a base that filters by folder
+root, run = vault({
+    "My Folder/My Note.md": "# My Note\n",
+    "index.md": "[[My Folder/My Note.md]] and [[My Folder/My Note]]\n",
+    "view.base": 'filters:\n  and:\n    - file.inFolder("My Folder")\n',
+})
+r = run()
+check(r.returncode == 0, r.stderr)
+index = (root / "index.md").read_text()
+check("[[My_Folder/My_Note.md|My Note.md]]" in index, index)
+check("[[My_Folder/My_Note|My Note]]" in index, index)
+check('file.inFolder("My_Folder")' in (root / "view.base").read_text(), (root / "view.base").read_text())
+
+# 6. untracked files are renamed without git mv
 root, run = vault({"Loose Note.md": "# Loose\n", "index.md": "[[Loose Note]]\n"}, add=False)
 r = run()
 check(r.returncode == 0, r.stderr)

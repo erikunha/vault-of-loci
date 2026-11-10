@@ -36,6 +36,9 @@ def sections(root):
             if in_front:
                 if number > 1 and line == "---":
                     in_front = False
+                    # The answer is in the body, so the line the result names is the first line
+                    # of the body and not the line of the frontmatter.
+                    start = number + 1
                 continue
             if line.startswith("#"):
                 if body:
@@ -48,7 +51,9 @@ def sections(root):
 
 
 def search(root, query, top):
-    docs = [(path, line, heading, Counter(words(" ".join(body) + " " + heading + " " + path))) for path, line, heading, body in sections(root)]
+    # The text of the document is the note, not its path: a note whose name holds the word of the
+    # query is not a note that talks about it.
+    docs = [(path, line, heading, Counter(words(" ".join(body) + " " + heading))) for path, line, heading, body in sections(root)]
     if not docs:
         return []
     avg = sum(sum(c.values()) for *_, c in docs) / len(docs)

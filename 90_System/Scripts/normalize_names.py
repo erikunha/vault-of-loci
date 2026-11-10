@@ -2,7 +2,8 @@
 
 Renames every file and folder with a space in its name, deepest first (git mv for tracked
 paths, a plain rename for untracked ones), and rewrites references: wikilinks (including
-folder paths), Markdown links (with %20, parentheses allowed) and paths in .canvas and .base files.
+folder paths and links that carry the extension of the note), Markdown links (with %20,
+parentheses allowed), the paths in .canvas files and the folders that .base files filter by.
 Folders that hold a `.vendored` marker, and everything under them, are third-party and left alone.
 A wikilink without a label gets the old name as its label, so the rendered text does not change.
 Idempotent: it also fixes links that still point to the spaced form of a file
@@ -95,7 +96,12 @@ def fix_wiki(m):
     folder, _, base = target.rpartition("/")
     base = base.strip()
     new_folder = fix_folders(folder) if folder else folder
-    new_base = unicodedata.normalize("NFC", base).replace(" ", "_") if resolves(base) else base
+    # A link can carry the extension of the note, `[[My Course.md]]`, and the name of the file
+    # it names is the same one with or without the extension.
+    plain = key(base)
+    new_base = unicodedata.normalize("NFC", base)
+    if resolves(plain):
+        new_base = plain.replace(" ", "_") + base[len(plain):]
     if new_folder == folder and new_base == base:
         return m.group(0)
     new = (new_folder + "/" if folder else "") + new_base
@@ -120,6 +126,9 @@ def fix_path(value):
 
 MDLINK = re.compile(r"(\]\()((?:[^()\s]|\([^()\s]*\))+)(\))")
 JSONPATH = re.compile(r'("(?:file|path)"\s*:\s*")([^"]+)(")')
+# A base filters by folder in a call, `file.inFolder("10_Tracks/My Course")`, and the folder it
+# names is a path that the rename moves.
+BASEFOLDER = re.compile(r'(file\.inFolder\(\s*")([^"]+)(")')
 
 touched = 0
 for p in files():
@@ -129,6 +138,7 @@ for p in files():
     n = WIKI.sub(fix_wiki, t)
     n = MDLINK.sub(lambda m: m.group(1) + fix_path(m.group(2)) + m.group(3), n)
     n = JSONPATH.sub(lambda m: m.group(1) + fix_path(m.group(2)) + m.group(3), n)
+    n = BASEFOLDER.sub(lambda m: m.group(1) + fix_folders(m.group(2)) + m.group(3), n)
     if n != t:
         touched += 1
         if WRITE:

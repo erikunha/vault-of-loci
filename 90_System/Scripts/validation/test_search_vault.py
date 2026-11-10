@@ -25,4 +25,12 @@ with tempfile.TemporaryDirectory() as tmp:
     assert len(lines) <= 2, "--top limits the results"
     none = subprocess.run([sys.executable, "-I", str(SCRIPT), "photosynthesis", "--root", str(root)], capture_output=True, text=True)
     assert none.returncode == 0 and "no match" in none.stdout, none.stdout
-print("ok: 6 checks")
+    # A note whose name holds the word is not a note that talks about it.
+    (root / "20_Concepts" / "photosynthesis_notes.md").write_text("# Other\n\nNothing about review here.\n", encoding="utf-8")
+    name_only = subprocess.run([sys.executable, "-I", str(SCRIPT), "photosynthesis", "--root", str(root)], capture_output=True, text=True)
+    assert name_only.returncode == 0 and "no match" in name_only.stdout, name_only.stdout
+    # A note with frontmatter and no heading points at the first line of the body.
+    (root / "20_Concepts" / "Plain.md").write_text("---\ntype: concept\n---\n\nSpacing spreads review sessions.\n", encoding="utf-8")
+    plain = subprocess.run([sys.executable, "-I", str(SCRIPT), "spacing", "--root", str(root)], capture_output=True, text=True)
+    assert "20_Concepts/Plain.md:4 " in plain.stdout, plain.stdout
+print("ok: 8 checks")
