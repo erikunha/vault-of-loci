@@ -37,8 +37,12 @@ def audit(events, horizons=HORIZONS, today=None):
         else:
             status = "measured"
             for horizon in horizons:
-                row = measured["retention"].get(str(horizon), {})
-                if row.get("eligible", 0) == 0:
+                # An attempt at a horizon counts whether it was a recall, an explain, an apply or a
+                # discriminate. Reading only the retention column left an objective measured by
+                # transfer alone permanently "due at 7 days", because it has no recall rows.
+                retention = measured["retention"].get(str(horizon), {})
+                transfer = measured["transfer"].get(str(horizon), {})
+                if retention.get("eligible", 0) == 0 and transfer.get("eligible", 0) == 0:
                     status = f"due at {horizon} days"
                     break
         report["objectives"].append({

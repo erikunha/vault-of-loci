@@ -101,4 +101,28 @@ with tempfile.TemporaryDirectory() as tmp:
     ledger.write_text("".join(json.dumps(item) + "\n" for item in measured), encoding="utf-8")
     done = run(root)
     assert "Nothing is due" in done.stdout, done.stdout
-print("ok: 12 checks")
+
+    # An objective measured only by transfer is not due. An attempt at a horizon counts whether it
+    # was a recall, an explain, an apply or a discriminate. Before the fix this read "due at 7
+    # days" forever, because the decision looked only at the retention column.
+    transfer_only = [
+        event(event_id="t1", objective_id="o-apply", item_id="item-t", mode="study",
+              occurred_at=days_ago(200), first_attempt_correct=None, confidence=None),
+        event(event_id="t2", objective_id="o-apply", item_id="item-t", mode="apply", occurred_at=days_ago(193)),
+        event(event_id="t3", objective_id="o-apply", item_id="item-t", mode="apply", occurred_at=days_ago(170)),
+        event(event_id="t4", objective_id="o-apply", item_id="item-t", mode="apply", occurred_at=days_ago(110)),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in transfer_only), encoding="utf-8")
+    only = run(root, "--json")
+    assert only.returncode == 0, only.stderr
+    only_report = json.loads(only.stdout)
+    only_rows = {row["objective_id"]: row for row in only_report["audit"]["objectives"]}
+    assert only_rows["o-apply"]["status"] == "measured", only_rows["o-apply"]
+    # An attempt counts for every horizon it reached, so the attempt 90 days after exposure is
+    # eligible at 7, 30 and 90 days.
+    assert only_rows["o-apply"]["transfer"]["7"]["eligible"] == 3, only_rows["o-apply"]
+    assert only_rows["o-apply"]["transfer"]["90"]["eligible"] == 1, only_rows["o-apply"]
+    assert only_rows["o-apply"]["retention"]["7"]["eligible"] == 0, only_rows["o-apply"]
+    assert only_report["audit"]["due"] == [], only_report["audit"]
+    assert only_report["plan"] == [], only_report["plan"]
+print("ok: 15 checks")
