@@ -215,14 +215,16 @@ def error_items(events, today=None):
                              if event.get("mode") != "study"
                              and event.get("grading_method") == "learner_confirmed"
                              and event.get("first_attempt_correct") is not None])
+    # The variants that already exist in the whole ledger, not in this item's own attempts. The
+    # next variation has to be an id nobody used, because one id means one task.
+    used = {str(event.get("item_id", "")) for event in events}
     rows = []
     for (objective, item), attempts in history.items():
         last = attempts[-1]
         if last.get("first_attempt_correct") is not False:
             continue
         when = parse_when(last.get("occurred_at"))
-        variants = sum(1 for event in attempts
-                       if str(event.get("item_id", "")).startswith(f"{item}-v"))
+        variants = sum(1 for name in used if name.startswith(f"{item}-v"))
         rows.append({
             "objective_id": objective,
             "item_id": item,

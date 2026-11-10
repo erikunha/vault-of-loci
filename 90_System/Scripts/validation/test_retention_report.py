@@ -128,4 +128,40 @@ with tempfile.TemporaryDirectory() as tmp:
     one = json.loads(only.stdout)
     assert one["objectives"] == ["o-apply"], one["objectives"]
     assert one["transfer"]["30"] == {"correct": 1, "eligible": 1, "rate": 1.0}, one["transfer"]
-print("ok: 18 checks")
+
+    # An attempt with no verdict says nothing about what was remembered. Counting it would print
+    # a rate that no event supports.
+    no_verdict = [
+        event(event_id="n1", objective_id="o-none", item_id="item-n", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="n2", objective_id="o-none", item_id="item-n", occurred_at=days_ago(30),
+              first_attempt_correct=None),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in no_verdict), encoding="utf-8")
+    ungraded = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+                              capture_output=True, text=True)
+    assert ungraded.returncode == 0, ungraded.stderr
+    report = json.loads(ungraded.stdout)
+    assert report["retention"]["7"]["eligible"] == 0, report["retention"]
+    assert report["retention"]["7"]["rate"] is None, report["retention"]
+
+    # An attempt the agent graded is evidence about the agent, not about the learner. It cannot
+    # make an objective learned.
+    by_agent = [
+        event(event_id="g1", objective_id="o-agent", item_id="item-g", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="g2", objective_id="o-agent", item_id="item-g", occurred_at=days_ago(30),
+              grading_method="agent_graded"),
+        event(event_id="g3", objective_id="o-agent", item_id="item-h", occurred_at=days_ago(22),
+              grading_method="agent_graded"),
+        event(event_id="g4", objective_id="o-agent", item_id="item-i", mode="apply",
+              occurred_at=days_ago(15), grading_method="agent_graded"),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in by_agent), encoding="utf-8")
+    graded = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+                            capture_output=True, text=True)
+    assert graded.returncode == 0, graded.stderr
+    report = json.loads(graded.stdout)
+    assert report["learned"] == [], report["learned"]
+    assert report["excluded"]["agent_graded"] == 3, report["excluded"]
+print("ok: 25 checks")

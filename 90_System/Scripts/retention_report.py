@@ -2,8 +2,8 @@
 
 The ledger is `50_Review/Attempts.jsonl`, written by `record_attempt.py`. This script only reads
 it. A retention number at a horizon counts first attempts, without help, graded by the learner,
-made that many days or more after the item was first seen. Transfer is the same, with an apply
-or discriminate task instead of a recall.
+made that many days or more after the objective was first seen. Transfer is the same, with an
+apply or discriminate task instead of a recall.
 
 A forecast is not a measurement, so nothing here predicts retention. Every number is what the
 learner already did.

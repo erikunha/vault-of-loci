@@ -62,6 +62,20 @@ def parse_when(value):
         return None
 
 
+def parse_moment(value):
+    """The instant of an ISO 8601 timestamp with an offset, or None when there is no such thing.
+
+    The date of a timestamp and the instant it points at are two different things. An attempt at
+    2026-11-11T02:00:00+14:00 is the same moment as 2026-11-10T09:00:00-03:00, and the second one
+    is already here. Comparing the dates of the two would call the first one a future attempt.
+    """
+    try:
+        moment = datetime.fromisoformat(str(value))
+    except (TypeError, ValueError):
+        return None
+    return moment if moment.tzinfo is not None else None
+
+
 def next_event_id(existing):
     """An event id that is not in `existing`, built from today's date."""
     today = date.today().isoformat()
@@ -80,7 +94,12 @@ def load_objectives(path=OBJECTIVES):
         data = json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-    return {str(item["id"]): item for item in data.get("objectives", []) if isinstance(item, dict) and item.get("id")}
+    if not isinstance(data, dict):
+        return {}
+    entries = data.get("objectives")
+    if not isinstance(entries, list):
+        return {}
+    return {str(item["id"]): item for item in entries if isinstance(item, dict) and item.get("id")}
 
 
 def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_objective=False):
@@ -115,10 +134,10 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     minutes = event.get("duration_minutes")
     if minutes is not None and (not isinstance(minutes, (int, float)) or minutes < 0):
         problems.append("duration_minutes must be 0 or more, or null")
-    when = parse_when(event.get("occurred_at"))
-    if when is None:
+    moment = parse_moment(event.get("occurred_at"))
+    if moment is None:
         problems.append("occurred_at must be an ISO 8601 timestamp with an offset")
-    elif when > date.today():
+    elif moment > datetime.now().astimezone():
         problems.append("occurred_at is in the future")
     if known_objectives is not None and not allow_unknown_objective:
         if event.get("objective_id") not in known_objectives:
@@ -192,7 +211,9 @@ def learned_objectives(events):
     """The objectives that meet the rule the vault already states: recalled twice on different
     days without notes, and used once in a task the learner had not seen.
 
-    The rule lives in `90_System/Specs/Track_kinds.md`. Here it is computed from the ledger.
+    The rule lives in `90_System/Specs/Track_kinds.md`. Here it is computed from the ledger. Only
+    an attempt the learner confirmed counts, the same as in the metrics: an attempt the agent
+    graded is evidence about the agent, not about the learner.
     """
     by_objective = {}
     for event in events:
@@ -205,11 +226,12 @@ def learned_objectives(events):
             item_id = event.get("item_id")
             correct = event.get("first_attempt_correct") is True
             helped = event.get("assistance") != "none"
-            if event.get("mode") in RETENTION_MODES and correct and not helped:
+            graded_by_agent = event.get("grading_method") != "learner_confirmed"
+            if event.get("mode") in RETENTION_MODES and correct and not helped and not graded_by_agent:
                 when = parse_when(event.get("occurred_at"))
                 if when:
                     recall_days.add(when)
-            if event.get("mode") in TRANSFER_MODES and correct and not helped and item_id not in seen_items:
+            if event.get("mode") in TRANSFER_MODES and correct and not helped and not graded_by_agent and item_id not in seen_items:
                 novel_use = True
             seen_items.add(item_id)
         if len(recall_days) >= 2 and novel_use:
@@ -221,10 +243,12 @@ def metrics(events, horizons=HORIZONS):
     """Retention, transfer, calibration and the learned rule, for every objective and overall.
 
     A retention attempt at horizon h is a recall or explain attempt, on the first try, with no
-    help, graded by the learner, made h days or more after the item was first seen. Transfer is
-    the same, with an apply or discriminate task instead.
+    help, graded by the learner, made h days or more after the objective was first seen. Transfer is
+    the same, with an apply or discriminate task instead. An attempt with no verdict says nothing
+    about what was remembered, so it is not eligible for any horizon.
     """
     exposure, item_days, inferred = first_exposure(events)
+    shortest = min(horizons) if horizons else None
     graded = [event for event in events if event.get("mode") != "study"]
     objectives = sorted({str(event.get("objective_id")) for event in events})
     report = {
@@ -249,6 +273,10 @@ def metrics(events, horizons=HORIZONS):
                     continue
                 if event.get("grading_method") != "learner_confirmed":
                     continue
+                if event.get("first_attempt_correct") is None:
+                    # A graded attempt with no verdict says nothing about what was remembered.
+                    # Counting it would print a rate that no event supports.
+                    continue
                 key = event.get("objective_id")
                 first = exposure.get(key)
                 when = parse_when(event.get("occurred_at"))
@@ -267,7 +295,7 @@ def metrics(events, horizons=HORIZONS):
         else:
             first = exposure.get(event.get("objective_id"))
             when = parse_when(event.get("occurred_at"))
-            if first is not None and when is not None and (when - first).days < min(horizons):
+            if shortest is not None and first is not None and when is not None and (when - first).days < shortest:
                 report["excluded"]["too_recent"] += 1
     explicit, ordinal = [], []
     for event in graded:

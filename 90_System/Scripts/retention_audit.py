@@ -98,6 +98,19 @@ def main(argv=None):
         print("Ledger lines that could not be read:")
         for problem in problems:
             print(f"  - {problem}")
+    if args.plan:
+        # The plan is the answer to one question: what owes a delayed attempt now. The rest of the
+        # audit is a different question, and the agent that runs this only needs this one.
+        if plan_rows:
+            print("Due now: a delayed attempt is missing")
+            for row in plan_rows:
+                print(f"  - {row['objective_id']} at {row['horizon']} days, first seen {row['first_seen']}. "
+                      f"item id for the new task: {row['example_item']}")
+            print()
+            print("A delayed attempt needs a task the learner has not seen, written from the objective.")
+        else:
+            print("Nothing is due: no objective passed a horizon without an attempt.")
+        return 0
     if not report["objectives"]:
         print()
         print("the ledger is empty: nothing has been studied yet.")
