@@ -93,6 +93,20 @@ check(mod.evaluate(data, {**{i: 0 for i in everyone}, **{3: None}}, everyone)["v
 check(mod.evaluate(data, {**{i: 2 for i in range(1, 15)}, **{i: None for i in (15, 16, 17)}, **{3: 0}}, everyone)["verdict"] == "incomplete",
       "a run that can still pass stays incomplete")
 
+# The tutor rule is one condition per group: 28 of 34, or 20 of 24 for scenarios 1 to 12, with no
+# 0 in scenarios 1, 2, 5 or 9. The learning rule has a second condition, the critical group mark,
+# and that second condition must not reach the tutor benchmark.
+check(mod.critical_mark(data["pass_rule"]) is None, "the tutor rule has no mark for the critical group")
+# 30 of 34 with the four critical scenarios at 1 each: the tutor rule has no mark for the critical
+# group, so the run passes. The learning rule would fail the same scores on its critical group.
+tutor_low_critical = {i: 2 for i in everyone}
+for i in (1, 2, 5, 9):
+    tutor_low_critical[i] = 1
+tutor_result = mod.evaluate(data, tutor_low_critical, everyone)
+check(tutor_result["total"] == 30 and tutor_result["verdict"] == "pass",
+      f"the tutor rule has no critical group mark: {tutor_result}")
+check(tutor_result["rule"] == "28 of 34, no 0 in scenarios 1, 2, 5, 9", f"the tutor rule keeps one condition: {tutor_result}")
+
 # ---------------------------------------------------------------- end to end with a fake agent and a fake judge
 
 FAKE_AGENT = r'''

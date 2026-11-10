@@ -361,12 +361,31 @@ def modal_score(scores):
 
 # ---------------------------------------------------------------- pass rule
 
+def critical_mark(rule):
+    """The pass mark of the critical group, when the rule gives the critical group one of its own.
+
+    A rule with two conditions states them as two groups: the whole benchmark and the critical group. The mark of
+    the group whose scenarios are exactly the critical scenarios is the second condition. The tutor rule names no
+    group for its critical scenarios, so it has one condition only and this returns None.
+    """
+    critical = sorted(rule["critical"])
+    for group in rule["groups"]:
+        if sorted(parse_ids(group["scenarios"])) == critical:
+            return group
+    return None
+
+
 def evaluate(data, scores, scenario_ids):
     """Verdict from {id: score or None} for the scenarios that ran.
 
     The pass rule is defined for a group of scenarios: the whole benchmark or the critical group. A run of any other
     subset has totals but no verdict. A scenario with no score makes the verdict incomplete, unless a 0 in a critical
     scenario or a total that no remaining score could lift to the pass mark already fails the run.
+
+    A rule can ask for two things at once. The learning one does: "The run passes with 24 of 30 points and 8 of 10 in
+    the critical group, with no 0 in scenarios 1, 2, 3, 10 or 11." (Learning_evals.md). The total mark and the critical
+    group mark are two conditions and both have to hold, so a run that reaches one and misses the other fails. The
+    tutor rule has one mark per group and no mark for the critical group, so it keeps that single condition.
     """
     rule = data["pass_rule"]
     ids = sorted(scenario_ids)
@@ -379,13 +398,25 @@ def evaluate(data, scores, scenario_ids):
     if group is None:
         result["note"] = "the pass rule covers the whole benchmark or the critical group; this subset has totals only"
         return result
-    result["rule"] = f"{group['pass']} of {group['total']}, no 0 in scenarios " + ", ".join(map(str, rule["critical"]))
-    if zeros or total + 2 * len(unscored) < group["pass"]:
+    # Each condition is a mark, the points the run has for it, and the points still missing there.
+    conditions = [(group["pass"], total, len(unscored))]
+    rule_text = f"{group['pass']} of {group['total']}"
+    critical = critical_mark(rule)
+    if critical is not None and sorted(parse_ids(critical["scenarios"])) != ids:
+        # The critical group is a second condition of this run, not the whole of it.
+        critical_ids = sorted(parse_ids(critical["scenarios"]))
+        if set(critical_ids) <= set(ids):
+            critical_total = sum(scores[i] for i in critical_ids if scores.get(i) is not None)
+            critical_unscored = sum(1 for i in critical_ids if scores.get(i) is None)
+            conditions.append((critical["pass"], critical_total, critical_unscored))
+            rule_text += f" and {critical['pass']} of {critical['total']} in the critical group"
+    result["rule"] = rule_text + ", no 0 in scenarios " + ", ".join(map(str, rule["critical"]))
+    if zeros or any(mark + 2 * missing < needed for needed, mark, missing in conditions):
         result["verdict"] = "fail"  # no score for the unscored scenarios can rescue it
     elif unscored:
         result["verdict"] = "incomplete"
     else:
-        result["verdict"] = "pass" if total >= group["pass"] else "fail"
+        result["verdict"] = "pass" if all(mark >= needed for needed, mark, _ in conditions) else "fail"
     return result
 
 
@@ -718,6 +749,9 @@ def score_existing(args, root, fallback_bench):
         if not (run_dir / "scores.json").exists():
             print(f"refused: {run_dir} has no scores.json to summarise", file=sys.stderr)
             return 2
+        if not (run_dir / "run.json").exists():
+            print(f"refused: {run_dir} has no run.json", file=sys.stderr)
+            return 1
         meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
         problem = benchmark_problem(meta)
         if problem:
@@ -728,8 +762,11 @@ def score_existing(args, root, fallback_bench):
         except OSError as error:
             print("refused: the scenarios of the benchmark could not be read:", error, file=sys.stderr)
             return 2
-        announce_benchmark(meta, bench)
         scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
+        if not isinstance(scored.get("scores"), dict):
+            print(f"refused: {run_dir / 'scores.json'} has no scores to summarise", file=sys.stderr)
+            return 1
+        announce_benchmark(meta, bench)
         verdict = evaluate(data, {int(k): v.get("score") for k, v in scored["scores"].items()}, meta["scenarios"])
         scored["verdict"] = verdict
         (run_dir / "scores.json").write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -741,6 +778,12 @@ def score_existing(args, root, fallback_bench):
     if not args.judge_cmd:
         print("--score-run needs --judge-cmd", file=sys.stderr)
         return 2
+    if not (run_dir / "run.json").exists():
+        print(f"refused: {run_dir} has no run.json", file=sys.stderr)
+        return 1
+    if not (run_dir / "transcript.jsonl").exists():
+        print(f"refused: {run_dir} has no transcript.jsonl to score", file=sys.stderr)
+        return 1
     meta = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
     problem = benchmark_problem(meta)
     if problem:
