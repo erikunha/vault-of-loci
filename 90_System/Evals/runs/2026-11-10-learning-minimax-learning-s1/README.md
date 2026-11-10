@@ -18,4 +18,4 @@ tags: [type/log]
 
 Retry of scenario 1, the critical one, after a 600s timeout.
 
-This transcript was produced before the scenario 1 fixture was fixed, so it is kept as the evidence that found the mismatch, not as a scoreable run. The fixture encoded the clean recalls as days ago, so the vault audit answered "due at 30 days" while the rubric asked for 90. The agent named the right objective and the right new task, and its answer was right for the ledger it read. The scoreable run is in `../2026-11-10-learning-minimax-learning-s1-fixed`.
+This transcript was produced before the scenario 1 fixture was fixed, so it is kept as the evidence that found the mismatch, not as a scoreable run. The fixture encoded the clean recalls as 110 and 100 days ago, so the vault audit answered "due at 30 days" while the rubric asked for 90. The agent named the right objective and the right new task, and its answer was right for the ledger it read. The scoreable run is in `../2026-11-10-learning-minimax-learning-s1-fixed`.
