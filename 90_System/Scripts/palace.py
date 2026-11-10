@@ -53,11 +53,41 @@ def item_id(name, number):
 
 
 def _cells(line):
-    """The cells of one Markdown table row, or None when the line is not a table row."""
+    """The cells of one Markdown table row, or None when the line is not a table row.
+
+    A wikilink inside a cell carries its alias as `[[Note|Note one]]` or `[[Note\\|Note one]]`,
+    and the pipe between them is not a column separator. A cell that ends with an escaped pipe
+    keeps the backslash, so the link still reads as one link.
+    """
     text = line.strip()
     if not text.startswith("|"):
         return None
-    return [cell.strip() for cell in text.strip("|").split("|")]
+    # The pipe that opens the row and the one that closes it are not separators.
+    text = text[1:]
+    if text.endswith("|"):
+        text = text[:-1]
+    cells, current, depth, index = [], "", 0, 0
+    while index < len(text):
+        char = text[index]
+        if text.startswith("[[", index):
+            depth += 1
+            current += "[["
+            index += 2
+            continue
+        if text.startswith("]]", index) and depth:
+            depth -= 1
+            current += "]]"
+            index += 2
+            continue
+        if char == "|" and not depth and not (index and text[index - 1] == "\\"):
+            cells.append(current)
+            current = ""
+            index += 1
+            continue
+        current += char
+        index += 1
+    cells.append(current)
+    return [cell.strip() for cell in cells]
 
 
 def _is_separator(cells):
@@ -71,7 +101,8 @@ def parse_places(text):
     """The places of a palace note, in the order of the table.
 
     The table is the one whose header holds the columns `Place` and `Item`. Rows with an empty
-    place are skipped, and the number of a place is its position among the rows that remain.
+    place are skipped, and the number of a place is its position among the rows that remain. That
+    is the rule the vault documents: the number of a place is its position in the route.
     """
     places = []
     header = None

@@ -164,4 +164,22 @@ with tempfile.TemporaryDirectory() as tmp:
     report = json.loads(graded.stdout)
     assert report["learned"] == [], report["learned"]
     assert report["excluded"]["agent_graded"] == 3, report["excluded"]
-print("ok: 25 checks")
+
+    # A ledger that holds events but no graded attempt is not a ledger with nothing in it. The
+    # report says how many events there are, so the reader does not read "0 attempts" as "no
+    # record at all".
+    study_only = [
+        event(event_id="s1", objective_id="o-study", item_id="item-s", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="s2", objective_id="o-study", item_id="item-s2", mode="study",
+              occurred_at=days_ago(50), first_attempt_correct=None, confidence=None),
+    ]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in study_only), encoding="utf-8")
+    studied = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger)],
+                             capture_output=True, text=True)
+    assert studied.returncode == 0, studied.stderr
+    assert "events recorded: 2" in studied.stdout, studied.stdout
+    assert "graded attempts: 0" in studied.stdout, studied.stdout
+    assert "2 event(s) recorded, none of them a graded attempt yet" in studied.stdout, studied.stdout
+    assert "no attempt recorded yet" not in studied.stdout, studied.stdout
+print("ok: 30 checks")

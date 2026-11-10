@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from dependencies import VAULT, gap_report  # noqa: E402
-from learning_ledger import LEDGER, OBJECTIVES, load_objectives, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, OBJECTIVES, load_objectives, problem_lines, read_ledger  # noqa: E402
 
 # What each state asks for next. The two reasons nothing counts are not the same problem: an
 # attempt made with help needs to be made again without it, and an attempt the learner never
@@ -41,14 +41,21 @@ def parse_args(argv):
 
 def main(argv=None):
     args = parse_args(argv)
-    events, _ = read_ledger(args.ledger)
-    rows = gap_report(events, args.root, args.target, load_objectives(args.objectives), date.today())
+    events, problems = read_ledger(args.ledger)
+    objectives = load_objectives(args.objectives)
+    rows = gap_report(events, args.root, args.target, objectives, date.today())
     if args.as_json:
-        print(json.dumps({"concepts": rows}, ensure_ascii=False, indent=2, sort_keys=True))
+        print(json.dumps({"concepts": rows, "problems": problems},
+                         ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     print("Prerequisite check")
+    for line in problem_lines(problems):
+        print(line)
     if not rows:
-        print("the vault has no concept map with prerequisites yet.")
+        if args.target:
+            print(f"no concept named {args.target!r} has prerequisites in the vault.")
+        else:
+            print("the vault has no concept map with prerequisites yet.")
         return 0
     print()
     for row in rows:

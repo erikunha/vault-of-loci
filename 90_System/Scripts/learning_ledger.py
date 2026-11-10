@@ -147,12 +147,28 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     return problems
 
 
+def problem_lines(problems):
+    """The lines that tell the reader which lines of the ledger could not be read.
+
+    Every report that reads the ledger shows these, so a line that could not be parsed never
+    disappears silently and the report never counts an attempt that was not read.
+    """
+    if not problems:
+        return []
+    return ["", "Ledger lines that could not be read:"] + [f"  - {problem}" for problem in problems]
+
+
 def read_ledger(path=LEDGER):
-    """The events of the ledger and the problems of the lines that could not be read."""
+    """The events of the ledger and the problems of the lines that could not be read.
+
+    A file that is not there is a problem of its own: an empty ledger and a ledger that could not
+    be opened are two different things, and a report that says the same about both hides one.
+    """
     events, problems = [], []
     try:
         text = Path(path).read_text(encoding="utf-8")
-    except OSError:
+    except OSError as problem:
+        problems.append(f"the ledger file could not be read: {problem}")
         return events, problems
     for number, line in enumerate(text.splitlines(), start=1):
         if not line.strip():
@@ -252,6 +268,7 @@ def metrics(events, horizons=HORIZONS):
     graded = [event for event in events if event.get("mode") != "study"]
     objectives = sorted({str(event.get("objective_id")) for event in events})
     report = {
+        "events": len(events),
         "attempts": len(graded),
         "items": len({event.get("item_id") for event in events}),
         "objectives": objectives,

@@ -113,4 +113,35 @@ with tempfile.TemporaryDirectory() as tmp:
     ledger.write_text(json.dumps(helped[0]) + "\n", encoding="utf-8")
     only = json.loads(run(root, "--json").stdout)
     assert only["plan"][0]["objective_id"] == "o-four", only["plan"]
-print("ok: 12 checks")
+
+    # A task the agent graded still holds its id, so the next task cannot be handed the same id.
+    graded = [event(event_id="g1", objective_id="o-five", item_id="o-five-t1", mode="apply",
+                    grading_method="agent_graded", occurred_at=days_ago(2))]
+    ledger.write_text(json.dumps(graded[0]) + "\n", encoding="utf-8")
+    after_graded = json.loads(run(root, "--json").stdout)
+    assert after_graded["plan"][0]["item_id"] == "o-five-t2", after_graded["plan"]
+
+    # The same task attempted twice is one task, so the next number does not skip one.
+    twice = [event(event_id="t1", objective_id="o-six", item_id="o-six-t1", mode="apply",
+                   first_attempt_correct=False, assistance="hint", hints_used=1, occurred_at=days_ago(4)),
+             event(event_id="t2", objective_id="o-six", item_id="o-six-t1", mode="apply",
+                   first_attempt_correct=False, assistance="hint", hints_used=1, occurred_at=days_ago(2))]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in twice), encoding="utf-8")
+    after_twice = json.loads(run(root, "--json").stdout)
+    assert after_twice["plan"][0]["item_id"] == "o-six-t2", after_twice["plan"]
+
+    # A line that could not be read is reported, not dropped in silence.
+    ledger.write_text("{not json\n" + json.dumps(graded[0]) + "\n", encoding="utf-8")
+    corrupt = json.loads(run(root, "--json").stdout)
+    assert corrupt["problems"], corrupt
+    assert "not valid JSON" in corrupt["problems"][0], corrupt["problems"]
+    corrupt_text = run(root)
+    assert "could not be read" in corrupt_text.stdout, corrupt_text.stdout
+
+    # A ledger that is not there is a problem, not an empty ledger.
+    missing = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(root / "No_Ledger.jsonl"),
+                               "--objectives", str(root / "Objectives.json")],
+                              capture_output=True, text=True)
+    assert missing.returncode == 0, missing.stderr
+    assert "could not be read" in missing.stdout, missing.stdout
+print("ok: 19 checks")

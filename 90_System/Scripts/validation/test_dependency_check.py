@@ -145,4 +145,65 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "the learner has to confirm the attempt" not in helped_text, helped_text
     assert "the learner has to confirm the attempt" in graded_text, graded_text
     assert "attempt the same task again, without help" not in graded_text, graded_text
-print("ok: 19 checks")
+
+    # A concept named with spaces in the registry is the same concept as the one the map names
+    # with underscores, so a clean attempt is not reported as "never studied".
+    spaced_registry = root / "Objectives.json"
+    registry = json.loads(spaced_registry.read_text(encoding="utf-8"))
+    registry["objectives"][0]["concept"] = "Alpha Practice"
+    spaced_registry.write_text(json.dumps(registry), encoding="utf-8")
+    underscored = root / "10_Tracks" / "T" / "practice" / "Concept_Map.md"
+    underscored.write_text(CONCEPT_MAP.replace("Alpha", "Alpha_Practice"), encoding="utf-8")
+    # The canvas names the same concept, so the two sources declare one prerequisite and not two.
+    canvas = root / "30_Maps" / "Track.canvas"
+    spaced_canvas = json.loads(canvas.read_text(encoding="utf-8"))
+    spaced_canvas["nodes"][0]["file"] = "20_Concepts/Alpha_Practice.md"
+    canvas.write_text(json.dumps(spaced_canvas), encoding="utf-8")
+    (root / "20_Concepts" / "Alpha_Practice.md").write_text("# Alpha Practice\n", encoding="utf-8")
+    ledger.write_text(json.dumps(event(event_id="a3")) + "\n", encoding="utf-8")
+    named = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in named["concepts"]}
+    assert rows["Beta"]["prerequisites"] == ["Alpha_Practice"], rows["Beta"]
+    assert rows["Beta"]["ready"] is True, rows["Beta"]
+    assert rows["Beta"]["gaps"] == [], rows["Beta"]
+    spaced_registry.write_text(json.dumps(OBJECTIVES), encoding="utf-8")
+    underscored.write_text(CONCEPT_MAP, encoding="utf-8")
+    canvas.write_text(json.dumps(CANVAS), encoding="utf-8")
+    (root / "20_Concepts" / "Alpha_Practice.md").unlink()
+
+    # The order column does not have to hold a number for the map to be read.
+    letters = root / "10_Tracks" / "T" / "practice" / "Concept_Map.md"
+    letters.write_text(CONCEPT_MAP.replace("| 1 |", "| A |").replace("| 2 |", "| B |"), encoding="utf-8")
+    ordered = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in ordered["concepts"]}
+    assert rows["Beta"]["prerequisites"] == ["Alpha"], rows["Beta"]
+
+    # A target that no concept carries is said so, instead of saying the vault has no map.
+    unmatched = run(root, "--target", "Nothing")
+    assert "no concept named 'Nothing'" in unmatched.stdout, unmatched.stdout
+
+    # The map and the canvas spell the same concept differently, one with a space and one with
+    # an underscore. It is one concept, in one row, with the prerequisites of both sources, not
+    # two half-informed rows.
+    canvas = root / "30_Maps" / "Track.canvas"
+    spelled = json.loads(json.dumps(CANVAS))
+    spelled["nodes"][1]["file"] = "20_Concepts/Beta_Practice.md"
+    canvas.write_text(json.dumps(spelled), encoding="utf-8")
+    (root / "20_Concepts" / "Beta_Practice.md").write_text("# Beta Practice\n", encoding="utf-8")
+    underscored.write_text(CONCEPT_MAP.replace("[[Beta\\|Beta]]", "[[Beta Practice\\|Beta Practice]]"),
+                           encoding="utf-8")
+    merged = json.loads(run(root, "--json").stdout)
+    rows = {row["concept"]: row for row in merged["concepts"]}
+    assert len(merged["concepts"]) == 1, merged["concepts"]
+    assert rows["Beta Practice"]["prerequisites"] == ["Alpha"], rows["Beta Practice"]
+    assert rows["Beta Practice"]["ready"] is True, rows["Beta Practice"]
+    underscored.write_text(CONCEPT_MAP, encoding="utf-8")
+    canvas.write_text(json.dumps(CANVAS), encoding="utf-8")
+    (root / "20_Concepts" / "Beta_Practice.md").unlink()
+
+    # A line that could not be read is reported, not dropped in silence.
+    ledger.write_text("{not json\n" + json.dumps(event(event_id="a4")) + "\n", encoding="utf-8")
+    corrupt = json.loads(run(root, "--json").stdout)
+    assert corrupt["problems"], corrupt
+    assert "not valid JSON" in corrupt["problems"][0], corrupt["problems"]
+print("ok: 22 checks")

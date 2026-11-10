@@ -17,7 +17,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, read_ledger  # noqa: E402
+from learning_ledger import LEDGER, problem_lines, read_ledger  # noqa: E402
 from misconceptions import MISTAKES, confusions, open_mistakes  # noqa: E402
 
 
@@ -32,15 +32,19 @@ def parse_args(argv):
 
 def main(argv=None):
     args = parse_args(argv)
-    events, _ = read_ledger(args.ledger)
-    mistakes = open_mistakes(args.mistakes)
+    events, problems = read_ledger(args.ledger)
+    mistakes, note_problems = open_mistakes(args.mistakes)
+    problems = problems + note_problems
     rows = confusions(events, mistakes, args.min_wrong, date.today())
     if args.as_json:
-        print(json.dumps({"confusions": rows, "open_mistakes": len(mistakes)},
+        print(json.dumps({"confusions": rows, "open_mistakes": len(mistakes),
+                          "problems": problems},
                          ensure_ascii=False, indent=2, sort_keys=True))
         return 0
     print("Misconception report")
     print(f"open mistakes in the log: {len(mistakes)}")
+    for line in problem_lines(problems):
+        print(line)
     if not rows:
         print("no objective was wrong more than once.")
         return 0

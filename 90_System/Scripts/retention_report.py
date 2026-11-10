@@ -58,7 +58,8 @@ def lines(report, events, problems, horizons, objective=None):
     out.append(f"generated: {now_iso()}")
     if objective:
         out.append(f"objective: {objective}")
-    out.append(f"attempts recorded: {report['attempts']}   items: {report['items']}   objectives: {len(report['objectives'])}")
+    out.append(f"events recorded: {report['events']}   graded attempts: {report['attempts']}   "
+               f"items: {report['items']}   objectives: {len(report['objectives'])}")
     if problems:
         out.append("")
         out.append("Ledger lines that could not be read:")
@@ -66,7 +67,13 @@ def lines(report, events, problems, horizons, objective=None):
             out.append(f"  - {problem}")
     if not report["attempts"]:
         out.append("")
-        out.append("no attempt recorded yet. Run record_attempt.py after a graded attempt.")
+        if report["events"]:
+            # The ledger holds events, but none of them is a graded attempt. Saying "no attempt
+            # recorded" would hide the events that are there.
+            out.append(f"{report['events']} event(s) recorded, none of them a graded attempt yet. "
+                       "Run record_attempt.py after a graded attempt.")
+        else:
+            out.append("no attempt recorded yet. Run record_attempt.py after a graded attempt.")
         return out
     out.append("")
     out.append("Retention: first attempt, no help, graded by the learner")

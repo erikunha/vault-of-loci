@@ -11,6 +11,7 @@ and an item id that carries the number of tasks already written for it.
 
 Standard library only.
 """
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -28,14 +29,34 @@ def transfer_attempts(events, objective):
 
 
 def tasks_written(events, objective):
-    """The transfer tasks of one objective, including the ones that needed help.
+    """The transfer tasks of one objective, by the id they carry.
 
-    A task that was attempted with help was still seen, so the next task gets the next number.
+    A task that was attempted with help was still seen, and a task the agent graded was seen too,
+    so both hold their id. The list holds tasks and not attempts: the same task attempted twice is
+    one task, and it is one id.
     """
-    return [event for event in events
-            if event.get("objective_id") == objective
-            and event.get("mode") in TRANSFER_MODES
-            and event.get("grading_method") == "learner_confirmed"]
+    return sorted({str(event.get("item_id")) for event in events
+                   if event.get("objective_id") == objective
+                   and event.get("mode") in TRANSFER_MODES
+                   and event.get("item_id")})
+
+
+def next_task_number(objective, task_ids):
+    """The number of the next transfer task of one objective.
+
+    The number is one above the number of tasks already written for the objective, and it is one
+    above the highest number any of those ids carries. So the new id is never an id a task
+    already holds, and a task that was skipped does not make the next number jump.
+    """
+    numbers = [0]
+    for task_id in task_ids:
+        match = re.fullmatch(rf"{re.escape(objective)}-t(\d+)", str(task_id))
+        if match:
+            numbers.append(int(match.group(1)))
+    number = max(len(task_ids), max(numbers)) + 1
+    while f"{objective}-t{number}" in task_ids:
+        number += 1
+    return number
 
 
 def studied_objectives(events):
@@ -69,6 +90,7 @@ def transfer_status(events, objectives=None, today=None):
             "first_seen": seen[objective].isoformat(),
             "transfer_attempts": len(applied),
             "tasks_written": len(written),
+            "task_ids": written,
             "last_transfer": last,
             "days_since_transfer": (today - parse_when(last)).days if parse_when(last) else None,
             "needs_transfer": not applied,
@@ -83,7 +105,8 @@ def transfer_plan(events, objectives=None, today=None, limit=None):
     for row in rows:
         if not row["needs_transfer"]:
             continue
-        number = row["tasks_written"] + 1
+        # The id has to be one nobody used, because one id means one task.
+        number = next_task_number(row["objective_id"], row["task_ids"])
         plan.append({
             "objective_id": row["objective_id"],
             "concept": row["concept"],
