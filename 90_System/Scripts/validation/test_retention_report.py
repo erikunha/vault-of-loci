@@ -183,4 +183,17 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "2 event(s) recorded, none of them a graded attempt yet" in studied.stdout, studied.stdout
     assert "no attempt recorded yet" not in studied.stdout, studied.stdout
 
-print("ok: 30 checks")
+    # A boolean is not a confidence and not a probability. The ledger and the calibration
+    # module read these two fields the same way, so a true in the file is not a number.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="bool-scale", item_id="item-bool", occurred_at=days_ago(100), confidence=True),
+        event(event_id="bool-probability", item_id="item-bool-2", occurred_at=days_ago(100),
+              confidence=None, confidence_probability=True)]), encoding="utf-8")
+    booleans = json.loads(subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+        capture_output=True, text=True).stdout)
+    assert booleans["calibration"]["n_explicit"] == 0, booleans["calibration"]
+    assert booleans["calibration"]["n_ordinal"] == 0, booleans["calibration"]
+    assert booleans["calibration"]["brier_explicit"] is None, booleans["calibration"]
+    assert booleans["calibration"]["brier_ordinal"] is None, booleans["calibration"]
+print("ok: 35 checks")

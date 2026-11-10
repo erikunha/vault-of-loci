@@ -136,10 +136,12 @@ def validate_event(event, known_objectives=None, used_ids=(), allow_unknown_obje
     elif not isinstance(correct, bool):
         problems.append("first_attempt_correct must be true or false for a graded mode")
     confidence = event.get("confidence")
-    if confidence is not None and not (isinstance(confidence, int) and 1 <= confidence <= 5):
+    if confidence is not None and not (isinstance(confidence, int) and not isinstance(confidence, bool)
+                                       and 1 <= confidence <= 5):
         problems.append("confidence must be an integer from 1 to 5, or null")
     probability = event.get("confidence_probability")
-    if probability is not None and not (isinstance(probability, (int, float)) and 0 <= probability <= 1):
+    if probability is not None and not (isinstance(probability, (int, float)) and not isinstance(probability, bool)
+                                        and 0 <= probability <= 1):
         problems.append("confidence_probability must be a number from 0 to 1, or null")
     hints = event.get("hints_used", 0)
     if not isinstance(hints, int) or hints < 0:
@@ -338,9 +340,11 @@ def metrics(events, horizons=HORIZONS):
             continue
         probability = event.get("confidence_probability")
         confidence = event.get("confidence")
-        if isinstance(probability, (int, float)):
+        # A boolean is not a number here: `true` is not a probability of 1 and not a confidence
+        # of 1. The calibration module reads the same two fields the same way.
+        if isinstance(probability, (int, float)) and not isinstance(probability, bool):
             explicit.append((float(probability), 1.0 if outcome else 0.0))
-        elif isinstance(confidence, int) and 1 <= confidence <= 5:
+        elif isinstance(confidence, int) and not isinstance(confidence, bool) and 1 <= confidence <= 5:
             ordinal.append(((confidence - 1) / 4, 1.0 if outcome else 0.0))
     report["calibration"] = {
         "brier_explicit": _brier(explicit),
