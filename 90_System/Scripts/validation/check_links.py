@@ -13,6 +13,10 @@ from urllib.parse import parse_qs, unquote, urlsplit
 root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
 SKIP = {".obsidian", "node_modules", ".git", ".trash", ".venv", ".smart-env", ".claude", ".agents"}
 files = [p for p in root.rglob("*") if p.is_file() and not SKIP.intersection(p.relative_to(root).parts)]
+# A wikilink without an extension points at a note, and a wikilink with an extension points at
+# that file. So `[[Note]]` needs a `Note.md`, and `[[chart.png]]` needs a `chart.png`.
+notes = {unicodedata.normalize("NFC", n) for p in files if p.suffix == ".md"
+         for n in (p.stem, p.name, str(p.relative_to(root).with_suffix("")))}
 names = {unicodedata.normalize("NFC", n) for p in files
          for n in (p.stem, p.name, str(p.relative_to(root).with_suffix("")))}
 broken = []
@@ -23,9 +27,12 @@ for p in files:
     t = re.sub(r"`[^`\n]*`", "", t)
     for m in re.finditer(r"\[\[([^\]|#^]+)", t):
         n = unicodedata.normalize("NFC", m.group(1).strip().replace("\\", ""))
-        if n and n not in names:
+        if not n:
+            continue
+        known = names if Path(n).suffix else notes
+        if n not in known:
             broken.append((p, n))
-    for m in re.finditer(r"\]\(((?:[^()\s]|\([^()\s]*\))+?\.md)(?:#[^)\s]*)?\)", t):
+    for m in re.finditer(r"\]\(((?:[^()\s]|\([^()\s]*\))+?\.md)(?:#[^)\s]*)?(?:\s+\"[^\"]*\")?\)", t):
         target = unquote(m.group(1))
         if "://" not in target and not (p.parent / target).resolve().exists():
             broken.append((p, target))

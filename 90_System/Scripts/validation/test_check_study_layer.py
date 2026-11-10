@@ -64,4 +64,8 @@ code, out = run({"20_Concepts/A.md": note("log", "## Details\n"), CONFIG: '{"che
 check(code == 1 and "missing" in out, f"checked_types from the file: {out}")
 code, out = run({"20_Concepts/A.md": note("concept", "## Details\n"), CONFIG: '{"checked_types": ["log"]}'})
 check(code == 0, f"a type outside checked_types is skipped: {out}")
+code, out = run({"20_Concepts/A.md": '---\ntype: "concept"\n---\n\n# T\n\n> [!tldr] In 3 lines\n> x\n\n## Details\n'})
+check(code == 1 and "missing" in out, f"a quoted type is the type it quotes: {out}")
+code, out = run({"20_Concepts/A.md": '---\ntype: concept\n---\n\n# T\n\n## Study explanation\n\ntext\n\n## Key takeaways\n\n- x\n'})
+check(code == 1 and "tldr" in out, f"the callout of three lines is part of the order: {out}")
 print("ok:", checks, "checks")

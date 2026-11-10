@@ -1,11 +1,12 @@
 """Naming standard: no file or folder in the vault has a space in its name.
 
+Usage: python3 -I 90_System/Scripts/validation/check_names.py [root]
 Exits 1 and lists offenders. To fix: python3 90_System/Scripts/normalize_names.py --write
 """
 import sys
 from pathlib import Path
 
-VAULT = Path(__file__).resolve().parents[3]
+VAULT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
 SKIP = {".git", ".obsidian", ".venv", "node_modules", ".smart-env", ".trash", ".claude"}
 bad = sorted(p.relative_to(VAULT) for p in VAULT.rglob("*")
              if " " in p.name and not SKIP.intersection(p.relative_to(VAULT).parts))

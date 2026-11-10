@@ -90,4 +90,11 @@ check(code == 0, f"highlights outside a flashcards note are not clozes: {out}")
 code, out = run({"20_Concepts/A.md": note("| What?::table | x |\n\n> What?::quote\n")})
 check(code == 0, f"tables and quotes are not cards: {out}")
 
+
+code, out = run({"20_Concepts/A.md": "---\ntype: concept\ntags:\n  - flashcards\n---\n\n# T\n\n## Flashcards\n\nSpacing beats ==massed== practice.\n"})
+check(code == 1 and "no source link" in out, f"a cloze in a note with the tags in a list needs a source: {out}")
+
+code, out = run({"40_References/P.md": "---\ntype: reference\nlink: \"\"\n---\n\n# P\n\nWhat does P show?::That Y.\n"})
+check(code == 1 and "no source link" in out, f"an empty link property is not a source: {out}")
+
 print("ok:", checks, "checks")

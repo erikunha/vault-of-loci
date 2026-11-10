@@ -23,4 +23,8 @@ with tempfile.TemporaryDirectory() as tmp:
     assert run(root, "| ![[a.png\\|A map]] |\n") == 0, "escaped pipe in a table with alt passes"
     assert run(root, "Example: `![[a.png|400]]`\n\n```\n![[b.png]]\n```\n") == 0, "inline and fenced code are not images"
     assert run(root, "![[Other_Note]]\n") == 0, "note embeds are not images"
-print("ok: 9 checks")
+    assert run(root, '![](chart.png "Figure 1")\n') == 1, "a markdown image with a title and no alt fails"
+    assert run(root, '![A chart](chart.png "Figure 1")\n') == 0, "a markdown image with a title and alt passes"
+    assert run(root, "![](<chart.png>)\n") == 1, "a target in angle brackets and no alt fails"
+    assert run(root, "![A chart](<chart.png>)\n") == 0, "a target in angle brackets and alt passes"
+print("ok: 13 checks")

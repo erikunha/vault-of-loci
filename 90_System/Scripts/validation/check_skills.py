@@ -5,8 +5,10 @@ Every folder in .agents/skills has a SKILL.md whose frontmatter has:
   or ending with a hyphen;
 - description: not empty, at most 1024 characters.
 Other keys (license, compatibility, tool settings) and other files in the folder are not checked, with one
-exception: a skill with `disable-model-invocation: true` (explicit use only in Claude Code and Cursor) also
-needs `agents/openai.yaml` with `allow_implicit_invocation: false` (the same rule in Codex).
+exception: the rule that a skill only runs when it is asked has to hold in every agent that runs it, so a
+skill with `disable-model-invocation: true` (explicit use only in Claude Code and Cursor) also needs
+`agents/openai.yaml` with `allow_implicit_invocation: false` (the same rule in Codex), and a skill with
+that file needs the key in the skill.
 
 Usage: python3 -I 90_System/Scripts/validation/check_skills.py [root]   (exits 1 on any problem)
 """
@@ -17,6 +19,25 @@ from pathlib import Path
 root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
 NAME = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 NAME_MAX, DESCRIPTION_MAX = 64, 1024
+
+
+def strip_comment(value):
+    """The value without the comment that follows it, the way YAML reads it.
+
+    A `#` starts a comment when it comes after a space and is not inside quotes.
+    """
+    quote = None
+    for index, char in enumerate(value):
+        if quote:
+            if char == quote:
+                quote = None
+            continue
+        if char in "\"'":
+            quote = char
+            continue
+        if char == "#" and (index == 0 or value[index - 1] in " \t"):
+            return value[:index].strip()
+    return value.strip()
 
 
 def frontmatter(text):
@@ -35,6 +56,7 @@ def frontmatter(text):
             props[current] = (props[current] + " " + line.strip()).strip()
     for k, v in props.items():
         v = re.sub(r"^[>|][+-]?\s*", "", v)
+        v = strip_comment(v)
         if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
             v = v[1:-1]
         props[k] = v
@@ -66,13 +88,21 @@ def problems_in(folder):
         found.append("description is missing or empty")
     elif len(description) > DESCRIPTION_MAX:
         found.append(f"description has {len(description)} characters, the limit is {DESCRIPTION_MAX}")
-    if props.get("disable-model-invocation", "").lower() == "true":
-        policy = folder / "agents" / "openai.yaml"
-        if not policy.is_file():
-            found.append("disable-model-invocation is set but agents/openai.yaml is missing")
-        elif not re.search(r"^\s+allow_implicit_invocation:\s*false\s*$",
-                           policy.read_text(encoding="utf-8", errors="replace"), flags=re.M):
-            found.append("agents/openai.yaml must set allow_implicit_invocation: false")
+    explicit_only = props.get("disable-model-invocation", "").lower() == "true"
+    policy = folder / "agents" / "openai.yaml"
+    has_policy = policy.is_file()
+    policy_explicit = has_policy and re.search(r"^\s+allow_implicit_invocation:\s*false\s*$",
+                                                policy.read_text(encoding="utf-8", errors="replace"),
+                                                flags=re.M)
+    if explicit_only and not has_policy:
+        found.append("disable-model-invocation is set but agents/openai.yaml is missing")
+    elif explicit_only and not policy_explicit:
+        found.append("agents/openai.yaml must set allow_implicit_invocation: false")
+    if policy_explicit and not explicit_only:
+        # The rule has to hold in every agent that runs the skill, not only in the one that
+        # reads the other file.
+        found.append("agents/openai.yaml sets allow_implicit_invocation: false "
+                     "but the skill does not set disable-model-invocation: true")
     return found
 
 

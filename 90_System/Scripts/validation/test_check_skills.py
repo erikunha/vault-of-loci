@@ -88,7 +88,7 @@ check(code == 1 and "allow_implicit_invocation" in out, f"policy file that allow
 code, out = run({path("good-skill"): explicit, ".agents/skills/good-skill/agents/openai.yaml": "interface:\n  display_name: Good\n" + POLICY})
 check(code == 0, f"policy file with other sections: {out}")
 
-code, out = run({path("good-skill"): skill("good-skill"), ".agents/skills/good-skill/agents/openai.yaml": POLICY, ".agents/skills/good-skill/references/a.md": "x\n"})
+code, out = run({path("good-skill"): explicit, ".agents/skills/good-skill/agents/openai.yaml": POLICY, ".agents/skills/good-skill/references/a.md": "x\n"})
 check(code == 0, f"extra files in a skill folder are allowed: {out}")
 
 code, out = run({".agents/skills/empty-folder/notes.md": "x\n"})
@@ -97,4 +97,8 @@ check(code == 1 and "SKILL.md" in out, f"a skill folder without SKILL.md: {out}"
 code, out = run({"README.md": "no skills here\n"})
 check(code == 0, f"a vault without skills passes: {out}")
 
+code, out = run({path("good-skill"): skill("good-skill # the skill")})
+check(code == 0, f"a comment after the value is not part of the value: {out}")
+code, out = run({path("good-skill"): skill("good-skill"), ".agents/skills/good-skill/agents/openai.yaml": POLICY})
+check(code == 1 and "disable-model-invocation" in out, f"the rule has to hold in every agent: {out}")
 print("ok:", checks, "checks")

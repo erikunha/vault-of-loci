@@ -1,6 +1,8 @@
 """Every image embedded in a note has alternative text.
 
-Accepts ![[image.png|alt text]] (or with \\| inside a table) and ![alt text](image.png). Inline and fenced code are skipped. Notes embedded with
+Accepts ![[image.png|alt text]] (or with \\| inside a table) and ![alt text](image.png). A Markdown
+image with a title, ![alt text](image.png "Figure 1"), and one with the target in angle brackets,
+![alt text](<image.png>), are read too. Inline and fenced code are skipped. Notes embedded with
 ![[Note]] (no image extension) are not images and are ignored. Exits 1 on any image
 without alt text.
 
@@ -13,7 +15,7 @@ from pathlib import Path
 ROOT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[3]
 IMAGE = r"\.(png|jpe?g|gif|svg|webp|avif|bmp)"
 WIKI = re.compile(r"!\[\[([^\]|\\]+?" + IMAGE + r")(\\?\|[^\]]*)?\]\]", re.I)
-MD = re.compile(r"!\[([^\]]*)\]\(([^)]+?" + IMAGE + r")\)", re.I)
+MD = re.compile(r"!\[([^\]]*)\]\(\s*<?([^)\s>]+?" + IMAGE + r")>?(?:\s+\"[^\"]*\")?\s*\)", re.I)
 SKIP = {".git", ".obsidian", ".agents", ".claude", "node_modules"}
 
 
