@@ -23,9 +23,11 @@ tags: [type/reference, flashcards]
 
 Drawing the thing you are learning is one of the most appealing study habits there is. It looks active, it looks visual, and a full page of diagrams feels like mastery. Leutner and Biele (2025) ask the question that a careful reviewer asks, which is not whether drawing is nice but whether drawing makes the student learn, and they also ask what has to be present for drawing to pay off.
 
-The review pooled 14 studies with 16 statistically independent comparisons between unsupported drawing and instructionally supported drawing, with 1213 participants in total. The outcomes were comprehension and transfer. The authors then tested three possible moderators of the support, each tied to a mechanism from generative learning theory. The first is a reduction of extraneous cognitive load, for example giving a partially drawn background so the student does not spend effort on the mechanics of drawing. The second is an increase of germane cognitive load, for example asking the student to write an explanation before drawing. The third is a facilitation of integration, for example asking the student to compare their drawing with an illustration provided in the material.
+The review pooled 14 studies with 16 statistically independent comparisons between unsupported drawing and instructionally supported drawing, with 1213 participants in total. The outcomes were comprehension and transfer. The authors then tested three possible moderators of the support, each tied to a mechanism from generative learning theory. The first is a reduction of extraneous cognitive load, for example giving a partially drawn background so the student does not spend effort on the mechanics of drawing. The second is an increase of germane cognitive load, for example asking the student to write an explanation before drawing. The third is a facilitation of integration, for example asking the student to compare their drawing with an illustration provided in the material, or to explain the content while the drawing is being made.
 
-The result that should stop a learner in their tracks is the headline one: drawing support in general was not related to learning outcomes. The design was not able to confirm that drawing helps, at least not in the form that the published studies measured. Then the moderator that did work: facilitation of integration. Where the support could be expected to help the student integrate, comprehension increased significantly, with g = 0.35. Where the support could not be expected to help with integration, the effect on comprehension was g = -0.15 and not significant. The other two moderators were not significant either.
+The three moderators are not the same size, and the difference matters. Explaining before drawing organizes the verbal model without integrating it into the picture, so it serves the germane load but not the integration. Explaining while drawing does both, so integration support is a subset of germane load support: a measure that integrates the verbal and the pictorial model can be expected to raise germane load, but a measure that raises germane load does not necessarily integrate anything.
+
+The result that should stop a learner in their tracks is the headline one: drawing support in general was not related to learning outcomes. The design was not able to confirm that drawing helps, at least not in the form that the published studies measured. Then the moderator that did work: facilitation of integration, with Q(1) = 7.90 and p = 0.005. Where the support could be expected to help the student integrate, comprehension increased significantly, with g = 0.35 and p = 0.048. Where the support could not be expected to help with integration, the effect on comprehension was g = -0.15, with p = 0.186 and not significant. The other two moderators were not significant either.
 
 A worked example with the numbers. Take a student who has to redraw a labelled diagram of the water cycle from memory, with no other instruction. Under the general finding, that alone is not expected to help. Now take the same student who redraws the diagram and then compares it, point by point, with the original illustration, naming what was missing. That is integration support, and it is the condition with g = 0.35. The gap between g = 0.35 and g = -0.15 is not a detail of the method, it is the whole method. The drawing is the vehicle and the comparison is what carries the learning.
 
@@ -47,8 +49,9 @@ Two notes in this vault connect. [[Retrieval_Practice|Retrieval practice]] is th
 | Statistically independent comparisons | 16 |
 | Participants in total | 1213 |
 | Drawing support in general | not related to learning outcomes |
-| Comprehension with support expected to facilitate integration | g = 0.35 |
-| Comprehension with support not expected to facilitate integration | g = -0.15, not significant |
+| Facilitation of integration as moderator | Q(1) = 7.90, p = 0.005 |
+| Comprehension with support expected to facilitate integration | g = 0.35, p = 0.048 |
+| Comprehension with support not expected to facilitate integration | g = -0.15, p = 0.186, not significant |
 | Reduction of extraneous cognitive load as moderator | not significant |
 | Increase of germane cognitive load as moderator | not significant |
 | Outcomes | comprehension and transfer |
@@ -71,6 +74,6 @@ Two notes in this vault connect. [[Retrieval_Practice|Retrieval practice]] is th
 What did Leutner and Biele (2025) pool?::14 studies with 16 statistically independent comparisons and 1213 participants.
 What did drawing support do to learning outcomes in general?::Nothing, it was not related to them.
 Which moderator did make a difference in Leutner and Biele (2025)?::Facilitation of integration, with g = 0.35 for comprehension against g = -0.15 for support without integration.
-What are two examples of integration support from Leutner and Biele (2025)?::Writing an explanation before drawing, and comparing your own drawing with the provided illustration.
+What are two examples of integration support from Leutner and Biele (2025)?::Comparing your own drawing with the provided illustration, and explaining the content while you draw.
 Why does redrawing the diagram more carefully not capture the effect in Leutner and Biele (2025)?::That reduces the mechanics of drawing but does not integrate the picture with the words, and integration is where the effect sits.
 What are the outcomes measured in Leutner and Biele (2025)?::Comprehension and transfer.

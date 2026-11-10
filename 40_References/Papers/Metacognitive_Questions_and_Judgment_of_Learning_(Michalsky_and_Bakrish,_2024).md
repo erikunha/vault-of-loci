@@ -16,7 +16,7 @@ tags: [type/reference, flashcards]
 
 > [!tldr] In 3 lines
 > Question: does asking metacognitive questions while studying make a student judge their own learning more accurately?
-> Method: two classroom studies with sixth sessions of digital study, one on reading literacy with 65 fifth-graders and one on mathematical literacy with 72, where the experimental material included metacognitive questioning.
+> Method: two classroom studies across six sessions of digital study, one on reading literacy with 65 fifth-graders and one on mathematical literacy with 72, where the experimental material included metacognitive questioning.
 > Result: the experimental groups improved over the six sessions in both performance and calibration, meaning the gap between what they predicted and what they scored got smaller.
 
 ## Study explanation
