@@ -196,4 +196,26 @@ with tempfile.TemporaryDirectory() as tmp:
     assert booleans["calibration"]["n_ordinal"] == 0, booleans["calibration"]
     assert booleans["calibration"]["brier_explicit"] is None, booleans["calibration"]
     assert booleans["calibration"]["brier_ordinal"] is None, booleans["calibration"]
-print("ok: 35 checks")
+    # A new rubric version starts a new series, and the series never mix: an attempt graded by
+    # an older rubric is not part of the rate of the current one.
+    mixed = [
+        event(event_id="m-study", objective_id="o-mixed", item_id="item-m", mode="study",
+              occurred_at=days_ago(200), first_attempt_correct=None, confidence=None),
+        event(event_id="m-old", objective_id="o-mixed", item_id="item-m", occurred_at=days_ago(190),
+              rubric_version="v1", first_attempt_correct=False),
+        event(event_id="m-new", objective_id="o-mixed", item_id="item-m2", occurred_at=days_ago(100),
+              rubric_version="v2", first_attempt_correct=True),
+    ]
+    registry = root / "objectives.json"
+    registry.write_text(json.dumps({"objectives": [
+        {"id": "o-mixed", "concept": "Mixed", "mode": "recall", "criterion": "c", "rubric_version": "v2"}]}),
+        encoding="utf-8")
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in mixed), encoding="utf-8")
+    mixed_run = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger),
+                                "--objectives", str(registry), "--json"],
+                                capture_output=True, text=True)
+    assert mixed_run.returncode == 0, mixed_run.stderr
+    series = json.loads(mixed_run.stdout)
+    assert series["retention"]["7"]["eligible"] == 1, series["retention"]
+    assert series["excluded"]["other_rubric"] == 1, series["excluded"]
+print("ok: 37 checks")

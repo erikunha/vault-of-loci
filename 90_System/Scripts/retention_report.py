@@ -20,7 +20,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from learning_ledger import (  # noqa: E402
     LEDGER,
     HORIZONS,
+    OBJECTIVES,
     by_objective,
+    load_objectives,
     metrics,
     now_iso,
     read_ledger,
@@ -42,6 +44,7 @@ def parse_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--ledger", type=Path, default=LEDGER, help="path of the ledger")
     ap.add_argument("--horizons", default=",".join(str(h) for h in HORIZONS), help="days, for example 7,30,90")
+    ap.add_argument("--objectives", type=Path, default=OBJECTIVES, help="path of the objective registry")
     ap.add_argument("--objective", help="report only this objective")
     ap.add_argument("--json", dest="as_json", action="store_true", help="print the report as JSON")
     return ap.parse_args(argv)
@@ -112,6 +115,8 @@ def lines(report, events, problems, horizons, objective=None):
     out.append(f"  {excluded['help']} attempt(s) with help")
     out.append(f"  {excluded['agent_graded']} attempt(s) graded by an agent")
     out.append(f"  {excluded['too_recent']} attempt(s) too recent for the shortest horizon")
+    if excluded.get("other_rubric"):
+        out.append(f"  {excluded['other_rubric']} attempt(s) graded by an older rubric, another series")
     if report["inferred_exposure"]:
         out.append(f"  {report['inferred_exposure']} item(s) have no study event, so their first attempt set the exposure day")
     out.append("")
@@ -129,7 +134,7 @@ def main(argv=None):
     events, problems = read_ledger(args.ledger)
     if args.objective:
         events = [event for event in events if str(event.get("objective_id")) == args.objective]
-    report = metrics(events, horizons)
+    report = metrics(events, horizons, load_objectives(args.objectives))
     if args.as_json:
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return 0

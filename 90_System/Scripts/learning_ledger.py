@@ -272,14 +272,32 @@ def learned_objectives(events):
     return learned
 
 
-def metrics(events, horizons=HORIZONS):
+def in_current_series(event, objectives):
+    """True when the attempt belongs to the series of the rubric that grades the objective now.
+
+    A new rubric version starts a new series and never mixes with the old one, so an attempt
+    graded by an older rubric is not part of the rate of the current one. An objective that is
+    not in the registry is not filtered: the registry is what says which rubric is current.
+    """
+    entry = objectives.get(str(event.get("objective_id")))
+    if not entry:
+        return True
+    current = entry.get("rubric_version")
+    if not current:
+        return True
+    return str(event.get("rubric_version")) == str(current)
+
+
+def metrics(events, horizons=HORIZONS, objectives=None):
     """Retention, transfer, calibration and the learned rule, for every objective and overall.
 
     A retention attempt at horizon h is a recall or explain attempt, on the first try, with no
     help, graded by the learner, made h days or more after the objective was first seen. Transfer is
     the same, with an apply or discriminate task instead. An attempt with no verdict says nothing
-    about what was remembered, so it is not eligible for any horizon.
+    about what was remembered, so it is not eligible for any horizon. An attempt graded by an
+    older rubric is not part of the current series of the objective, so it is not eligible either.
     """
+    registry = load_objectives() if objectives is None else objectives
     exposure, item_days, inferred = first_exposure(events)
     shortest = min(horizons) if horizons else None
     graded = [event for event in events if event.get("mode") != "study"]
@@ -294,7 +312,7 @@ def metrics(events, horizons=HORIZONS):
         "calibration": {},
         "learned": learned_objectives(events),
         "exposure": {str(name): day.isoformat() for name, day in exposure.items()},
-        "excluded": {"help": 0, "agent_graded": 0, "too_recent": 0},
+        "excluded": {"help": 0, "agent_graded": 0, "too_recent": 0, "other_rubric": 0},
         "inferred_exposure": len(inferred),
     }
     for horizon in horizons:
@@ -311,6 +329,10 @@ def metrics(events, horizons=HORIZONS):
                     # A graded attempt with no verdict says nothing about what was remembered.
                     # Counting it would print a rate that no event supports.
                     continue
+                if not in_current_series(event, registry):
+                    # An attempt graded by an older rubric is another series, and the series
+                    # never mix.
+                    continue
                 key = event.get("objective_id")
                 first = exposure.get(key)
                 when = parse_when(event.get("occurred_at"))
@@ -326,6 +348,8 @@ def metrics(events, horizons=HORIZONS):
             report["excluded"]["help"] += 1
         elif event.get("grading_method") != "learner_confirmed":
             report["excluded"]["agent_graded"] += 1
+        elif not in_current_series(event, registry):
+            report["excluded"]["other_rubric"] += 1
         else:
             first = exposure.get(event.get("objective_id"))
             when = parse_when(event.get("occurred_at"))
@@ -359,13 +383,14 @@ def metrics(events, horizons=HORIZONS):
     return report
 
 
-def by_objective(events, horizons=HORIZONS):
+def by_objective(events, horizons=HORIZONS, objectives=None):
     """The same metrics, one entry per objective."""
-    objectives = sorted({str(event.get("objective_id")) for event in events})
+    names = sorted({str(event.get("objective_id")) for event in events})
+    registry = load_objectives() if objectives is None else objectives
     result = {}
-    for objective in objectives:
+    for objective in names:
         subset = [event for event in events if str(event.get("objective_id")) == objective]
-        result[objective] = metrics(subset, horizons)
+        result[objective] = metrics(subset, horizons, registry)
     return result
 
 
