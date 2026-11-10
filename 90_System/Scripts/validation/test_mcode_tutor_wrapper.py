@@ -11,7 +11,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-WRAPPER = Path(__file__).resolve().parents[2] / "Evals" / "runs" / "2026-11-09-minimax" / "mcode-tutor.sh"
+WRAPPER = Path(__file__).resolve().parents[2] / "Evals" / "mcode-tutor.sh"
 
 # The reply the fake session holds, and the size in bytes the CLI reports when it chooses it.
 ANSWER = "THE REAL ANSWER"

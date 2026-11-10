@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Tutor eval runs
 
-Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`. Run the commands below from the root of the vault, then commit the folder you want to keep.
+Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, and they are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
 
 A run folder holds:
 
@@ -41,7 +41,7 @@ Add `--scenarios 1,2,5` to try a few scenarios first, or `--dry-run` to print th
 Two things changed in the runs of 2026-11-09, both about the CLI rather than the model:
 
 - **Antigravity needs the delegated print mode to read the vault.** In the plain print mode its PreToolUse hook refuses to read files inside the vault copy, so the agent answers from the prompt alone and the run measures the hook. `AI_DEV_RUNTIME_AGY_DELEGATED=1` is the mode that lets ordinary reads through. The run of 2026-11-09 used it.
-- **The MiniMax Code CLI can lose the answer on exit.** When its runtime shutdown misses the deadline it exits 70 and prints nothing, even though the reply was produced. The wrapper `mcode-tutor.sh` in the run folder `2026-11-09-minimax` runs the CLI with `--diagnostics-dir` and prints the message it finds there. Use it as `--agent-cmd` or as `--judge-cmd`.
+- **The MiniMax Code CLI can lose the answer on exit.** When its runtime shutdown misses the deadline it exits 70 and prints nothing, even though the reply was produced. The wrapper `90_System/Evals/mcode-tutor.sh` runs the CLI with `--diagnostics-dir` and prints the message it finds there. Use it as `--agent-cmd` or as `--judge-cmd`.
 
 ## Add a judge from another family
 

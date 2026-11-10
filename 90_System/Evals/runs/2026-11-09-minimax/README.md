@@ -16,7 +16,7 @@ tags: [type/log]
 
 ## Notes
 
-Tutor: MiniMax Code CLI (mcode exec) through the wrapper `mcode-tutor.sh` in this folder, because the CLI exits 70 when its runtime shutdown misses the deadline; the wrapper reads the final message from the diagnostics folder.
+Tutor: MiniMax Code CLI (mcode exec) through the wrapper `90_System/Evals/mcode-tutor.sh`, because the CLI exits 70 when its runtime shutdown misses the deadline; the wrapper reads the final message from the diagnostics folder.
 
 Judges: agy (Antigravity CLI, family google) wrote `scores.json` and `summary.md`. kimi (family moonshot) wrote `scores-judge-kimi.json` and `summary-judge-kimi.md`. Neither judge shares the tutor's family.
 
