@@ -24,6 +24,9 @@ with tempfile.TemporaryDirectory() as tmp:
                    for f in files), "tutor eval transcripts are left out"
     assert "90_System/Evals/runs/README.md" in files, "the instructions for running the eval are kept"
     assert "90_System/Evals/mcode-tutor.sh" in files, "the agent wrapper is kept"
+    # The checks that run inside the copy leave a compiled cache behind, and a .pyc file holds the
+    # path of the machine that built it. The release carries neither.
+    assert not any(f.endswith(".pyc") or "__pycache__" in f for f in files), "the compiled cache is left out"
     for kept in ("AGENTS.md", "00_Home.md", "20_Concepts/Retrieval_Practice.md", "90_System/Templates/Track.md",
                  ".obsidian/core-plugins.json", "90_System/Scripts/run_checks.py"):
         assert kept in files, f"{kept} is kept"
@@ -34,4 +37,4 @@ with tempfile.TemporaryDirectory() as tmp:
     llms = (vault / "vault-of-loci" / "llms.txt").read_text(encoding="utf-8")
     assert "Example_Course" not in llms and "Example_Book" not in llms, "llms.txt lists no removed note"
     assert "passed" in run.stdout and "FAILED" not in run.stdout, run.stdout
-print("ok: 9 checks")
+print("ok: 10 checks")
