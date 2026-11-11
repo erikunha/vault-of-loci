@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Transcript: minimax-learning-s1, 2026-11-10
 
-Agent command: `/Users/erikhenriquealvescunha/Desktop/Projects/vault-of-loci/90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh`. Each message is in a code block, as the agent wrote it.
+Agent command: `90_System/Evals/runs/2026-11-09-minimax/mcode-tutor.sh`. Each message is in a code block, as the agent wrote it.
 
 ## Scenario 1
 
