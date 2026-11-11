@@ -6,7 +6,7 @@ Vault of Loci is an Obsidian vault template for learning anything with AI agents
 
 * **Same `AGENTS.md`, any agent or provider.** Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor and OpenCode read the same rules from one file, and your notes and progress are plain files, so you can switch agent or model, including local ones, without starting over.
 * **A tutor, not an answer machine:** you attempt first, hints come one step at a time, you rate your confidence before the reveal, and the agent never writes your notes. Practice with unguarded AI raises scores while you have it and lowers them once you don't; a guarded tutor largely avoids that.
-* **Notes you can study from:** every concept, paper and guide carries a long explanation, key takeaways and flashcards with a source on each card. Every reference is verified, and checks on every push keep notes, links and names consistent.
+* **Notes you can study from:** every concept, paper and guide carries a long explanation, key takeaways and flashcards with a source on each card. Every reference says whether it was verified, and checks on every push keep notes, links and names consistent.
 * **Any learning project:** a course, a book, a certification, an interview, research, a skill or a language, each with its own recipe.
 
 [Learn how to study with this vault](How_to_Study_with_this_Vault.md).
@@ -55,7 +55,7 @@ Five more interventions come out of the same record. The calibration coach shows
 
 ```bash
 python3 -I 90_System/Scripts/calibration_coach.py        # how well confidence tracks the result, with the sharpest cases
-python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/Home_Route.md   # the route, with the item blank
+python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/<Name>.md   # the route of a palace note, with the item blank
 ```
 
 ## Test whether the agent measures the learning, not only the rules
@@ -67,7 +67,7 @@ python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd 
   --label my-agent --agent-family my-family --judge-cmd "other-agent -p" --judge-family other-family
 ```
 
-Its 10 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here.
+Its 15 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here.
 
 ## Screenshots
 
