@@ -24,7 +24,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import LEDGER, GRADING, parse_when, read_ledger, sort_by_moment  # noqa: E402
+from learning_ledger import LEDGER, GRADING, parse_when, read_ledger, sort_by_moment, verdict_of  # noqa: E402
 
 DAILY_CAP = 15
 NEW_PER_DAY = 2
@@ -68,7 +68,7 @@ def strength_of(attempts):
     """How solid the record on an item is, from 0 to 1, updated by each attempt."""
     strength = 0.5
     for event in attempts:
-        if event.get("first_attempt_correct"):
+        if verdict_of(event):
             strength += (1 - strength) * STRENGTH_STEP
         else:
             strength -= strength * STRENGTH_STEP
@@ -110,7 +110,7 @@ def ranked_entries(events, today=None):
     history = item_history([event for event in events
                              if event.get("mode") != "study"
                              and event.get("grading_method") == "learner_confirmed"
-                             and event.get("first_attempt_correct") is not None])
+                             and verdict_of(event) is not None])
     seen = objectives_seen(events)
     entries = []
     for (objective, item), attempts in history.items():
@@ -181,7 +181,11 @@ def plan(events, cap=DAILY_CAP, new_per_day=NEW_PER_DAY, today=None):
     today = today or date.today()
     entries, seen, clean = ranked_entries(events, today)
     backlog = len(entries)
-    catch_up = backlog > cap
+    # The queue that passes the cap is the queue of reviews. The objectives that were never
+    # attempted are new material, and counting them here would put the vault in catch-up mode
+    # with nothing to catch up on, and the plan of the day would be empty every day.
+    pending = len([entry for entry in entries if not entry["new"]])
+    catch_up = pending > cap
     reviews = [entry for entry in entries if not entry["new"]][:cap]
     news = [] if catch_up else [entry for entry in entries if entry["new"]][:new_per_day]
     chosen = sorted(reviews + news, key=lambda entry: (-entry["priority"], entry["objective_id"] or ""))
@@ -252,7 +256,7 @@ def error_items(events, today=None):
     history = item_history([event for event in events
                              if event.get("mode") != "study"
                              and event.get("grading_method") == "learner_confirmed"
-                             and event.get("first_attempt_correct") is not None])
+                             and verdict_of(event) is not None])
     # The variants that already exist in the whole ledger, not in this item's own attempts. The
     # next variation has to be an id nobody used, because one id means one task.
     used = {str(event.get("item_id", "")) for event in events}

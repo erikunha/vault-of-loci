@@ -96,7 +96,7 @@ def main(argv=None):
     if ranked["catch_up"]:
         print("catch-up mode: the queue is over the cap, so no new cards until it is under it.")
     if not ranked["entries"]:
-        print("nothing to review yet: the ledger has no attempt.")
+        print("nothing to review yet: the ledger holds no objective to work on.")
         return 0
     print()
     for number, entry in enumerate(ranked["entries"], start=1):

@@ -108,4 +108,22 @@ with tempfile.TemporaryDirectory() as tmp:
 
     counted = len(ledger.read_text(encoding="utf-8").splitlines())
     assert counted == 3, f"only the three valid attempts were written, found {counted}"
-print("ok: 13 checks")
+    # A registry that cannot be read turns the check that the objective exists off, so the
+    # attempt is refused instead of being recorded under a name that does not exist.
+    missing = subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), "--ledger", str(root / "Attempts.jsonl"),
+         "--objectives", str(root / "NoRegistry.json"), "--objective", "typo-not-real",
+         "--item", "item-11", "--mode", "recall", "--correct", "--at", YESTERDAY],
+        capture_output=True, text=True)
+    assert missing.returncode == 1, missing.stdout + missing.stderr
+    assert "objective registry could not be read" in missing.stdout, missing.stdout
+
+    allowed = subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), "--ledger", str(root / "Attempts.jsonl"),
+         "--objectives", str(root / "NoRegistry.json"), "--objective", "typo-not-real",
+         "--item", "item-12", "--mode", "recall", "--correct", "--at", YESTERDAY,
+         "--allow-unknown-objective"],
+        capture_output=True, text=True)
+    assert allowed.returncode == 0, allowed.stdout + allowed.stderr
+
+print("ok: 15 checks")

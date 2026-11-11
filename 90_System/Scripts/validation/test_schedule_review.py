@@ -177,4 +177,19 @@ with tempfile.TemporaryDirectory() as tmp:
     assert "not valid JSON" in broken.stdout, broken.stdout
     broken_json = json.loads(run(root, "--json").stdout)
     assert broken_json["problems"], broken_json
-print("ok: 22 checks")
+    # Many objectives that were never attempted: the plan still holds the new ones. The queue
+    # that passes the cap is the queue of reviews, and the objectives with no attempt are new
+    # material, not a backlog that never shrinks.
+    many = [event(event_id=f"n{n}", objective_id=f"o-new-{n}", item_id=f"item-n{n}", mode="study",
+                  occurred_at=days_ago(3), first_attempt_correct=None, confidence=None)
+            for n in range(20)]
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in many), encoding="utf-8")
+    fresh_plan = run(root, "--json")
+    assert fresh_plan.returncode == 0, fresh_plan.stderr
+    fresh = json.loads(fresh_plan.stdout)
+    assert fresh["entries"], fresh
+    assert fresh["catch_up"] is False, fresh
+    fresh_text = run(root)
+    assert "nothing to review yet" not in fresh_text.stdout, fresh_text.stdout
+
+print("ok: 25 checks")

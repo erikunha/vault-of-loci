@@ -218,4 +218,15 @@ with tempfile.TemporaryDirectory() as tmp:
     series = json.loads(mixed_run.stdout)
     assert series["retention"]["7"]["eligible"] == 1, series["retention"]
     assert series["excluded"]["other_rubric"] == 1, series["excluded"]
-print("ok: 37 checks")
+    # A verdict that is neither true nor false is not a verdict: it says nothing about what was
+    # remembered, and the line is named instead of counting as a success.
+    ledger.write_text(json.dumps(event(event_id="word", occurred_at=days_ago(193),
+                                       first_attempt_correct="false")) + "\n", encoding="utf-8")
+    worded = subprocess.run([sys.executable, "-I", str(SCRIPT), "--ledger", str(ledger), "--json"],
+                            capture_output=True, text=True)
+    assert worded.returncode == 0, worded.stderr
+    words = json.loads(worded.stdout)
+    assert words["retention"]["7"]["eligible"] == 0, words["retention"]
+    assert words["retention"]["7"]["correct"] == 0, words["retention"]
+
+print("ok: 39 checks")

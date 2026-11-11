@@ -255,4 +255,22 @@ with tempfile.TemporaryDirectory() as tmp:
     assert broken.returncode == 0, broken.stdout + broken.stderr
     assert "Traceback" not in broken.stderr, broken.stderr
 
-print("ok: 51 checks")
+    # The registry the audit is given is the registry the metrics use: an attempt graded by an
+    # older rubric is another series, so it does not measure the horizon.
+    ledger.write_text("".join(json.dumps(item) + "\n" for item in [
+        event(event_id="s1", objective_id="o-one", item_id="item-a", mode="study",
+              occurred_at=days_ago(100), first_attempt_correct=None, confidence=None),
+        event(event_id="a1", objective_id="o-one", item_id="item-a", occurred_at=days_ago(93)),
+    ]), encoding="utf-8")
+    old_rubric = root / "OldRubric.json"
+    old_rubric.write_text(json.dumps({"version": "v2", "objectives": [
+        {"id": "o-one", "concept": "One", "mode": "recall", "criterion": "c", "rubric_version": "v2"}]}),
+        encoding="utf-8")
+    series_run = run_with_objectives(root, old_rubric, "--json")
+    assert series_run.returncode == 0, series_run.stderr
+    series = json.loads(series_run.stdout)
+    row = [r for r in series["audit"]["objectives"] if r["objective_id"] == "o-one"][0]
+    assert row["retention"]["7"]["eligible"] == 0, row
+    assert row["status"].startswith("due"), row
+
+print("ok: 53 checks")

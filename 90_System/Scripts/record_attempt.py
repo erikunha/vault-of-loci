@@ -96,6 +96,11 @@ def main(argv=None):
             print("invalid attempt:", problem)
         return 1
     objectives = load_objectives(args.objectives)
+    if not objectives and not args.allow_unknown_objective:
+        # The registry says nothing, so the check that the objective exists cannot run. A check
+        # that turns itself off without a word is not a check.
+        print(f"invalid attempt: the objective registry could not be read: {args.objectives}")
+        return 1
     known = objectives or None
     problems = validate_event(event, known, used_ids, args.allow_unknown_objective)
     if problems:
