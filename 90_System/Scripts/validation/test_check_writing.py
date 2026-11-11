@@ -101,6 +101,12 @@ check(code == 1 and "end as a node id" in out, f"an arrow to a node named end: {
 code, out = run({"A.md": "# A note\n\n> ```mermaid\n> flowchart LR\n>   end --> B\n> ```\n"})
 check(code == 1 and "end as a node id" in out, f"a node named end in a quoted diagram: {out}")
 
+code, out = run({"A.md": "# A note\n\n```mermaid\nflowchart LR\n  end --> B\n```\n"})
+check(
+    code == 1 and "A.md:5" in out and out.strip().splitlines()[-1] == "writing problems: 1",
+    f"the problem of the diagram names its line and its count: {out}",
+)
+
 code, out = run({"A.md": "# A note\n\n```mermaid\nflowchart LR\n  subgraph one\n  A --> B\n  end\n```\n"})
 check(code == 0, f"the end of a subgraph is not a node: {out}")
 
@@ -126,6 +132,12 @@ code, out = run({"A.md": "", "B.md": "# No newline at the end"})
 check(code == 0, f"an empty file and a file without a newline: {out}")
 
 code, out = run({"A.md": "# A note\n\nA word — another word.\n", "B.md": "# Another\n\nA word – another word.\n"})
-check(code == 1 and "writing problems: 2" in out, f"every problem is named: {out}")
+check(
+    code == 1
+    and "A.md:3" in out
+    and "B.md:3" in out
+    and out.strip().splitlines()[-1] == "writing problems: 2",
+    f"every problem is named with its file, its line and its count: {out}",
+)
 
 print("ok:", checks, "checks")
