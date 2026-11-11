@@ -57,12 +57,39 @@ EXPLAIN, TAKEAWAYS = CONFIG_VALUES["explanation"], CONFIG_VALUES["takeaways"]
 CHECKED_TYPES = set(CONFIG_VALUES["checked_types"])
 
 
+def note_type(head):
+    """The `type` of a note, in the inline form and in the list form.
+
+    The type is one value. A note that writes it as a list is read from the first item, and
+    the comparison with the checked types ignores the case, so a note that writes "Concept"
+    is a concept note and not a note of another type.
+    """
+    lines = head.splitlines()
+    for index, line in enumerate(lines):
+        match = re.match(r"^type:[ \t]*(.*)$", line)
+        if not match:
+            continue
+        value = match.group(1).strip().strip("'\"")
+        if value:
+            return value
+        for follow in lines[index + 1:]:
+            item = re.match(r"^[ \t]*-[ \t]*(.*)$", follow)
+            if not item:
+                break
+            value = item.group(1).strip().strip("'\"")
+            if value:
+                return value
+    return ""
+
+
 def problem(text):
     """None when the note is fine, else a short reason."""
     front = re.match(r"---\n(.*?)\n---", text, flags=re.DOTALL)
-    kind = re.search(r"(?m)^type:\s*(\S+)", front.group(1)) if front else None
-    # The type can be written with quotes, and "concept" is the concept note.
-    if kind and kind.group(1).strip("'\"") not in CHECKED_TYPES:
+    head = front.group(1) if front else ""
+    kind = note_type(head)
+    # A note with another type (a track or a log, for example) is not checked. A note without
+    # frontmatter and a note without a type are checked, because there is no type to skip.
+    if kind and kind.casefold() not in CHECKED_TYPES:
         return None
     body = re.sub(r"(?ms)^(`{3,}|~{3,}).*?^\1\s*$", "", text[front.end():] if front else text)
     sections = re.findall(r"(?m)^## .*$", body)

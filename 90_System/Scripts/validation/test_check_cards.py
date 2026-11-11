@@ -97,4 +97,10 @@ check(code == 1 and "no source link" in out, f"a cloze in a note with the tags i
 code, out = run({"40_References/P.md": "---\ntype: reference\nlink: \"\"\n---\n\n# P\n\nWhat does P show?::That Y.\n"})
 check(code == 1 and "no source link" in out, f"an empty link property is not a source: {out}")
 
+code, out = run({"20_Concepts/A.md": note("## Flashcards\n\nWhat is [[Source_A|X]]?::A thing.\n")})
+check(code == 1 and "no source link" in out, f"a link in the question is not the source of the answer: {out}")
+
+code, out = run({"20_Concepts/A.md": note("## Flashcards\n\nWhat is X?::A thing, see [[Source_A|source]].\n")})
+check(code == 0, f"a link in the answer is the source of the card: {out}")
+
 print("ok:", checks, "checks")
