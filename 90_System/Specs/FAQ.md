@@ -150,7 +150,7 @@ It is optional. The plugin offers FSRS since version 1.15.0. Back up the vault a
 
 ## Can I review the cards in Anki or cite the references in Zotero?
 
-Yes. `export_anki_tsv.py --out cards.tsv` writes every card and cloze to a file Anki imports with File > Import, one deck per track; the header lines set the note type, deck and tags. `export_bibtex.py --out refs.bib --csl-out refs.json` turns the reference notes into BibTeX and CSL JSON, which Zotero, Pandoc and LaTeX read. A reference with `verified: false` is exported with the note "not verified". The vault stays the source; export again after you edit.
+Yes. `export_anki_tsv.py --out cards.tsv` writes every card and cloze to a file Anki imports with File > Import, one deck per track; the header lines set the note type, deck and tags. `export_bibtex.py --out refs.bib --csl-out refs.json` turns the reference notes into BibTeX and CSL JSON, which Zotero, Pandoc and LaTeX read. A reference with `verified: false` is exported with the note "not verified", in the BibTeX and in the CSL JSON. Import the CSL JSON into Zotero: a name that the note writes with the surname alone reads as an institution in BibTeX, because BibTeX cannot tell it from the name of a company, and the CSL JSON carries the family name, so Zotero knows it is a person. The vault stays the source; export again after you edit.
 
 ## Does the vault ship an MCP server configuration for Obsidian?
 
