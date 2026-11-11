@@ -88,7 +88,7 @@ def parse(text):
     deck = "flashcards" in frontmatter_tags(head)
     skipped = text[: front.end()].count("\n") if front else 0
     lines = text.splitlines()[skipped:]
-    sections, cards, fence = [{"title": "", "lines": []}], [], None
+    sections, cards, fence = [{"title": "", "lines": [], "cards": []}], [], None
     for offset, raw in enumerate(lines):
         number = skipped + offset + 1
         marker = re.match(r"\s*(`{3,}|~{3,})", raw)
@@ -100,16 +100,18 @@ def parse(text):
         line = re.sub(r"`[^`\n]*`", "", raw)
         heading = re.match(r"#{1,6}\s+(.*?)\s*$", line)
         if heading:
-            sections.append({"title": heading.group(1).strip().casefold(), "lines": []})
+            sections.append({"title": heading.group(1).strip().casefold(), "lines": [], "cards": []})
             continue
         sections[-1]["lines"].append(line)
         if line.lstrip().startswith((">", "|")):
             continue
         card = CARD.match(line.strip())
         if card:
-            cards.append((number, card.group("q").strip(), line, len(sections) - 1))
+            sections[-1]["cards"].append(len(sections[-1]["lines"]) - 1)
+            cards.append((number, card.group("q").strip(), card.group("a").strip(), len(sections) - 1))
         elif deck and CLOZE.search(line):
-            cards.append((number, line.strip(), line, len(sections) - 1))
+            sections[-1]["cards"].append(len(sections[-1]["lines"]) - 1)
+            cards.append((number, line.strip(), line.strip(), len(sections) - 1))
     return cards, sections, frontmatter_source(head)
 
 
@@ -117,9 +119,14 @@ problems, seen = [], {}
 for path, rel in notes():
     cards, sections, noted = parse(path.read_text(encoding="utf-8", errors="ignore"))
     shared = noted or any(WIKILINK.search("\n".join(s["lines"])) for s in sections if s["title"] in SOURCE_SECTIONS)
-    for number, question, line, index in cards:
+    for number, question, answer, index in cards:
         where = f"{rel}:{number}"
-        if not (WIKILINK.search(line) or shared or WIKILINK.search("\n".join(sections[index]["lines"]))):
+        # The source backs the answer, the thing the learner is asked to recall. A link in the
+        # question is the name of the concept, not the source of the answer, and the lines of the
+        # other cards do not source this one.
+        section = sections[index]
+        prose = [l for i, l in enumerate(section["lines"]) if i not in set(section["cards"])]
+        if not (WIKILINK.search(answer) or shared or WIKILINK.search("\n".join(prose))):
             problems.append(f"no source link: {where}: {question}")
         key = normalize(question)
         if key in seen:

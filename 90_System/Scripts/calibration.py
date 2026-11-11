@@ -26,7 +26,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from learning_ledger import now_iso  # noqa: E402
+from learning_ledger import now_iso, verdict_of  # noqa: E402
 
 POPULATION = "first attempt, no help, graded by the learner"
 SCALE = "(confidence - 1) / 4"
@@ -69,7 +69,7 @@ def scale_probability(event):
 
 def outcome(event):
     """What happened in one attempt: 1.0 when the answer was right, 0.0 when it was wrong."""
-    return 1.0 if event.get("first_attempt_correct") else 0.0
+    return 1.0 if verdict_of(event) else 0.0
 
 
 def brier(pairs):

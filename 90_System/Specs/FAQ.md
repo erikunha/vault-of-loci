@@ -16,7 +16,7 @@ Open an issue with the "Question" form, after checking this FAQ. Ideas go in the
 
 ## Do I need AI agents to use this vault?
 
-No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use an agent such as Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor or OpenCode. The README table "Supported agents" lists what each one reads.
+No. Everything is plain Markdown and works in Obsidian alone. The agent files only matter if you use an agent such as Claude Code, Codex, Antigravity CLI, Gemini CLI, Copilot, Cursor or OpenCode. The table in `90_System/Specs/Agents.md` lists what each one reads.
 
 ## Do I need Python?
 

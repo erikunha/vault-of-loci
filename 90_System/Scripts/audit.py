@@ -19,7 +19,7 @@ from learning_ledger import HORIZONS, metrics, parse_when  # noqa: E402
 from scheduler import clean_attempts, days_since_last, objectives_seen  # noqa: E402
 
 
-def audit(events, horizons=HORIZONS, today=None):
+def audit(events, horizons=HORIZONS, today=None, objectives=None):
     """The state of every objective the ledger knows about."""
     today = today or date.today()
     seen = objectives_seen(events)
@@ -29,7 +29,7 @@ def audit(events, horizons=HORIZONS, today=None):
         clean = clean_attempts(subset)
         graded = [event for event in subset if event.get("mode") != "study"]
         helped = [event for event in graded if event.get("assistance") != "none"]
-        measured = metrics(subset, horizons)
+        measured = metrics(subset, horizons, objectives)
         days = days_since_last(subset, today)
         exposed = (today - seen[objective]).days
         if not graded:
@@ -82,9 +82,9 @@ def equivalent_item(item_id, horizon):
     return f"{item_id}-d{horizon}"
 
 
-def delayed_plan(events, horizons=HORIZONS, today=None):
+def delayed_plan(events, horizons=HORIZONS, today=None, objectives=None):
     """The objectives that owe a delayed attempt, with the horizon each one owes."""
-    report = audit(events, horizons, today)
+    report = audit(events, horizons, today, objectives)
     plan = []
     for row in report["due"]:
         horizon = int(row["status"].split()[2])

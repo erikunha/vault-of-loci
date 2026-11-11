@@ -57,7 +57,7 @@ python3 -I 90_System/Scripts/retention_audit.py                         # object
 python3 -I 90_System/Scripts/transfer_lab.py                             # objectives that were studied and never applied in a new task
 python3 -I 90_System/Scripts/misconception_report.py                    # objectives that were wrong more than once, and the drill they need
 python3 -I 90_System/Scripts/dependency_check.py                         # what has to be understood first, and where the gap is
-python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/Home_Route.md   # the route of a memory palace, in walking order, with the item blank
+python3 -I 90_System/Scripts/palace_test.py --palace 50_Review/Palaces/<Name>.md   # the route of a memory palace, in walking order, with the item blank
 python3 -I 90_System/Scripts/pdf_to_text.py paper.pdf --out /tmp/paper.txt --note 40_References/Papers/X.md   # PDF text once per file, recorded in 90_System/ingest_manifest.json
 ```
 

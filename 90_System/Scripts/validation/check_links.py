@@ -23,7 +23,10 @@ broken = []
 for p in files:
     if p.suffix != ".md" and p.name != "llms.txt":
         continue
-    t = re.sub(r"```.*?```", "", p.read_text(encoding="utf-8", errors="ignore"), flags=re.DOTALL)
+    text = p.read_text(encoding="utf-8", errors="ignore")
+    # A link inside a fenced block is an example, not a link. Both fences count.
+    t = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    t = re.sub(r"~~~.*?~~~", "", t, flags=re.DOTALL)
     t = re.sub(r"`[^`\n]*`", "", t)
     for m in re.finditer(r"\[\[([^\]|#^]+)", t):
         n = unicodedata.normalize("NFC", m.group(1).strip().replace("\\", ""))

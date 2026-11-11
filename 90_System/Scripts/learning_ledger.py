@@ -103,6 +103,17 @@ def next_event_id(existing):
     return f"attempt-{today}-{(max(numbers) + 1 if numbers else 1):03d}"
 
 
+def verdict_of(event):
+    """The verdict of an attempt: True, False, or None when the event carries no verdict.
+
+    A verdict that is neither true nor false is not a verdict, so it reads as none. A line
+    that writes the word "false" says nothing about what was remembered, and counting it as
+    a success would print a rate that no event supports.
+    """
+    value = event.get("first_attempt_correct")
+    return value if isinstance(value, bool) else None
+
+
 def load_objectives(path=OBJECTIVES):
     """The objective registry as a dict of id to objective, or an empty dict when it is missing."""
     try:
@@ -198,6 +209,8 @@ def read_ledger(path=LEDGER):
         if not isinstance(event, dict):
             problems.append(f"line {number}: not a JSON object")
             continue
+        if event.get("first_attempt_correct") is not None and not isinstance(event.get("first_attempt_correct"), bool):
+            problems.append(f"line {number}: first_attempt_correct is not true or false")
         event["_line"] = number
         events.append(event)
     events = sort_by_moment(events)
@@ -325,7 +338,8 @@ def metrics(events, horizons=HORIZONS, objectives=None):
                     continue
                 if event.get("grading_method") != "learner_confirmed":
                     continue
-                if event.get("first_attempt_correct") is None:
+                verdict = verdict_of(event)
+                if verdict is None:
                     # A graded attempt with no verdict says nothing about what was remembered.
                     # Counting it would print a rate that no event supports.
                     continue
@@ -341,7 +355,7 @@ def metrics(events, horizons=HORIZONS, objectives=None):
                 if (when - first).days < horizon:
                     continue
                 eligible += 1
-                correct += 1 if event.get("first_attempt_correct") else 0
+                correct += 1 if verdict else 0
             report[label][str(horizon)] = {"correct": correct, "eligible": eligible, "rate": _rate(correct, eligible)}
     for event in graded:
         if event.get("assistance") != "none":
@@ -357,7 +371,7 @@ def metrics(events, horizons=HORIZONS, objectives=None):
                 report["excluded"]["too_recent"] += 1
     explicit, ordinal = [], []
     for event in graded:
-        outcome = event.get("first_attempt_correct")
+        outcome = verdict_of(event)
         if outcome is None:
             continue
         if event.get("assistance") != "none" or event.get("grading_method") != "learner_confirmed":

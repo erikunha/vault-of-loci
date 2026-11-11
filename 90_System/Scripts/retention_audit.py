@@ -84,8 +84,9 @@ def main(argv=None):
         print("invalid horizons:", error)
         return 1
     events, problems = read_ledger(args.ledger)
-    report = audit(events, horizons, date.today())
-    plan_rows = delayed_plan(events, horizons, date.today())
+    registry = load_objectives(args.objectives)
+    report = audit(events, horizons, date.today(), registry)
+    plan_rows = delayed_plan(events, horizons, date.today(), registry)
     registered = registered_without_events(report, args.objectives)
     if args.as_json:
         print(json.dumps({"audit": report, "plan": plan_rows, "registered_without_events": registered},

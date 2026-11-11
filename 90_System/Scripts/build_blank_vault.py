@@ -81,6 +81,16 @@ def unlink(text, removed):
     return link.sub(lambda m: m.group(1) or m.group(0)[2:-2].split("#")[0], text)
 
 
+def is_cache(path):
+    """Whether a path is a compiled Python cache.
+
+    The checks that run inside the copy leave a `__pycache__` behind, and a `.pyc` file holds the
+    path of the machine that built it. A release that ships them carries that path and a file no
+    one can read.
+    """
+    return path.suffix == ".pyc" or "__pycache__" in path.parts
+
+
 def walk(top):
     """Every file and symlink under top, without following symlinked folders."""
     for here, dirs, names in os.walk(top):
@@ -128,7 +138,8 @@ def build(out):
                   if p.name != "test_build_blank_vault.py"]
         failed = 0
         for args in steps:
-            run = subprocess.run([sys.executable, "-I", *args], capture_output=True, text=True, cwd=vault)
+            run = subprocess.run([sys.executable, "-I", *args], capture_output=True, text=True, cwd=vault,
+                                 env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"})
             name = Path(args[0]).name
             print(("passed: " if run.returncode == 0 else "FAILED: ") + name)
             if run.returncode:
@@ -138,6 +149,9 @@ def build(out):
             return 1
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
             for path in walk(vault):
+                relative = path.relative_to(vault)
+                if is_cache(relative):
+                    continue
                 arc = str(path.relative_to(vault.parent))
                 if path.is_symlink():
                     info = zipfile.ZipInfo(arc)
