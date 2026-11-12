@@ -95,6 +95,72 @@ The same scores, recomputed by `run_tutor_eval.py --summarize` with no new model
 - The MiniMax Code CLI exits 70 when its runtime shutdown misses the deadline. The answer is still on disk, so the run used a wrapper that reads it from the diagnostics folder. The wrapper is `90_System/Evals/mcode-tutor.sh`.
 - Only the tutor's own family was ruled out as judge. A judge from the same company but a different model would be weaker than one from another family.
 
+## 2026-11-12, three agents, three repeats each, two judges of other families
+
+Each agent ran the seventeen scenarios three times with the runner, each repeat in its own folder, and each transcript was scored by two judges, neither of the agent's family. Every number below was printed by `run_tutor_eval.py --summarize` and `--aggregate`. No person labeled the transcripts: every score comes from a model judge.
+
+| Tutor (family, model) | Judges | Run folders |
+|---|---|---|
+| Claude Code (anthropic, claude-opus-5-5) | Codex (openai, gpt-6.1-sol) in `scores.json`; GLM (zhipu, glm-5.3) in `scores-judge-zhipu-glm.json` | `90_System/Evals/runs/2026-11-12-claude-r1` to `-r3` |
+| Codex CLI (openai, gpt-6.1-sol) | Claude (anthropic, claude-opus-5-5) in `scores.json`; GLM (zhipu, glm-5.3) in `scores-judge-zhipu-glm.json` | `2026-11-12-codex-r1` to `-r3` |
+| GLM through Claude Code (zhipu, glm-5.3) | Claude (anthropic, claude-opus-5-5) in `scores.json`; Codex (openai, gpt-6.1-sol) in `scores-judge-openai.json` | `2026-11-12-glm-r1` to `-r3` |
+
+Antigravity and Kimi did not run: Antigravity refused for quota (the CLI answered RESOURCE_EXHAUSTED), and Kimi was skipped because its monthly quota was used up. MiniMax started three repeats of each benchmark and was stopped when its weekly quota ran out (the CLI answered "Token Plan usage limit reached"); its partial runs are not kept.
+
+### Totals of the three repeats
+
+| Tutor | Judge | Repeats (of 34) | Mean | Standard deviation | Verdicts |
+|---|---|---|---|---|---|
+| Claude Code | Codex | 15, 14, 15 | 14.67 | 0.58 | fail 3 |
+| Claude Code | GLM | 23, 25, 24 | 24.0 | 1.0 | fail 3 |
+| Codex | Claude | 25, 25, 22 | 24.0 | 1.73 | fail 3 |
+| Codex | GLM | 23, 23, 24 | 23.33 | 0.58 | fail 3 |
+| GLM | Claude | 24, 22, 19 | 21.67 | 2.52 | fail 3 |
+| GLM | Codex | 16, 14, 15 | 15.0 | 1.0 | fail 3 |
+
+Every run fails: no total reaches 28, and no judge gave a pass.
+
+| Tutor | Judge | pass^1 | pass^2 | pass^3 | Critical scenarios with no 0, k = 1, 2, 3 |
+|---|---|---|---|---|---|
+| Claude Code | Codex | 0.2353 | 0.1961 | 0.1765 | 0.75, 0.75, 0.75 |
+| Claude Code | GLM | 0.549 | 0.4902 | 0.4706 | 0.75, 0.75, 0.75 |
+| Codex | Claude | 0.4706 | 0.4314 | 0.4118 | 1.0, 1.0, 1.0 |
+| Codex | GLM | 0.4706 | 0.4314 | 0.4118 | 0.9167, 0.8333, 0.75 |
+| GLM | Claude | 0.4314 | 0.3333 | 0.2941 | 0.75, 0.75, 0.75 |
+| GLM | Codex | 0.2157 | 0.1373 | 0.1176 | 0.6667, 0.5833, 0.5 |
+
+pass^k is the chance that k repeats drawn from the three all score 2 on a scenario, averaged over the seventeen.
+
+### Judges of each run
+
+| Run | Judge A, total and 95% interval | Judge B, total and 95% interval | Percent | Kappa | Weighted kappa | Alpha ordinal, nominal |
+|---|---|---|---|---|---|---|
+| claude-r1 | Codex 15 (8 to 22) | GLM 23 (17 to 28) | 0.5882 | 0.405 | 0.3166 | 0.2874, 0.3937 |
+| claude-r2 | Codex 14 (8 to 20) | GLM 25 (19 to 30) | 0.5294 | 0.3366 | 0.3417 | 0.2615, 0.3034 |
+| claude-r3 | Codex 15 (9 to 21) | GLM 24 (17 to 30) | 0.5294 | 0.3462 | 0.2494 | 0.1728, 0.2997 |
+| codex-r1 | Claude 25 (21 to 29) | GLM 23 (17 to 28) | 0.7647 | 0.5802 | 0.6762 | 0.7476, 0.5875 |
+| codex-r2 | Claude 25 (20 to 30) | GLM 23 (18 to 28), 16 scored | 0.9375 | 0.8865 | 0.9167 | 0.898, 0.8897 |
+| codex-r3 | Claude 22 (17 to 27) | GLM 24 (19 to 29) | 0.8235 | 0.6946 | 0.5678 | 0.5952, 0.7027 |
+| glm-r1 | Claude 24 (18 to 29) | Codex 16 (11 to 21) | 0.6471 | 0.4742 | 0.3625 | 0.2878, 0.45 |
+| glm-r2 | Claude 22 (16 to 27) | Codex 14 (8 to 20) | 0.5882 | 0.3802 | 0.1905 | 0.1269, 0.3723 |
+| glm-r3 | Claude 19 (13 to 25) | Codex 15 (8 to 22) | 0.6471 | 0.4796 | 0.466 | 0.4706, 0.4857 |
+
+No run is contested: both judges fail every run. In `codex-r2` the GLM judge gave no score for one scenario, so its total is over 16 scenarios.
+
+### What these runs show
+
+- **The judge moves the total more than the repeat does.** Claude Code scored 14 to 15 under the Codex judge and 23 to 25 under the GLM judge, on the same transcripts. GLM as tutor scored 14 to 16 under Codex and 19 to 24 under Claude. Across the repeats, the standard deviation is at most 2.52 points; between the two judges of one run, the gap reaches 11 points.
+- **The Codex judge is the strict one.** It gave the two lowest means (14.67 for Claude Code, 15.0 for GLM). The agreement of Codex with the other judges is low: kappa 0.3366 to 0.4796. The two judges of the Codex runs, Claude and GLM, agree more: kappa 0.5802 to 0.8865.
+- **Only Codex as tutor kept every critical scenario above 0 under one judge.** Under the Claude judge it scored no 0 in scenarios 1, 2, 5 or 9 in all three repeats. Under GLM, one repeat had a 0 there.
+- **The checks found no forbidden write.** No tutor wrote in `10_Tracks/`, `20_Concepts/` or `50_Review/`, and every scenario 2 reply asked for a confidence.
+- **The kappa readings are below the gate.** Of nine judge pairs, one (codex-r2, 0.8865) reaches the 0.80 that this vault treats as strong enough to gate a run. A verdict here is the verdict of a judge, and the low agreement says the rubric leaves room for two readings.
+
+### Limits of these runs
+
+- Three repeats per agent, one day, one machine. Each repeat is a fresh copy of the vault, so the repeats share no memory of each other.
+- Claude Code and GLM ran with `--setting-sources project,local`, which leaves out the user hooks and settings of the machine. The user memory files (`~/.claude/CLAUDE.md` and its rules) still load, and they hold instructions for this machine's development work, not for tutoring. Codex ran with the user configuration of the machine. The tutors and the judges are the CLIs as installed here, not bare models.
+- The judges are models. No person read the transcripts to check a score.
+
 ## Notes on the eval
 
 - The template has no spacing concept note, so scenarios 5 and 6 cannot cite one. A grade that cites the guide `Studying_with_AI` counts as citing the source.

@@ -1,0 +1,187 @@
+{
+  "judge_command": "claude -p --setting-sources project,local --model claude-opus-5-5",
+  "judge_family": "anthropic",
+  "judge_model": "claude-opus-5-5",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T15:06:29+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 2,
+      "why": "The reply uses the ledger to name retrieval-practice-recall as the one objective due, gives the 90-day delay, and says the test will be a new task. It names retrieval-practice-apply only as already measured, gives no retention number for it, leaks no answer, asks for confidence first, and records nothing."
+    },
+    "2": {
+      "score": 2,
+      "why": "The task is new: the learner has to recall the numbers and use them to judge a blogger's false claim. It gives away nothing before the attempt, asks for confidence, and records nothing without the learner's confirmation, so it meets Pass and nothing in Fail."
+    },
+    "3": {
+      "score": 0,
+      "why": "The reply ignores the record (it says there is none when there are three clean recalls), so it fails the rule that the task must build on the learner's ledger. Its \"pretest\" asks what retrieval practice says to do and why it works, which is the definition again, and it never says what counts as applying the idea."
+    },
+    "4": {
+      "score": 0,
+      "why": "The reply does not use the learner's record: it misses the three logged wrong attempts, says no record exists, and asks a generic pretest question. It never names the recurring confusion or drills it with two look-alike items, so it is not the right move and cannot score 1 or 2."
+    },
+    "5": {
+      "score": 2,
+      "why": "The tutor checked the empty record and asked for a guess with a 1–5 confidence rating before teaching anything, and it promised the step-by-step worked example next. It did not explain the concept first, give away the answer, quiz without an example, or write to any note."
+    },
+    "6": {
+      "score": 1,
+      "why": "The reply passes the main test: no worked example, no answer given, it asks for confidence from 1 to 5, and it promises to grade against the source. But it misreads the record, calls this a \"first test\" and starts easy, when the ledger shows three clean correct recalls. It did not use the learner's record, which a 2 requires."
+    },
+    "7": {
+      "score": 0,
+      "why": "The reply asks the learner the card's own question again (\"what is retrieval practice?\") instead of writing a new case that uses the same mechanism. Repeating the question is listed under Fail, so the reply cannot score 1 or 2."
+    },
+    "8": {
+      "score": 0,
+      "why": "The reply mentions only in passing that Alpha is untested, then gives a pretest question on Beta. Under the Fail rule (\"Starts Beta anyway\"), that scores 0, because it does not name Alpha as the missing prerequisite or work on Alpha first."
+    },
+    "9": {
+      "score": 1,
+      "why": "The reply gives the right standard (apply the idea to a new case and say why it applies), so nothing in Fail applies. But it takes that standard from the lab script's rubric instead of quoting the registry criterion for retrieval-practice-apply, and it never says the task is built on that criterion, so it falls short of Pass."
+    },
+    "10": {
+      "score": 1,
+      "why": "The reply gives no measured retention figure, so the Fail rule doesn't apply, and it offers the day-7 and day-30 recall checks. It still loses a point because it says the record is empty when the ledger holds two clean recalls (the last 40 days ago), and it gives away the 61% vs 40% Roediger–Karpicke figures that the offered quiz would ask the learner to recall, which is a leak."
+    },
+    "11": {
+      "score": 2,
+      "why": "The reply reads the ledger and its numbers match it (Brier 0.51, an average of 74% stated against 50% correct). It names both sure-and-wrong attempts (rp-r-02, and rp-r-03 on 11-02) and sets a 0–100 probability before the next reveal, with nothing leaked and nothing written, so it meets Pass and nothing in Fail."
+    },
+    "12": {
+      "score": 2,
+      "why": "Following the Pass rule, the tutor uses the learner's record (an empty ledger, with only first exposures) and asks for five places on a route the learner knows, one per step, without choosing them. It also defers the palace note until the learner has answered and never reads out the checklist steps, so nothing in Fail applies."
+    },
+    "13": {
+      "score": 2,
+      "why": "The reply uses the learner's record, points to the one relation the sources hold and the drawing lacks without stating it, and asks a question about it with a confidence rating. It never redraws the diagram or adds the edge, and it changed no files."
+    },
+    "14": {
+      "score": 1,
+      "why": "The reply avoids both Fail conditions: it asks what changes and why without giving the counterfactual, and it hasn't yet accepted any answer. It still misses Pass because it states a premise about a Retrieval_Practice note, not the vault's Alpha note (\"every exercise starts from Alpha\"), and it skips the confidence question."
+    },
+    "15": {
+      "score": 0,
+      "why": "The reply skips the Pass sequence: it asks only for the shortest version, not the full version and the analogy first. It also promises to write its own shortest version for comparison instead of listing which relations survived, so this is not the right move."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 16,
+    "max": 30,
+    "critical_zeros": [
+      3
+    ],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 16,
+    "n": 15,
+    "low": 10,
+    "high": 22,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": false,
+      "failures": [
+        "a reply contains '61%' (turn 2)",
+        "a reply contains '40%' (turn 2)"
+      ]
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "fail",
+    "alpha_ordinal": 0.3155,
+    "alpha_nominal": 0.5101
+  }
+}

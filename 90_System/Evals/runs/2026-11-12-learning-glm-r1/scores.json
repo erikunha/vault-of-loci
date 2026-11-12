@@ -1,0 +1,188 @@
+{
+  "judge_command": "claude -p --setting-sources project,local --model claude-opus-5-5",
+  "judge_family": "anthropic",
+  "judge_model": "claude-opus-5-5",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T15:02:14+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 2,
+      "why": "The reply names retrieval-practice-recall as the objective that is due, gives the 90-day horizon, and says the test will be a new task the learner has not seen. It lists retrieval-practice-apply only as already measured, gives no retention number, does not reveal the answer, and changes no files."
+    },
+    "2": {
+      "score": 0,
+      "why": "The questions only ask the learner to restate the concept note: the definition, the Roediger and Karpicke numbers, and why rereading feels effective. That is the studied recall question for `retrieval-practice-recall`, not a new task built from the note. The Fail rule \"repeats the studied question\" applies, even though nothing was leaked and the confidence question was asked."
+    },
+    "3": {
+      "score": 0,
+      "why": "The reply asks for the definition of retrieval practice again, which is listed under Fail. It also ignores the learner's record of three clean recalls and treats the learner as having none, instead of setting an apply task in a new case."
+    },
+    "4": {
+      "score": 0,
+      "why": "The reply uses the ledger, but it never names a recurring confusion or drills it with two look-alike items. Instead it gives an easier version of the same card and plans to walk the learner back through the source note, which is the Fail case of repeating the card and pointing them back to the note."
+    },
+    "5": {
+      "score": 2,
+      "why": "The reply checks the empty record and asks for a guess with a 1–5 confidence before explaining anything, which is the \"guess first\" step that Pass requires. The worked example belongs after the guess, so it doesn't fall under \"quizzes with no worked example\", and nothing is leaked or written to the vault."
+    },
+    "6": {
+      "score": 1,
+      "why": "The reply avoids both Fail conditions. It gives no worked example, holds back the answer and asks for confidence from 1 to 5. A 2 also requires using the learner's record, and the reply contradicts it: it calls this a first test with no history, but the ledger shows three clean correct recalls, the last one yesterday."
+    },
+    "7": {
+      "score": 0,
+      "why": "The tutor read the learner's record, but then asked the same question again in nearly the same words instead of writing a new case with the same mechanism, and the Fail rule says repeating the question scores 0."
+    },
+    "8": {
+      "score": 0,
+      "why": "The tutor started Beta with a pretest and never said that Alpha, which the concept map lists as Beta's prerequisite, has no attempt in the ledger. That matches the Fail rule \"Starts Beta anyway\"."
+    },
+    "9": {
+      "score": 0,
+      "why": "The Fail rule decided it. The registry's criterion for retrieval-practice-apply is \"Apply the idea in a new case and say why it applies\", but the reply quotes a different one (\"choose what to do the night before a test in a new subject…\") as the registry text, and it says the task is built from the concept note rather than from the criterion."
+    },
+    "10": {
+      "score": 1,
+      "why": "The reply gives no measured retention percentage, so it avoids the Fail. It drops to 1 because it misreports the record as empty when the ledger holds two clean recalls (the last 40 days ago), and it hands over the exact 61%/40% figures that its own baseline question then asks the learner to recall, which the leak rule penalises."
+    },
+    "11": {
+      "score": 1,
+      "why": "The reply reads the ledger, shows the gap between confidence and results, names the confident misses (rp-r-02 and rp-r-03), and its Brier score of about 0.51 matches the record, so nothing in Fail applies. It loses a point under the \"skips the confidence question\" rule: it asks for a 1–5 rating before the next reveal, not a probability in percent."
+    },
+    "12": {
+      "score": 1,
+      "why": "Nothing in Fail applies: the tutor says the learner picks the places and doesn't read out any step. But it doesn't do what Pass says either, because it asks for a recall attempt and a confidence rating and offers an alternative, without asking for the route's places now. So it can't score 2."
+    },
+    "13": {
+      "score": 2,
+      "why": "The reply names only the missing Alpha–Beta link and asks about it as a question with both options open, plus a confidence question. It doesn't redraw the diagram, add the relation, or write to any note, so it meets Pass and nothing in Fail."
+    },
+    "14": {
+      "score": 1,
+      "why": "The reply makes no Fail move, since it neither answers the counterfactual nor accepts a bare repeat of the recommendation. But Pass needs one premise stated in one line from the learner's record, and the tutor asked which concept was meant instead of stating \"every exercise in the course starts from Alpha\" from the Alpha note, so it is the right move but falls short of 2."
+    },
+    "15": {
+      "score": 0,
+      "why": "The reply asks only for the one-line version and skips the full version and the analogy, so it misses the Pass sequence. It also promises to give its own shortest version next, which is the Fail move (\"writes the shortest correct version itself\")."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 11,
+    "max": 30,
+    "critical_zeros": [
+      2,
+      3
+    ],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 11,
+    "n": 15,
+    "low": 5,
+    "high": 17,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": false,
+      "failures": [
+        "a reply contains '61%' (turn 2)",
+        "a reply contains '40%' (turn 2)"
+      ]
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "fail",
+    "alpha_ordinal": 0.7067,
+    "alpha_nominal": 0.7921
+  }
+}
