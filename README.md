@@ -19,7 +19,7 @@ The tutor rules are a request, not a guarantee, so the repo has a test of 17 sce
 python3 -I 90_System/Scripts/run_tutor_eval.py --label my-agent --agent-family my-family --agent-cmd "my-agent -p"
 ```
 
-Add `--judge-cmd` with a command from another model family to score the run, or score it by hand with `scoring_sheet.md`. The results of the runs kept here are in [Tutor mode eval results](90_System/Evals/Tutor_mode_results.md): two agents, one run of the seventeen scenarios each, scored by two judges of two other families.
+Add `--judge-cmd` with a command from another model family to score the run, or score it by hand with `scoring_sheet.md`. The results of the runs kept here are in [Tutor mode eval results](90_System/Evals/Tutor_mode_results.md): two agents, one run of the seventeen scenarios each, scored by two judges of two other families. Each summary also shows checks that need no model (which files the agent wrote, whether it asked for a confidence), the 95% interval of the total, and whether the judges split on the verdict.
 
 ## Measure what you keep
 

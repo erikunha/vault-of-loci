@@ -21,7 +21,14 @@ Usage:
   python3 -I 90_System/Scripts/run_tutor_eval.py --score-run 90_System/Evals/runs/2026-11-10-qwen \
       --judge-cmd "codex exec -" --judge-family openai
   python3 -I 90_System/Scripts/run_tutor_eval.py --summarize 90_System/Evals/runs/2026-11-10-qwen
+  python3 -I 90_System/Scripts/run_tutor_eval.py --compare 90_System/Evals/runs/A 90_System/Evals/runs/B
   python3 -I 90_System/Scripts/run_tutor_eval.py --check-drift
+
+Every summary also shows what needs no model: the deterministic checks of each scenario
+(eval_checks.py), the 95% interval of the total (eval_stats.py), and, when the run folder holds
+the scores of more than one judge, their agreement and whether they split on the verdict. A run
+records the hashes of the scenarios, the rubric, the judge prompt and the checks it used, and a
+summary or a comparison refuses runs whose hashes differ, unless --force is given.
 
 The agent command is recorded in the transcript. Keep keys in environment variables, never in the command.
 
@@ -40,6 +47,11 @@ import tempfile
 import time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import eval_checks  # noqa: E402
+import eval_stats  # noqa: E402
+import judge_agreement  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SCENARIOS_REL = Path("90_System") / "Evals" / "tutor_scenarios.json"
@@ -147,6 +159,10 @@ def check_drift(data, markdown):
             problems.append(f"scenario {sid}: the table describes the setup, so table_turn must be 0")
         if not s["turns"]:
             problems.append(f"scenario {sid}: no learner turns")
+    for s in data["scenarios"]:
+        if "checks" not in s:
+            problems.append(f"scenario {s['id']}: no checks field")
+        problems.extend(eval_checks.problems_in_checks(s))
     return problems
 
 
@@ -359,6 +375,51 @@ def modal_score(scores):
     return min(score for score, count in counts.items() if count == best)
 
 
+# ---------------------------------------------------------------- frozen version
+
+VERSION_KEYS = ("scenarios_sha256", "rubric_sha256", "judge_prompt_sha256", "checks_sha256")
+
+
+def _sha(value):
+    text = value if isinstance(value, str) else json.dumps(value, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def benchmark_version(data):
+    """The hashes that say which version of a benchmark a run or a score used.
+
+    - scenarios: what the agent sees, the setup and the learner turns of every scenario and the
+      preamble of the agent prompt.
+    - rubric: what decides a score, the rubric, the pass rule and the Pass, Fail and scorer notes.
+    - judge prompt: the prompt every scenario sends to the judge, with an empty transcript, so a
+      change in its fixed text changes the hash too.
+    - checks: the deterministic checks of every scenario.
+    """
+    scenarios = data["scenarios"]
+    agent_side = {"preamble": PREAMBLE,
+                  "scenarios": [{k: s.get(k) for k in ("id", "setup", "setup_description", "turns")} for s in scenarios]}
+    rubric = {"rubric": data["rubric"], "pass_rule": data["pass_rule"],
+              "scenarios": [{k: s.get(k) for k in ("id", "pass", "fail", "scorer_notes")} for s in scenarios]}
+    judge = "".join(judge_prompt(data, s, []) for s in scenarios)
+    checks = [{"id": s["id"], "checks": s.get("checks")} for s in scenarios]
+    return dict(zip(VERSION_KEYS, (_sha(agent_side), _sha(rubric), _sha(judge), _sha(checks))))
+
+
+def version_problems(label_a, version_a, label_b, version_b):
+    """(differences, unknowns) between two recorded versions.
+
+    A difference is a hash both sides recorded with different values: the two do not measure the
+    same thing. An unknown is a side that recorded no version, which is every run made before the
+    runner recorded one; it is said out loud and not refused.
+    """
+    unknown = [label for label, version in ((label_a, version_a), (label_b, version_b)) if not version]
+    if unknown:
+        return [], unknown
+    differ = [key for key in VERSION_KEYS
+              if version_a.get(key) and version_b.get(key) and version_a[key] != version_b[key]]
+    return [f"{key.replace('_sha256', '')} differs between {label_a} and {label_b}" for key in differ], []
+
+
 # ---------------------------------------------------------------- pass rule
 
 def critical_mark(rule):
@@ -444,6 +505,7 @@ def evaluate(data, scores, scenario_ids):
             critical_unscored = sum(1 for i in critical_ids if scores.get(i) is None)
             conditions.append((critical["pass"], critical_total, critical_unscored))
             rule_text += f" and {critical['pass']} of {critical['total']} in the critical group"
+    result["mark"] = group["pass"]
     result["rule"] = rule_text + ", no 0 in scenarios " + ", ".join(map(str, rule["critical"]))
     if zeros or any(mark + 2 * missing < needed for needed, mark, missing in conditions):
         result["verdict"] = "fail"  # no score for the unscored scenarios can rescue it
@@ -558,23 +620,94 @@ def write_sheet(path, data, meta, ids):
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def write_summary(path, data, meta, scored, verdict):
-    by_id = {s["id"]: s for s in data["scenarios"]}
+def score_map(scored):
+    """{scenario id: score or None} of one scores file."""
+    return {int(k): (v.get("score") if isinstance(v, dict) else v) for k, v in scored["scores"].items()}
+
+
+def analyse(data, meta, scored, records):
+    """Add to one scores file what needs no model: the verdict, the interval and the checks."""
+    ids = meta["scenarios"]
+    scores = score_map(scored)
+    verdict = evaluate(data, scores, ids)
+    scored["verdict"] = verdict
+    scored["interval"] = eval_stats.bootstrap_total([scores.get(i) for i in ids])
+    if records is not None:
+        scored["checks"] = eval_checks.check_run(data, records, ids)
+    return verdict
+
+
+def judges_agreement(entries, ids):
+    """How the judges of one run agree, from [(name, scores file)], each already analysed.
+
+    The run verdict is contested when one judge passes the run and another fails it: the verdict
+    then belongs to the judge, not to the run.
+    """
+    names = [name for name, _ in entries]
+    maps = [score_map(scored) for _, scored in entries]
+    units = [[m.get(i) for m in maps] for i in ids]
+    pairs = []
+    for a in range(len(entries)):
+        for b in range(a + 1, len(entries)):
+            shared = [(maps[a][i], maps[b][i]) for i in ids
+                      if maps[a].get(i) is not None and maps[b].get(i) is not None]
+            pairs.append({"a": names[a], "b": names[b], "scenarios": len(shared),
+                          "percent_agreement": judge_agreement.percent_agreement(shared),
+                          "cohen_kappa": judge_agreement.cohen_kappa(shared),
+                          "weighted_kappa": judge_agreement.weighted_kappa(shared)})
+    verdicts = {name: scored["verdict"]["verdict"] for name, scored in entries}
+    decided = set(verdicts.values())
+    if {"pass", "fail"} <= decided:
+        run_verdict = "contested"
+    elif len(decided) == 1:
+        run_verdict = decided.pop()
+    else:
+        run_verdict = "incomplete"
+    return {"judges": names, "verdicts": verdicts, "run_verdict": run_verdict, "pairs": pairs,
+            "alpha_ordinal": eval_stats.krippendorff_alpha(units, "ordinal"),
+            "alpha_nominal": eval_stats.krippendorff_alpha(units, "nominal")}
+
+
+def interval_line(verdict, interval):
+    if not interval:
+        return "No scored scenario, so no interval."
+    line = (f"95% interval of the total: {interval['low']} to {interval['high']}, over the {interval['n']} "
+            f"scored scenarios (bootstrap over scenarios, {interval['resamples']} resamples, seed {interval['seed']}).")
+    mark = verdict.get("mark")
+    if mark is not None:
+        if interval["low"] < mark <= interval["high"]:
+            line += f" The pass mark {mark} is inside it: other scenarios of the same kind could move the verdict."
+        else:
+            line += f" The pass mark {mark} is outside it."
+    return line
+
+
+def write_summary(path, data, meta, scored, verdict, agreement=None, notes=()):
     lines = ["---", "type: log", f"summary: {bench_of(meta)['title']} scores of {meta['agent']} on {meta['date']}, judged by {scored['judge_family']}.",
              "tags: [type/log]", "---", "", f"# Scores: {meta['agent']}, {meta['date']}", "",
-             f"Agent family: {meta.get('agent_family') or 'not recorded'}. Judge family: {scored['judge_family']}. "
+             f"Agent family: {meta.get('agent_family') or 'not recorded'}. Agent model: {meta.get('agent_model') or 'not recorded'}. "
+             f"Judge family: {scored['judge_family']}. Judge model: {scored.get('judge_model') or 'not recorded'}. "
              f"Judge command: `{scored['judge_command']}`.", ""]
     if scored.get("same_family_allowed"):
         lines += ["The agent and the judge are from the same family; this was allowed on request. Treat the scores as "
                   "less independent.", ""]
-    lines += ["| # | Score | Why |", "|---|---|---|"]
+    checks = scored.get("checks")
+    if checks is not None:
+        lines += ["| # | Score | Checks | Why |", "|---|---|---|---|"]
+    else:
+        lines += ["| # | Score | Why |", "|---|---|---|"]
     for i in verdict["scenarios"]:
         r = scored["scores"].get(str(i), {})
         sc = r.get("score")
         why = (r.get("why") or r.get("error") or "").replace("|", "/")
         stable = f" (judge agreed on {r['consistent']})" if r.get("consistent") else ""
-        lines.append(f"| {i} | {'not scored' if sc is None else sc}{stable} | {why} |")
-    lines += ["", f"Total: {verdict['total']} of {verdict['max']}.", ""]
+        cell = f"{'not scored' if sc is None else sc}{stable}"
+        if checks is not None:
+            lines.append(f"| {i} | {cell} | {eval_checks.describe(checks.get(str(i))).replace('|', '/')} | {why} |")
+        else:
+            lines.append(f"| {i} | {cell} | {why} |")
+    lines += ["", f"Total: {verdict['total']} of {verdict['max']}.", interval_line(verdict, scored.get("interval")),
+              f"Coverage: {len(verdict['scenarios'])} of {len(data['scenarios'])} scenarios of the benchmark.", ""]
     if verdict["rule"]:
         lines.append(f"Pass rule: {verdict['rule']}.")
     else:
@@ -582,8 +715,96 @@ def write_summary(path, data, meta, scored, verdict):
     lines.append(f"Critical scenarios with a 0: {', '.join(map(str, verdict['critical_zeros'])) or 'none'}.")
     if verdict["unscored"]:
         lines.append("Not scored: " + ", ".join(map(str, verdict["unscored"])) + ".")
+    if checks is not None:
+        failed = [k for k, v in checks.items() if not v["passed"]]
+        lines.append("Deterministic checks failed in scenarios: " + (", ".join(failed) or "none")
+                     + ". The checks are shown next to the score and do not change it.")
     lines += ["", f"Verdict: **{verdict['verdict']}**.", ""]
+    if agreement and len(agreement["judges"]) > 1:
+        lines += ["## Judges of this run", ""]
+        for name in agreement["judges"]:
+            lines.append(f"- `{name}.json`: {agreement['verdicts'][name]}")
+        lines.append("")
+        for pair in agreement["pairs"]:
+            lines.append(f"- {pair['a']} and {pair['b']}, {pair['scenarios']} scenarios: percent agreement "
+                         f"{pair['percent_agreement']}, Cohen's kappa {pair['cohen_kappa']}, weighted kappa {pair['weighted_kappa']}.")
+        lines += [f"- Krippendorff's alpha across the {len(agreement['judges'])} judges: ordinal {agreement['alpha_ordinal']}, "
+                  f"nominal {agreement['alpha_nominal']}.", "",
+                  f"Verdict of the run across its {len(agreement['judges'])} judges: **{agreement['run_verdict']}**."
+                  + (" One judge passes the run and another fails it." if agreement["run_verdict"] == "contested" else ""), ""]
+    for note in notes:
+        lines += [note, ""]
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def judge_files(run_dir):
+    """The scores files of a run folder: scores.json first, then every scores-judge-*.json."""
+    files = [run_dir / "scores.json"] if (run_dir / "scores.json").exists() else []
+    return files + sorted(run_dir.glob("scores-judge-*.json"))
+
+
+def summary_path(scores_path):
+    return scores_path.with_name(scores_path.name.replace("scores", "summary", 1).replace(".json", ".md"))
+
+
+def summarize_folder(run_dir, data, meta, force=False):
+    """Rebuild every scores file and summary of a run folder. Returns (exit code, lines to print).
+
+    Refuses when a recorded version differs from the benchmark of today, unless forced: a verdict
+    computed with today's rule on a run made under another rule is not that run's verdict.
+    """
+    current = benchmark_version(data)
+    loaded, problems, notes = [], [], []
+    for path in judge_files(run_dir):
+        try:
+            scored = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as error:
+            return 1, [f"refused: {path} could not be read: {error}"]
+        if not isinstance(scored, dict) or not isinstance(scored.get("scores"), dict):
+            return 1, [f"refused: {path} has no scores to summarise"]
+        outside = outside_scale(scored["scores"])
+        if outside:
+            return 1, ["refused: the scale of a scenario is 0, 1 or 2, and:", *["  " + o for o in outside]]
+        loaded.append((path, scored))
+    if not loaded:
+        return 2, [f"refused: {run_dir} has no scores.json to summarise"]
+    sides = [("run.json", meta.get("version"))] + [(p.name, s.get("version")) for p, s in loaded]
+    for label, version in sides:
+        differ, unknown = version_problems(label, version, "the benchmark today", current)
+        problems += differ
+        if unknown:
+            notes.append(f"Version: {label} records no hashes of the scenarios, rubric and judge prompt. "
+                         "This summary assumes they are the ones of today.")
+    if problems and not force:
+        return 2, ["refused: " + p for p in problems] + ["pass --force to summarise anyway"]
+    if problems:
+        notes += ["Forced over a version difference: " + p + "." for p in problems]
+    records = load_records(run_dir) if (run_dir / "transcript.jsonl").exists() else None
+    for _, scored in loaded:
+        analyse(data, meta, scored, records)
+    agreement = judges_agreement([(p.stem, s) for p, s in loaded], meta["scenarios"]) if len(loaded) > 1 else None
+    out = []
+    for path, scored in loaded:
+        if agreement:
+            scored["run_verdict"] = {k: agreement[k] for k in ("judges", "run_verdict", "alpha_ordinal", "alpha_nominal")}
+        path.write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        write_summary(summary_path(path), data, meta, scored, scored["verdict"], agreement, notes)
+        v, iv = scored["verdict"], scored.get("interval")
+        out.append(f"{path.name}: total {v['total']} of {v['max']}"
+                   + (f", 95% interval {iv['low']} to {iv['high']} (n={iv['n']})" if iv else "")
+                   + f"; verdict: {v['verdict']}")
+    first = loaded[0][1]
+    if first.get("checks") is not None:
+        failed = {k: r["failures"] for k, r in first["checks"].items() if not r["passed"]}
+        out.append("checks failed: " + ("; ".join(f"scenario {k}: {', '.join(f)}" for k, f in failed.items()) or "none"))
+    if agreement:
+        for pair in agreement["pairs"]:
+            out.append(f"{pair['a']} vs {pair['b']}: percent {pair['percent_agreement']}, kappa {pair['cohen_kappa']}, "
+                       f"weighted kappa {pair['weighted_kappa']} ({pair['scenarios']} scenarios)")
+        out.append(f"alpha ordinal {agreement['alpha_ordinal']}, nominal {agreement['alpha_nominal']}; "
+                   f"run verdict across {len(loaded)} judges: {agreement['run_verdict']}")
+    out += ["note: " + n for n in notes]
+    return 0, out
 
 
 def write_readme(path, meta, note):
@@ -719,12 +940,16 @@ def judge_run(args, data, run_dir, meta, records, statuses):
         scores[str(sid)] = entry
         print(f"judge scenario {sid}: {final if final is not None else entry.get('error', 'no score')}"
               + (f" ({entry['consistent']} same)" if entry.get("consistent") else ""), flush=True)
-    scored = {"judge_command": args.judge_cmd, "judge_family": args.judge_family, "agent_family": meta.get("agent_family"),
-              "same_family_allowed": bool(args.allow_same_family), "judged": now(), "scores": scores}
-    verdict = evaluate(data, {int(k): v["score"] for k, v in scores.items()}, ids)
-    scored["verdict"] = verdict
+    scored = {"judge_command": args.judge_cmd, "judge_family": args.judge_family,
+              "judge_model": getattr(args, "judge_model", None), "agent_family": meta.get("agent_family"),
+              "same_family_allowed": bool(args.allow_same_family), "judged": now(),
+              "version": benchmark_version(data), "scores": scores}
+    verdict = analyse(data, meta, scored, records)
     (run_dir / "scores.json").write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    write_summary(run_dir / "summary.md", data, meta, scored, verdict)
+    # The summary is rebuilt for the whole folder, so a second judge already there is compared too.
+    code, lines = summarize_folder(run_dir, data, meta, force=True)
+    for line in lines:
+        print(line)
     return verdict
 
 
@@ -748,14 +973,18 @@ def build_parser():
     ap.add_argument("--label", default="run", help="short name for the run folder, for example claude-code")
     ap.add_argument("--agent-name", help="name recorded in the transcript (default: the label)")
     ap.add_argument("--agent-family", help="model family of the agent, for example anthropic, openai, google, qwen")
+    ap.add_argument("--agent-model", help="model id of the agent, recorded in run.json (for example the one the CLI reports)")
     ap.add_argument("--judge-cmd", help="shell command that scores one transcript; optional")
     ap.add_argument("--judge-family", help="model family of the judge")
+    ap.add_argument("--judge-model", help="model id of the judge, recorded in scores.json")
     ap.add_argument("--judge-repeats", type=int, default=1,
                     help="score every scenario this many times, to see how stable the judge is")
     ap.add_argument("--allow-same-family", action="store_true", help="let the judge share the agent's family")
     ap.add_argument("--score-run", metavar="RUN_DIR", help="score an existing run folder with --judge-cmd")
     ap.add_argument("--summarize", metavar="RUN_DIR",
                     help="rebuild summary.md and the verdict from scores.json, for example after a person fixed a score")
+    ap.add_argument("--compare", nargs=2, metavar=("RUN_A", "RUN_B"),
+                    help="paired difference of two runs (run folders or scores files) on the scenarios both scored")
     ap.add_argument("--scenarios", help="subset, for example 1,2,5 or 1-12 (default: all)")
     ap.add_argument("--timeout", type=int, default=600, help="seconds for one agent reply (default 600)")
     ap.add_argument("--judge-timeout", type=int, default=600, help="seconds for one judge reply (default 600)")
@@ -765,7 +994,8 @@ def build_parser():
     ap.add_argument("--dry-run", action="store_true", help="print the first prompt of each scenario and run nothing")
     ap.add_argument("--check-drift", action="store_true", help="compare the scenarios with the Markdown table and exit")
     ap.add_argument("--benchmark", choices=sorted(BENCHMARKS), default="tutor", help="which benchmark to run")
-    ap.add_argument("--force", action="store_true", help="overwrite an existing run folder or scores")
+    ap.add_argument("--force", action="store_true",
+                    help="overwrite an existing run folder or scores; summarise or compare across different versions")
     ap.add_argument("--root", default=str(ROOT), help="vault root (default: this vault)")
     ap.add_argument("--date", help="date for the run folder (default: today)")
     return ap
@@ -798,25 +1028,11 @@ def score_existing(args, root, fallback_bench):
         except OSError as error:
             print("refused: the scenarios of the benchmark could not be read:", error, file=sys.stderr)
             return 2
-        try:
-            scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
-        except (OSError, ValueError) as error:
-            print(f"refused: {run_dir / 'scores.json'} could not be read: {error}", file=sys.stderr)
-            return 1
-        if not isinstance(scored, dict) or not isinstance(scored.get("scores"), dict):
-            print(f"refused: {run_dir / 'scores.json'} has no scores to summarise", file=sys.stderr)
-            return 1
-        outside = outside_scale(scored["scores"])
-        if outside:
-            print("refused: the scale of a scenario is 0, 1 or 2, and:", *outside, sep="\n  ", file=sys.stderr)
-            return 1
         announce_benchmark(meta, bench)
-        verdict = evaluate(data, {int(k): v.get("score") for k, v in scored["scores"].items()}, meta["scenarios"])
-        scored["verdict"] = verdict
-        (run_dir / "scores.json").write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        write_summary(run_dir / "summary.md", data, meta, scored, verdict)
-        print(f"total {verdict['total']} of {verdict['max']}; verdict: {verdict['verdict']}")
-        return 0
+        code, lines = summarize_folder(run_dir, data, meta, force=args.force)
+        for line in lines:
+            print(line, file=sys.stderr if line.startswith("refused") else sys.stdout)
+        return code
 
     run_dir = Path(args.score_run)
     if not args.judge_cmd:
@@ -860,6 +1076,73 @@ def score_existing(args, root, fallback_bench):
     return 0
 
 
+def resolve_scores(path):
+    """(run folder, scores file) for a run folder or a scores file."""
+    path = Path(path)
+    if path.is_dir():
+        return path, path / "scores.json"
+    return path.parent, path
+
+
+def compare_runs(args, root, fallback_bench):
+    """The paired difference of two scored runs, A minus B, on the scenarios both scored.
+
+    Two runs measure the same thing only when they ran the same scenarios under the same rubric
+    and judge prompt. A recorded difference is refused unless --force; a run that records no
+    version is named, and the comparison says it assumes the versions match.
+    """
+    sides = []
+    for given in args.compare:
+        run_dir, scores_path = resolve_scores(given)
+        meta = read_run_json(run_dir) if (run_dir / "run.json").exists() else None
+        if meta is None:
+            print(f"refused: {run_dir} has no readable run.json", file=sys.stderr)
+            return 1
+        try:
+            scored = json.loads(scores_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as error:
+            print(f"refused: {scores_path} could not be read: {error}", file=sys.stderr)
+            return 1
+        if not isinstance(scored, dict) or not isinstance(scored.get("scores"), dict) or outside_scale(scored["scores"]):
+            print(f"refused: {scores_path} has no scores on the 0 to 2 scale", file=sys.stderr)
+            return 1
+        sides.append((f"{run_dir.name}/{scores_path.name}", meta, scored))
+    (label_a, meta_a, scored_a), (label_b, meta_b, scored_b) = sides
+    if meta_a.get("benchmark", "tutor") != meta_b.get("benchmark", "tutor"):
+        print("refused: the two runs belong to different benchmarks", file=sys.stderr)
+        return 2
+    problems, unknown = [], []
+    for kind, version_a, version_b in (("run.json", meta_a.get("version"), meta_b.get("version")),
+                                       ("scores", scored_a.get("version"), scored_b.get("version"))):
+        differ, missing = version_problems(f"{kind} of {label_a}", version_a, f"{kind} of {label_b}", version_b)
+        problems += differ
+        unknown += missing
+    if problems and not args.force:
+        for p in problems:
+            print("refused:", p, file=sys.stderr)
+        print("pass --force to compare anyway", file=sys.stderr)
+        return 2
+    a, b = score_map(scored_a), score_map(scored_b)
+    result = eval_stats.paired_difference(a, b)
+    if result is None:
+        print("refused: the two runs share no scored scenario", file=sys.stderr)
+        return 2
+    print(f"A: {label_a} (judge {scored_a.get('judge_family')}), total {sum(v for v in a.values() if v is not None)}")
+    print(f"B: {label_b} (judge {scored_b.get('judge_family')}), total {sum(v for v in b.values() if v is not None)}")
+    if scored_a.get("judge_family") != scored_b.get("judge_family"):
+        print("note: the two runs were scored by judges of different families; the difference mixes agent and judge")
+    print(f"paired difference A minus B over {result['n']} scenarios: {result['difference']}, "
+          f"95% interval {result['low']} to {result['high']} (bootstrap over scenarios, seed {result['seed']})")
+    print(f"scenarios where A is higher: {result['a_higher']}, B is higher: {result['b_higher']}, same: {result['same']}")
+    if result["left_out"]:
+        print("left out, not scored on both sides: " + ", ".join(map(str, result["left_out"])))
+    for label in unknown:
+        print(f"note: {label} records no version; the comparison assumes both used the same scenarios, rubric and judge prompt")
+    for p in problems:
+        print(f"note: forced over a version difference: {p}")
+    return 0
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
     root = Path(args.root).resolve()
@@ -871,6 +1154,8 @@ def main(argv=None):
     # a learning run.
     if args.summarize or args.score_run:
         return score_existing(args, root, bench)
+    if args.compare:
+        return compare_runs(args, root, bench)
 
     try:
         data = load_scenarios(root / bench["scenarios"])
@@ -929,8 +1214,8 @@ def main(argv=None):
         return 2
     run_dir.mkdir(parents=True, exist_ok=True)
     meta = {"date": stamp, "label": args.label, "benchmark": args.benchmark, "agent": args.agent_name or args.label,
-            "agent_family": args.agent_family, "command": args.agent_cmd, "scenarios": ids, "timeout": args.timeout,
-            "inline_instructions": bool(args.inline_instructions), "started": now()}
+            "agent_family": args.agent_family, "agent_model": args.agent_model, "command": args.agent_cmd, "scenarios": ids, "timeout": args.timeout,
+            "inline_instructions": bool(args.inline_instructions), "version": benchmark_version(data), "started": now()}
     records, statuses = run_scenarios(args, data, root, run_dir, meta)
     meta["finished"] = now()
     meta["errors"] = sorted(sid for sid, st in statuses.items() if st == "error")

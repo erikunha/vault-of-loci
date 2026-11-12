@@ -92,6 +92,11 @@ The first asks whether the agent behaves as a tutor. The second asks whether it 
 learner's record to measure what was learned, with the scenarios in
 `90_System/Evals/learning_scenarios.json` and the table in `90_System/Evals/Learning_evals.md`.
 
+Every summary adds what needs no model: the deterministic checks of each scenario
+(`eval_checks.py`), the 95% interval of the total (`eval_stats.py`) and, when a run has two or
+more judges, their kappa, Krippendorff's alpha and whether they split on the verdict
+(`judge_agreement.py`). `--compare RUN_A RUN_B` gives the paired difference of two runs.
+
 ## Naming
 
 File and folder names use underscores instead of spaces (`Retrieval_Practice.md`). The title inside the note keeps spaces, and links show the readable name: `[[Retrieval_Practice|Retrieval practice]]`. To fix names created by hand (files and folders, deepest first; folders marked `.vendored` are skipped):

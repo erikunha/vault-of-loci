@@ -93,4 +93,30 @@ with tempfile.TemporaryDirectory() as tmp:
     assert broken.returncode == 2, broken
     assert "refused" in broken.stderr, broken.stderr
     assert "Traceback" not in broken.stderr, broken.stderr
-print("ok: 24 checks")
+
+    # Three judges: every pair, Krippendorff's alpha across all three, and the run verdict. A
+    # pass next to a fail is a contested run, whatever the totals say.
+    passing = scores_file(root / "scores-judge-pass.json", {"1": 0, "2": 1, "3": 2, "4": 2}, "zeta", 5, "pass")
+    out = subprocess.run([sys.executable, "-I", str(SCRIPT), str(a), str(b), str(passing), "--json"],
+                         capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    many = json.loads(out.stdout)
+    assert len(many["pairs"]) == 3 and many["run_verdict"] == "contested", many
+    assert many["alpha_ordinal"] is not None and 0 < many["alpha_ordinal"] < 1, many
+    out = subprocess.run([sys.executable, "-I", str(SCRIPT), str(a), str(b), "--json"], capture_output=True, text=True)
+    assert json.loads(out.stdout)["run_verdict"] == "fail", out.stdout
+    one = subprocess.run([sys.executable, "-I", str(SCRIPT), str(a)], capture_output=True, text=True)
+    assert one.returncode == 2, one
+
+# The two judges of the agy run of 2026-11-09, as committed. The blank vault that ships on a
+# release has no run folders, so this part is skipped there.
+RUN = Path(__file__).resolve().parents[2] / "Evals" / "runs" / "2026-11-09-agy"
+if RUN.is_dir():
+    out = subprocess.run([sys.executable, "-I", str(SCRIPT), str(RUN / "scores.json"), str(RUN / "scores-judge-minimax.json"),
+                          "--json"], capture_output=True, text=True)
+    assert out.returncode == 0, out.stderr
+    real = json.loads(out.stdout)
+    assert (real["percent_agreement"], real["cohen_kappa"], real["weighted_kappa"]) == (0.7647, 0.3131, 0.5072), real
+    assert real["alpha_ordinal"] == 0.5024 and real["alpha_nominal"] == 0.3231, real
+    assert real["run_verdict"] == "contested", real
+print("ok: 33 checks")

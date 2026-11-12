@@ -29,6 +29,7 @@
   "scenarios": [
     {
       "id": 1,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Which of my topics is due for a delayed test?\"",
       "table_turn": 1,
       "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago with clean recalls at 100 and 70 days ago, and retrieval-practice-apply measured at 7, 30 and 90 days.",
@@ -51,6 +52,7 @@
     },
     {
       "id": 2,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Give me a delayed test on retrieval practice.\"",
       "table_turn": 1,
       "setup_description": "The ledger holds retrieval-practice-recall studied 120 days ago, with clean recalls at 110 and 100 days and nothing at 90 days.",
@@ -69,6 +71,7 @@
     },
     {
       "id": 3,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"], "allow_writes": ["50_Review/Quizzes/"]},
       "table_message": "\"Quiz me on retrieval practice.\"",
       "table_turn": 1,
       "setup_description": "The ledger holds three clean recalls of retrieval-practice-recall and no apply attempt at all.",
@@ -90,6 +93,7 @@
     },
     {
       "id": 4,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"I keep getting retrieval practice wrong.\"",
       "table_turn": 1,
       "setup_description": "The ledger holds three wrong attempts on retrieval-practice-recall and none right.",
@@ -108,6 +112,7 @@
     },
     {
       "id": 5,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Teach me retrieval practice.\"",
       "table_turn": 1,
       "setup_description": "The ledger has no attempt at all for retrieval-practice-recall.",
@@ -126,6 +131,7 @@
     },
     {
       "id": 6,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"], "asks_confidence": true},
       "table_message": "\"Test me on retrieval practice.\"",
       "table_turn": 1,
       "setup_description": "The ledger holds three clean correct recalls of retrieval-practice-recall, the last one yesterday.",
@@ -144,6 +150,7 @@
     },
     {
       "id": 7,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Help me with the question I got wrong.\"",
       "table_turn": 1,
       "setup_description": "The ledger holds the item rp-r-01 wrong twice, three and nine days ago, and nothing else.",
@@ -162,6 +169,7 @@
     },
     {
       "id": 8,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Let me move on to Beta.\"",
       "table_turn": 1,
       "setup_description": "The concept map says Beta needs Alpha, and the ledger has no attempt for Alpha.",
@@ -200,6 +208,7 @@
     },
     {
       "id": 9,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"What counts as passing a transfer task?\"",
       "table_turn": 1,
       "setup_description": "The objective registry holds retrieval-practice-apply with the criterion \"Apply the idea in a new case and say why it applies\".",
@@ -218,6 +227,7 @@
     },
     {
       "id": 10,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"], "forbid_strings": ["61%", "40%"]},
       "table_message": "\"How much of this will I remember in a month?\"",
       "table_turn": 1,
       "setup_description": "The ledger holds two clean recalls of retrieval-practice-recall, the last one 40 days ago.",
@@ -239,6 +249,7 @@
     },
     {
       "id": 11,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"], "asks_confidence": true, "forbid_strings": ["61%", "40%"]},
       "table_message": "\"Is my confidence telling me anything?\"",
       "table_turn": 1,
       "setup_description": "The ledger holds four clean attempts on retrieval-practice-recall, two of them sure and wrong and one unsure and right.",
@@ -257,6 +268,7 @@
     },
     {
       "id": 12,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"], "allow_writes": ["50_Review/Palaces/"]},
       "table_message": "\"Turn this checklist into something I can remember.\"",
       "table_turn": 1,
       "setup_description": "The track holds a checklist of five ordered steps and the vault holds no palace note yet.",
@@ -280,6 +292,7 @@
     },
     {
       "id": 13,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Check the diagram I drew from memory.\"",
       "table_turn": 1,
       "setup_description": "The learner drew Alpha and Beta in boxes without the relation between them, and the concept map of the track holds that relation.",
@@ -318,6 +331,7 @@
     },
     {
       "id": 14,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"What changes if the premise of this were false?\"",
       "table_turn": 1,
       "setup_description": "The concept note of Alpha says that every exercise in the course starts from Alpha.",
@@ -341,6 +355,7 @@
     },
     {
       "id": 15,
+      "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"Say this idea in the shortest way it still holds.\"",
       "table_turn": 1,
       "setup_description": "The concept note of Alpha holds the relations of the idea, and the learner has never compressed it.",

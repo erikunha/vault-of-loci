@@ -1,6 +1,6 @@
 ---
 type: log
-updated: 2026-11-09
+updated: 2026-11-12
 tags: [type/log]
 ---
 
@@ -66,6 +66,27 @@ The tutor family is the family of the model that answered, not of the CLI. Antig
 - **MiniMax writes what it should only read.** In scenario 4 it created `20_Concepts/Spacing.md` with a full 624-word study explanation. In scenario 10 it created a reference note for a paper it guessed from the title alone, then verified against the web. agy declined both and changed no file.
 - **The judge changes the verdict.** agy scored 30 of 34 by both judges, but kimi scored 0 in scenario 2 and MiniMax scored 1, so one verdict is fail and the other pass. The pass rule needs no 0 in scenarios 1, 2, 5 or 9, so a single scenario decides it. Read the two summaries in the run folder before quoting a verdict.
 - **A model judge is not a person.** These are scores from models of another family, not a person reading the transcripts. They are a second opinion, not a re-score by a human.
+
+### Uncertainty, judge agreement and checks
+
+The same scores, recomputed by `run_tutor_eval.py --summarize` with no new model call. The interval is the middle 95% of 10000 bootstrap totals over the 17 scenarios, seed 20261109.
+
+| Tutor | Judge | Score | 95% interval | Verdict of the judge |
+|---|---|---|---|---|
+| agy | kimi | 30 of 34 | 25 to 34 | fail |
+| agy | MiniMax | 30 of 34 | 26 to 33 | pass |
+| MiniMax | agy | 16 of 34 | 10 to 23 | fail |
+| MiniMax | kimi | 19 of 34 | 12 to 26 | fail |
+
+| Run | Percent agreement | Cohen's kappa | Weighted kappa | Krippendorff's alpha (ordinal, nominal) | Verdict of the run |
+|---|---|---|---|---|---|
+| `2026-11-09-agy` | 0.7647 | 0.3131 | 0.5072 | 0.5024, 0.3231 | **contested** |
+| `2026-11-09-minimax` | 0.7059 | 0.5641 | 0.8019 | 0.8039, 0.5669 | fail |
+
+- **The agy verdict is contested.** The two judges give the same total and split on pass and fail, and the pass mark 28 is inside both intervals. Quote it as "30 of 34, contested", not as a pass or a fail.
+- **Paired difference under one judge family.** `--compare` of `2026-11-09-agy/scores.json` and `2026-11-09-minimax/scores-judge-kimi.json`, both judged by kimi: agy minus MiniMax is 11 points over 17 scenarios, 95% interval 3 to 19; agy higher in 7 scenarios, MiniMax higher in 1, the same in 9. It is one run of each agent, and neither run recorded the version hashes, so the comparison assumes both used the same scenarios, rubric and judge prompt. The scenario file did not change between the two runs.
+- **Checks without a model.** The agy run passes every check. The MiniMax run fails the write check in scenario 4 (`20_Concepts/Spacing.md`, the course note and a session note), scenario 10 (`40_References/Papers/Adaptive_Memory_Replay_(Smith_et_al.,_2024).md`) and scenario 16 (`50_Review/Daily/2026-11-09.md` and `50_Review/Mistakes.md`). Its quiz files in `50_Review/Quizzes/` were asked for and pass. The checks are shown next to the scores and do not change them.
+- **No person labeled the transcripts.** Every score here comes from a model judge.
 
 ### Limits of these runs
 
