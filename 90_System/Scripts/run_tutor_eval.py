@@ -22,6 +22,9 @@ Usage:
       --judge-cmd "codex exec -" --judge-family openai
   python3 -I 90_System/Scripts/run_tutor_eval.py --summarize 90_System/Evals/runs/2026-11-10-qwen
   python3 -I 90_System/Scripts/run_tutor_eval.py --compare 90_System/Evals/runs/A 90_System/Evals/runs/B
+  python3 -I 90_System/Scripts/run_tutor_eval.py --label claude --agent-cmd "claude -p" --agent-repeats 3 ...
+  python3 -I 90_System/Scripts/run_tutor_eval.py --score-run RUN_DIR --judge-cmd "..." --judge-family x --judge-name x
+  python3 -I 90_System/Scripts/run_tutor_eval.py --aggregate RUN_DIR_1 RUN_DIR_2 RUN_DIR_3 [--judge-name x]
   python3 -I 90_System/Scripts/run_tutor_eval.py --check-drift
 
 Every summary also shows what needs no model: the deterministic checks of each scenario
@@ -739,6 +742,7 @@ def write_summary(path, data, meta, scored, verdict, agreement=None, notes=()):
 
 def judge_files(run_dir):
     """The scores files of a run folder: scores.json first, then every scores-judge-*.json."""
+    run_dir = Path(run_dir)
     files = [run_dir / "scores.json"] if (run_dir / "scores.json").exists() else []
     return files + sorted(run_dir.glob("scores-judge-*.json"))
 
@@ -890,6 +894,12 @@ def load_records(run_dir):
     return [json.loads(line) for line in (run_dir / "transcript.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+def scores_name(args):
+    """The scores file a judge writes: scores.json, or scores-judge-<name>.json for a named judge."""
+    name = getattr(args, "judge_name", None)
+    return f"scores-judge-{name}.json" if name else "scores.json"
+
+
 def judge_run(args, data, run_dir, meta, records, statuses):
     ids = meta["scenarios"]
     repeats = max(1, int(getattr(args, "judge_repeats", 1) or 1))
@@ -945,7 +955,7 @@ def judge_run(args, data, run_dir, meta, records, statuses):
               "same_family_allowed": bool(args.allow_same_family), "judged": now(),
               "version": benchmark_version(data), "scores": scores}
     verdict = analyse(data, meta, scored, records)
-    (run_dir / "scores.json").write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    (run_dir / scores_name(args)).write_text(json.dumps(scored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     # The summary is rebuilt for the whole folder, so a second judge already there is compared too.
     code, lines = summarize_folder(run_dir, data, meta, force=True)
     for line in lines:
@@ -977,6 +987,12 @@ def build_parser():
     ap.add_argument("--judge-cmd", help="shell command that scores one transcript; optional")
     ap.add_argument("--judge-family", help="model family of the judge")
     ap.add_argument("--judge-model", help="model id of the judge, recorded in scores.json")
+    ap.add_argument("--judge-name", help="write scores-judge-<name>.json instead of scores.json, for a second judge; "
+                                         "with --aggregate, the scores file to read")
+    ap.add_argument("--agent-repeats", type=int, default=1,
+                    help="run the agent this many times, each in its own folder <label>-r<n>")
+    ap.add_argument("--aggregate", nargs="+", metavar="RUN_DIR",
+                    help="mean, spread and pass^k of the repeats of one agent, from their scores files")
     ap.add_argument("--judge-repeats", type=int, default=1,
                     help="score every scenario this many times, to see how stable the judge is")
     ap.add_argument("--allow-same-family", action="store_true", help="let the judge share the agent's family")
@@ -1010,8 +1026,8 @@ def score_existing(args, root, fallback_bench):
     """
     if args.summarize:
         run_dir = Path(args.summarize)
-        if not (run_dir / "scores.json").exists():
-            print(f"refused: {run_dir} has no scores.json to summarise", file=sys.stderr)
+        if not judge_files(run_dir):
+            print(f"refused: {run_dir} has no scores.json or scores-judge-*.json to summarise", file=sys.stderr)
             return 2
         if not (run_dir / "run.json").exists():
             print(f"refused: {run_dir} has no run.json", file=sys.stderr)
@@ -1061,8 +1077,8 @@ def score_existing(args, root, fallback_bench):
     if error:
         print("refused:", error, file=sys.stderr)
         return 2
-    if (run_dir / "scores.json").exists() and not args.force:
-        print("refused: scores.json exists; pass --force to score again", file=sys.stderr)
+    if (run_dir / scores_name(args)).exists() and not args.force:
+        print(f"refused: {scores_name(args)} exists; pass --force to score again", file=sys.stderr)
         return 2
     records = load_records(run_dir)
     statuses = {sid: "error" if any(r.get("error") for r in records if r["scenario"] == sid) else "ok"
@@ -1152,10 +1168,15 @@ def main(argv=None):
     # flag. The flag benchmark is only the default for a new run, so the scenarios of the flag are
     # not read at all on these paths: a vault that only has the learning benchmark can still score
     # a learning run.
+    if args.judge_name and not re.fullmatch(r"[A-Za-z0-9._-]+", args.judge_name):
+        print("refused: --judge-name may use letters, digits, dot, underscore and hyphen only", file=sys.stderr)
+        return 2
     if args.summarize or args.score_run:
         return score_existing(args, root, bench)
     if args.compare:
         return compare_runs(args, root, bench)
+    if args.aggregate:
+        return aggregate_runs(args)
 
     try:
         data = load_scenarios(root / bench["scenarios"])
@@ -1207,15 +1228,38 @@ def main(argv=None):
         print(f"dry run: {len(ids)} scenarios, nothing was run")
         return 0
 
-    stamp = args.date or date.today().isoformat()
-    run_dir = root / RUNS_REL / f"{stamp}-{bench['run_prefix']}{args.label}"
-    if run_dir.exists() and not args.force:
-        print(f"refused: {run_dir} exists; pick another --label or pass --force", file=sys.stderr)
+    if args.agent_repeats < 1:
+        print("refused: --agent-repeats is 1 or more", file=sys.stderr)
         return 2
+    stamp = args.date or date.today().isoformat()
+    repeats = args.agent_repeats
+    labels = [args.label] if repeats == 1 else [f"{args.label}-r{n}" for n in range(1, repeats + 1)]
+    # Every folder is checked before the first one runs, so a repeat cannot stop halfway on a name.
+    for label in labels:
+        run_dir = root / RUNS_REL / f"{stamp}-{bench['run_prefix']}{label}"
+        if run_dir.exists() and not args.force:
+            print(f"refused: {run_dir} exists; pick another --label or pass --force", file=sys.stderr)
+            return 2
+    code = 0
+    for n, label in enumerate(labels, 1):
+        code = max(code, one_run(args, data, root, bench, ids, stamp, label, n if repeats > 1 else None, repeats))
+    if repeats > 1 and args.judge_cmd:
+        print("aggregate of the repeats:")
+        aggregate_runs(args, [root / RUNS_REL / f"{stamp}-{bench['run_prefix']}{label}" for label in labels])
+    return code
+
+
+def one_run(args, data, root, bench, ids, stamp, label, repeat, repeats):
+    """One run of the agent over the scenarios, in its own folder, judged when a judge is given."""
+    run_dir = root / RUNS_REL / f"{stamp}-{bench['run_prefix']}{label}"
     run_dir.mkdir(parents=True, exist_ok=True)
-    meta = {"date": stamp, "label": args.label, "benchmark": args.benchmark, "agent": args.agent_name or args.label,
-            "agent_family": args.agent_family, "agent_model": args.agent_model, "command": args.agent_cmd, "scenarios": ids, "timeout": args.timeout,
-            "inline_instructions": bool(args.inline_instructions), "version": benchmark_version(data), "started": now()}
+    meta = {"date": stamp, "label": label, "benchmark": args.benchmark, "agent": args.agent_name or args.label,
+            "agent_family": args.agent_family, "agent_model": args.agent_model, "command": args.agent_cmd, "scenarios": ids,
+            "timeout": args.timeout, "inline_instructions": bool(args.inline_instructions),
+            "version": benchmark_version(data), "started": now()}
+    if repeat is not None:
+        meta["repeat"] = repeat
+        meta["repeats"] = repeats
     records, statuses = run_scenarios(args, data, root, run_dir, meta)
     meta["finished"] = now()
     meta["errors"] = sorted(sid for sid, st in statuses.items() if st == "error")
@@ -1230,6 +1274,94 @@ def main(argv=None):
     else:
         print("no judge: score the run by hand with scoring_sheet.md, or run --score-run later")
     return 1 if meta["errors"] else 0
+
+
+def pass_hat_k(trials, k):
+    """pass^k of tau-bench: the chance that k trials of a scenario, drawn from its n, all succeed.
+
+    `trials` is a list, per scenario, of n booleans. For one scenario with c successes out of n it
+    is C(c, k) / C(n, k); the result is the mean over the scenarios (Yao et al., 2024,
+    arXiv:2406.12045).
+    """
+    from math import comb
+    usable = [t for t in trials if len(t) >= k]
+    if not usable or k < 1:
+        return None
+    return round(sum(comb(sum(t), k) / comb(len(t), k) for t in usable) / len(usable), 4)
+
+
+def aggregate_runs(args, run_dirs=None):
+    """Mean, spread, verdicts and pass^k of the repeats of one agent.
+
+    Each run folder gives the scores of one judge (scores.json, or the file --judge-name names).
+    The runs must be of the same benchmark and scenarios, and their recorded versions must match,
+    unless --force. A scenario succeeds in a run when it scores 2; a critical scenario holds when
+    it does not score 0.
+    """
+    run_dirs = [Path(d) for d in (run_dirs or args.aggregate)]
+    name = scores_name(args)
+    runs = []
+    for run_dir in run_dirs:
+        meta = read_run_json(run_dir) if (run_dir / "run.json").exists() else None
+        if meta is None:
+            print(f"refused: {run_dir} has no readable run.json", file=sys.stderr)
+            return 1
+        try:
+            scored = json.loads((run_dir / name).read_text(encoding="utf-8"))
+        except (OSError, ValueError) as error:
+            print(f"refused: {run_dir / name} could not be read: {error}", file=sys.stderr)
+            return 1
+        if not isinstance(scored, dict) or not isinstance(scored.get("scores"), dict) or outside_scale(scored["scores"]):
+            print(f"refused: {run_dir / name} has no scores on the 0 to 2 scale", file=sys.stderr)
+            return 1
+        runs.append((run_dir, meta, scored))
+    benches = {meta.get("benchmark", "tutor") for _, meta, _ in runs}
+    scenario_sets = {tuple(meta["scenarios"]) for _, meta, _ in runs}
+    if len(benches) > 1 or len(scenario_sets) > 1:
+        print("refused: the runs do not share one benchmark and one set of scenarios", file=sys.stderr)
+        return 2
+    first = runs[0]
+    problems, unknown = [], []
+    for run_dir, meta, scored in runs[1:]:
+        for kind, a, b in (("run.json", first[1].get("version"), meta.get("version")),
+                           (name, first[2].get("version"), scored.get("version"))):
+            differ, missing = version_problems(f"{kind} of {first[0].name}", a, f"{kind} of {run_dir.name}", b)
+            problems += differ
+            unknown += missing
+    if problems and not args.force:
+        for p in problems:
+            print("refused:", p, file=sys.stderr)
+        print("pass --force to aggregate anyway", file=sys.stderr)
+        return 2
+    bench_name = benches.pop()
+    data = load_scenarios(Path(args.root).resolve() / BENCHMARKS[bench_name]["scenarios"])
+    ids = list(scenario_sets.pop())
+    maps = [score_map(scored) for _, _, scored in runs]
+    totals = [sum(m[i] for i in ids if m.get(i) is not None) for m in maps]
+    verdicts = [evaluate(data, m, ids)["verdict"] for m in maps]
+    n = len(runs)
+    mean = sum(totals) / n
+    spread = (sum((x - mean) ** 2 for x in totals) / (n - 1)) ** 0.5 if n > 1 else 0.0
+    full = [[m.get(i) == 2 for m in maps] for i in ids]
+    critical = [i for i in data["pass_rule"]["critical"] if i in ids]
+    held = [[m.get(i) not in (0, None) for m in maps] for i in critical]
+    print(f"{n} runs of {bench_name}, scores file {name}, {len(ids)} scenarios each")
+    for (run_dir, _, _), total, verdict in zip(runs, totals, verdicts):
+        print(f"  {run_dir.name}: total {total} of {2 * len(ids)}; verdict {verdict}")
+    print(f"mean total {round(mean, 2)}, standard deviation {round(spread, 2)}, lowest {min(totals)}, highest {max(totals)}")
+    print("verdicts: " + ", ".join(f"{v} {verdicts.count(v)}" for v in sorted(set(verdicts))))
+    print("pass^k, a scenario scoring 2 in every one of k runs: "
+          + ", ".join(f"pass^{k} {pass_hat_k(full, k)}" for k in range(1, n + 1)))
+    if critical:
+        print(f"critical scenarios {', '.join(map(str, critical))} with no 0 in every one of k runs: "
+              + ", ".join(f"k={k} {pass_hat_k(held, k)}" for k in range(1, n + 1)))
+    changed_ids = [i for i in ids if len({m.get(i) for m in maps}) > 1]
+    print("scenarios whose score changed between runs: " + (", ".join(map(str, changed_ids)) or "none"))
+    for label in unknown:
+        print(f"note: {label} records no version; the aggregate assumes the runs used the same benchmark")
+    for p in problems:
+        print(f"note: forced over a version difference: {p}")
+    return 0
 
 
 if __name__ == "__main__":

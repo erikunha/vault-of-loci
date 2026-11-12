@@ -22,6 +22,17 @@ A run folder holds:
 # rebuild every summary of a run folder, with all its judges
 python3 -I 90_System/Scripts/run_tutor_eval.py --summarize 90_System/Evals/runs/<date>-<label>
 
+# three repeats of one agent, each in its own folder <label>-r1, -r2, -r3
+python3 -I 90_System/Scripts/run_tutor_eval.py --label claude --agent-family anthropic --agent-cmd "claude -p" --agent-repeats 3
+
+# a second judge writes scores-judge-<name>.json next to scores.json
+python3 -I 90_System/Scripts/run_tutor_eval.py --score-run 90_System/Evals/runs/<date>-<label> \
+  --judge-cmd "codex exec --skip-git-repo-check -" --judge-family openai --judge-name openai
+
+# mean, spread, verdicts and pass^k of the repeats, for one judge file
+python3 -I 90_System/Scripts/run_tutor_eval.py --aggregate 90_System/Evals/runs/<date>-<label>-r1 \
+  90_System/Evals/runs/<date>-<label>-r2 90_System/Evals/runs/<date>-<label>-r3 --judge-name openai
+
 # paired difference of two runs, A minus B; refused when their recorded versions differ, unless --force
 python3 -I 90_System/Scripts/run_tutor_eval.py --compare 90_System/Evals/runs/<run-a> 90_System/Evals/runs/<run-b>/scores-judge-<judge>.json
 ```
