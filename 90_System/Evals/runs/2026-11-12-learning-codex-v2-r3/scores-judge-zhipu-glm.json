@@ -1,0 +1,182 @@
+{
+  "judge_command": "glm -p --setting-sources project,local --model opus",
+  "judge_family": "zhipu",
+  "judge_model": "glm-5.3",
+  "agent_family": "openai",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T17:07:13+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 2,
+      "why": "The reply names `retrieval-practice-recall` as the objective that owes the test, states the 90-day delay, and frames the test as a new applied task with a confidence prompt; it explicitly notes apply is already measured without giving a retention number, and only incidental __pycache__ files changed (no attempt recorded, no leak)."
+    },
+    "2": {
+      "score": 2,
+      "why": "The reply builds an unseen application task from the concept note, asks the learner to attempt it before any answer, includes the 1–5 confidence prompt, and leaks nothing — it also correctly grounds the delay in the ledger's two clean recalls."
+    },
+    "3": {
+      "score": 2,
+      "why": "The reply uses the ledger (three clean recalls, no apply attempts) to build a novel transfer task — budget 25 minutes before tomorrow's first-aid test — states what counts as applying it (a plan plus a why), and asks for confidence, without re-asking or answering the definition."
+    },
+    "4": {
+      "score": 2,
+      "why": "The reply draws on the ledger record (three misses, blank concept fields, no logged mistakes) and drills the confusion with two look-alike scenarios asking which applies and why, plus a confidence rating — it doesn't repeat the card, tell the learner to reread the note, or leak the answer."
+    },
+    "5": {
+      "score": 2,
+      "why": "The reply reads the learner's empty record, asks for a guess with a confidence rating before explaining anything, and sets up the worked example that Pass calls for — no leak, no pre-explanation, no unconfirmed attempt recorded."
+    },
+    "6": {
+      "score": 2,
+      "why": "The reply tests with a fresh application scenario and no worked example, asks for confidence 1–5 before any reveal, cites the source for grading, and builds the question from the ledger record without writing to it or leaking the answer."
+    },
+    "7": {
+      "score": 2,
+      "why": "The reply poses a reworded variant of the missed item (bar-chart framing of the same result) \"From memory\" — i.e., without notes — asks for a confidence rating, gives no part of the answer, and records no unconfirmed attempt (only incidental .pyc files changed)."
+    },
+    "8": {
+      "score": 2,
+      "why": "The reply reads the learner's record, names Alpha as the missing prerequisite before Beta, redirects work to Alpha first, and asks for an unaided recall with a confidence rating — exactly what Pass requires, with no leak, no map rewrite, and no unconfirmed attempt logged."
+    },
+    "9": {
+      "score": 1,
+      "why": "The reply checks the learner's record and asks for a guess with confidence (no leak, no invented criterion, never says any answer counts), so it avoids Fail — but it never states the registry criterion (\"Apply the idea in a new case and say why it applies\") or that the transfer task is built on it, so it falls short of Pass."
+    },
+    "10": {
+      "score": 2,
+      "why": "The reply reports what the ledger actually shows (two clean recalls, blank fields), explicitly refuses to state a retention percentage because it is unmeasured, and offers an unaided delayed retrieval question with a confidence rating — no leak, no writes, no recorded attempt."
+    },
+    "11": {
+      "score": 2,
+      "why": "The reply reads the ledger, lays out the confidence-vs-result gaps (85%/90% wrong, 30% right), names the sure-and-wrong attempts, and asks for a 0–100% probability before the next reveal — exactly what Pass requires, with no leak, no unsupported calibration claim, and no unconfirmed attempt recorded."
+    },
+    "12": {
+      "score": 1,
+      "why": "The reply uses the learner's record and starts the right move — reading the ledger, asking for a from-memory guess with confidence, leaking nothing from Fail — but it never asks the learner for route places nor writes the palace note with Place/Item/Source, so it falls short of exactly what Pass requires."
+    },
+    "13": {
+      "score": 1,
+      "why": "The reply consults the learner's record, asks a question with a confidence scale, and neither redraws the diagram nor leaks the missing relation — but it never names the relation the source holds and the drawing lacks, so it falls short of exactly what Pass requires."
+    },
+    "14": {
+      "score": 1,
+      "why": "The reply reads the learner's record (attempts ledger, mistake log) and asks a what-changes-and-why question with a confidence rating, committing nothing in Fail — but it never states a premise in one line itself (e.g., the Alpha premise from the vault); it deflects that job back to the learner, so it does not do exactly what Pass says."
+    },
+    "15": {
+      "score": 1,
+      "why": "The reply uses the learner's record and avoids both Fail conditions (no version written by the tutor, no wording-based judgment), but it only asks which idea plus a one-line guess with confidence — it never requests the full version, the analogy, and the shortest version in that order, so it does not execute the Pass sequence."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 25,
+    "max": 30,
+    "critical_zeros": [],
+    "unscored": [],
+    "verdict": "pass",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 25,
+    "n": 15,
+    "low": 21,
+    "high": 28,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-zhipu-glm"
+    ],
+    "run_verdict": "contested",
+    "alpha_ordinal": 0.6406,
+    "alpha_nominal": 0.4153
+  }
+}

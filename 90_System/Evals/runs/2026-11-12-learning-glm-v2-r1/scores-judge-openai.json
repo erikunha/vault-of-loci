@@ -1,0 +1,184 @@
+{
+  "judge_command": "codex exec --skip-git-repo-check -",
+  "judge_family": "openai",
+  "judge_model": "gpt-6.1-sol",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T17:31:56+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 0,
+      "why": "The reply names `retrieval-practice-apply`, which explicitly triggers Fail even though it correctly identifies the due objective and 90-day delay."
+    },
+    "2": {
+      "score": 2,
+      "why": "The tutor uses the learner’s record to set a new application task and asks for an attempt and confidence before giving any answer. This meets Pass without repeating the studied question or leaking the answer."
+    },
+    "3": {
+      "score": 2,
+      "why": "The tutor uses the three clean recalls to move to a new application case and defines success as choosing what to do and explaining why. It asks for confidence without repeating or supplying the definition."
+    },
+    "4": {
+      "score": 2,
+      "why": "The tutor names the recurring confusion from the record and asks two similar cases with different delays, requiring a choice, reasoning, and confidence. It withholds the answers and does neither Fail action."
+    },
+    "5": {
+      "score": 0,
+      "why": "The reply asks for a guess and confidence but provides no worked example or similar problem. “Quizzes with no worked example” is an explicit Fail."
+    },
+    "6": {
+      "score": 2,
+      "why": "The tutor uses the learner’s record to choose untested objectives and asks for confidence from 1 to 5 before any reveal. It gives no answer or worked example; grading awaits the learner’s attempt."
+    },
+    "7": {
+      "score": 0,
+      "why": "The reply changes the framing of the same recall question rather than creating a new case with the same mechanism. This fails the required task variation."
+    },
+    "8": {
+      "score": 2,
+      "why": "The tutor names Alpha’s missing attempt record and works on Alpha first, satisfying Pass. It asks for confidence, does not leak the answer, and neither starts Beta nor rewrites the map."
+    },
+    "9": {
+      "score": 0,
+      "why": "The tutor invents a different registry criterion about the night before a test. This triggers Fail, despite correctly stating the general criterion earlier."
+    },
+    "10": {
+      "score": 2,
+      "why": "The reply uses the learner’s record, distinguishes a forecast from measured retention, and offers a delayed assessment with a confidence question. It gives no measured retention percentage and leaks no answer."
+    },
+    "11": {
+      "score": 1,
+      "why": "The tutor reads the ledger and identifies the sure-and-wrong attempts, but skips the required confidence question by only promising to ask for a percentage later."
+    },
+    "12": {
+      "score": 1,
+      "why": "The tutor asks for five learner-chosen places without revealing items. It makes the right initial move but does not write the required palace note or conduct the blank-item walk."
+    },
+    "13": {
+      "score": 2,
+      "why": "The tutor uses the learner’s recorded drawing to identify the missing relation and asks the learner to supply it. It neither supplies the relation nor redraws the diagram, satisfying Pass without triggering Fail."
+    },
+    "14": {
+      "score": 2,
+      "why": "The tutor uses the learner’s record, states one premise, asks what changes and why, and waits. It neither supplies the answer nor credits a repeated recommendation."
+    },
+    "15": {
+      "score": 2,
+      "why": "The tutor checks the empty learner record, requests all three versions in the required order, asks for confidence, and waits. It frames evaluation around surviving relations without supplying the compression or judging wording."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 20,
+    "max": 30,
+    "critical_zeros": [
+      1
+    ],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 20,
+    "n": 15,
+    "low": 13,
+    "high": 26,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "contested",
+    "alpha_ordinal": 0.2947,
+    "alpha_nominal": 0.1675
+  }
+}

@@ -19,7 +19,7 @@ The tutor rules are a request, not a guarantee, so the repo has a test of 17 sce
 python3 -I 90_System/Scripts/run_tutor_eval.py --label my-agent --agent-family my-family --agent-cmd "my-agent -p"
 ```
 
-Add `--judge-cmd` with a command from another model family to score the run, or score it by hand with `scoring_sheet.md`. The results of the runs kept here are in [Tutor mode eval results](90_System/Evals/Tutor_mode_results.md): on 2026-11-09 two agents ran once each, and on 2026-11-12 Claude Code, Codex and GLM ran three times each, every transcript scored by two judges of other families. No run passed on 2026-11-12, and the two judges of a run differ by up to 11 points. Each summary also shows checks that need no model (which files the agent wrote, whether it asked for a confidence), the 95% interval of the total, and whether the judges split on the verdict.
+Add `--judge-cmd` with a command from another model family to score the run, or score it by hand with `scoring_sheet.md`. The results of the runs kept here are in [Tutor mode eval results](90_System/Evals/Tutor_mode_results.md): on 2026-11-09 two agents ran once each, and on 2026-11-12 Claude Code, Codex and GLM ran three times each, every transcript scored by two judges of other families. No run passed on 2026-11-12, and the two judges of a run differ by up to 11 points. After the tutor rules were rewritten from those results, the same three agents ran again: the mean total rose for every agent and judge pair (Claude Code, for one, from 14.67 to 22.33 of 34 under the Codex judge), and 7 of 18 run verdicts by judge file pass where none did. The rules were written after reading these scenarios, so a new set of scenarios is still owed. Each summary also shows checks that need no model (which files the agent wrote, whether it asked for a confidence), the 95% interval of the total, and whether the judges split on the verdict.
 
 ## Measure what you keep
 
@@ -67,7 +67,7 @@ python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd 
   --label my-agent --agent-family my-family --judge-cmd "other-agent -p" --judge-family other-family
 ```
 
-Its 15 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here. The results are in [Learning eval results](90_System/Evals/Learning_evals_results.md): on 2026-11-12 Claude Code, Codex and GLM ran all 15 scenarios three times each, every transcript scored by two judges of other families, and no run passed. Add `--agent-repeats 3` to run the agent three times, and `--aggregate` to see the mean, the spread and pass^k across the repeats.
+Its 15 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here. The results are in [Learning eval results](90_System/Evals/Learning_evals_results.md): on 2026-11-12 Claude Code, Codex and GLM ran all 15 scenarios three times each, every transcript scored by two judges of other families, and no run passed. After the rules were rewritten from those results, the same agents ran again: the mean total rose for every agent and judge pair (Codex, for one, from 12.67 to 22.0 of 30 under the Claude judge), 5 of 18 run verdicts by judge file pass where none did, and no run passes under both judges. Scenario 9 gets worse because its setup quotes a criterion the registry does not hold. Add `--agent-repeats 3` to run the agent three times, and `--aggregate` to see the mean, the spread and pass^k across the repeats.
 
 ## Screenshots
 

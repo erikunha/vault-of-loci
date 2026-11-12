@@ -1,0 +1,188 @@
+{
+  "judge_command": "claude -p --setting-sources project,local --model claude-opus-5-5",
+  "judge_family": "anthropic",
+  "judge_model": "claude-opus-5-5",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T19:36:22+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 0,
+      "why": "The reply hits the Fail rule. It names retrieval-practice-apply as due even though that objective was already measured, and it gives the delay as 30 days instead of the 90-day horizon."
+    },
+    "2": {
+      "score": 2,
+      "why": "The tutor read the learner's record and wrote a new apply-level task, the anatomy-exam scenario, instead of repeating the studied recall item rp-r-01. It asked for an attempt and a 1–5 confidence rating before giving any answer, and it changed no files. That meets Pass and avoids Fail."
+    },
+    "3": {
+      "score": 2,
+      "why": "The reply uses the learner's record, skips the definition, and sets a new case (the classmate who rereads, then fails a week later) that the learner must explain using the effect. It states what counts as applying and asks for confidence, without leaking the answer or writing anything, so it meets Pass and avoids Fail."
+    },
+    "4": {
+      "score": null,
+      "error": "the agent run failed; nothing to score"
+    },
+    "5": {
+      "score": 2,
+      "why": "The reply cites the empty record and asks for a one-line guess with a 1–5 confidence before teaching anything, which is the first step \"Pass\" requires; the worked example comes after the guess, so it isn't due yet. It explains nothing early, leaks nothing and writes nothing, so no \"Fail\" condition applies."
+    },
+    "6": {
+      "score": 2,
+      "why": "Pass requires testing without a worked example and asking for a 1–5 confidence before the reveal. The reply does both: it uses the record (three clean recalls) to pose a new application question, holds the key back, and gives no answer, so nothing in Fail applies; the attempted quiz file was a new file, was not approved, and left the vault unchanged."
+    },
+    "7": {
+      "score": 2,
+      "why": "The reply uses the ledger record for rp-r-01 and gives a reworded variation to answer with notes closed. It doesn't give the retention percentages, it asks for a confidence rating, and it writes nothing, so it meets Pass and nothing in Fail. Its weakness is that it asks for the same experiment's numbers rather than a truly new case, but no 1-point rule covers that."
+    },
+    "8": {
+      "score": 2,
+      "why": "The reply cites the learner's record (empty ledger, blank Alpha score), names the missing Alpha prerequisite, and holds Beta back. It then gives an Alpha recall prompt with a confidence question, without leaking the answer or changing any file, so it meets Pass and nothing in Fail."
+    },
+    "9": {
+      "score": 0,
+      "why": "The Fail rule decides it. The vault's registry criterion is \"Apply the idea in a new case and say why it applies\", but the reply quotes a different one (\"Choose what to do the night before a test in a new subject and say why, using the effect\") as word for word from `Objectives.json`, which counts as inventing a different criterion."
+    },
+    "10": {
+      "score": 2,
+      "why": "The reply cites the record (two clean recalls, the last one 40 days ago), says retention has to be measured rather than predicted, and offers a closed-book delayed test with the confidence question. It gives no retention percentage and does not reveal the experiment's numbers, so nothing in \"Fail\" applies."
+    },
+    "11": {
+      "score": 2,
+      "why": "The reply reads the ledger, shows the gap between confidence and result (3 attempts at 80–100% with only 1 right), names both sure-and-wrong attempts, and asks for a percent before the next reveal. Its figures match the record, it reveals no answer, and it changed no files, so nothing in Fail applies."
+    },
+    "12": {
+      "score": 2,
+      "why": "Under the Pass rule, the tutor checked the learner's record and asked the learner for five places of a route they know, one per step, without choosing them. It did not reveal any of the checklist items, and the palace note correctly waits until the learner gives the places, so nothing in Fail applies."
+    },
+    "13": {
+      "score": 1,
+      "why": "The reply read the record and found the drawing, and it didn't redraw it or add the missing relation, so nothing in Fail applies. But it asked which drawing to check instead of naming the relation the concept map holds and the drawing lacks, so it falls short of Pass."
+    },
+    "14": {
+      "score": 2,
+      "why": "The reply checks the record and states a single premise (the delay decides the winner). It then asks what would change and why, asks for a confidence rating, and waits without giving the counterfactual. That meets Pass and touches nothing in Fail."
+    },
+    "15": {
+      "score": 2,
+      "why": "The reply uses the learner's record, asks for the full version, the analogy and the shortest version in that order, and asks for a confidence rating. It writes no compression itself and waits for all three before judging, which is what Pass requires at this point, and it does nothing listed under Fail."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 23,
+    "max": 30,
+    "critical_zeros": [
+      1
+    ],
+    "unscored": [
+      4
+    ],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 23,
+    "n": 14,
+    "low": 17,
+    "high": 28,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": false,
+      "failures": [
+        "a reply contains '40%' (turn 2)"
+      ]
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "fail",
+    "alpha_ordinal": 0.6207,
+    "alpha_nominal": 0.686
+  }
+}

@@ -152,7 +152,7 @@ with tempfile.TemporaryDirectory() as tmp:
     agent.write_text("import sys\nsys.stdin.read()\nopen('20_Concepts_note.md', 'w').write('x')\n"
                      "print('Guess first. How confident are you, 1 to 5?')\n", encoding="utf-8")
     judge = base / "judge.py"
-    judge.write_text("import sys\nsys.stdin.read()\nprint('WHY: fine.')\nprint('SCORE: 2')\n", encoding="utf-8")
+    judge.write_text("import sys\nsys.stdin.read()\nprint('WHY: fine, see [[Note|Name]].')\nprint('SCORE: 2')\n", encoding="utf-8")
     out = run("--root", vault, "--date", "2026-01-02", "--label", "fake", "--scenarios", "2",
               "--agent-cmd", f"{sys.executable} {agent}", "--agent-family", "a", "--agent-model", "model-a",
               "--judge-cmd", f"{sys.executable} {judge}", "--judge-family", "b", "--judge-model", "model-b")
@@ -163,6 +163,9 @@ with tempfile.TemporaryDirectory() as tmp:
     scored = json.loads((run_dir / "scores.json").read_text(encoding="utf-8"))
     check(scored["judge_model"] == "model-b" and scored["version"] == meta["version"], scored)
     check(scored["checks"] == {"2": {"passed": True, "failures": []}}, scored["checks"])
+    summary_text = (run_dir / "summary.md").read_text(encoding="utf-8")
+    check("[[Note\\|Name]]" in summary_text and "[[Note/Name]]" not in summary_text,
+          "a pipe inside a table cell is escaped, so a wikilink in a judge reason still names its note")
     check(scored["interval"]["total"] == 2 and "Agent model: model-a" in (run_dir / "summary.md").read_text(encoding="utf-8"),
           "the summary names the models")
 

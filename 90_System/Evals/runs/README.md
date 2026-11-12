@@ -6,7 +6,7 @@ tags: [type/log]
 
 # Tutor eval runs
 
-Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`, with the prefix of the benchmark in the label: a run of the learning benchmark is `<YYYY-MM-DD>-learning-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, the runs of 2026-11-12 are the three repeats of Claude Code, Codex and GLM on each benchmark (`2026-11-12-<agent>-r<n>` and `2026-11-12-learning-<agent>-r<n>`), and they are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
+Each run of `90_System/Scripts/run_tutor_eval.py` writes one folder here, named `<YYYY-MM-DD>-<label>`, with the prefix of the benchmark in the label: a run of the learning benchmark is `<YYYY-MM-DD>-learning-<label>`. The runs of 2026-11-09 are `2026-11-09-agy` and `2026-11-09-minimax`, the runs of 2026-11-12 are the three repeats of Claude Code, Codex and GLM on each benchmark (`2026-11-12-<agent>-r<n>` and `2026-11-12-learning-<agent>-r<n>`), and the reruns after the tutor rules of pull requests #41 and #42 are `2026-11-12-<agent>-v2-r<n>`, `2026-11-12-<agent>-v3-r<n>` and the same two with `learning-` after the date. They are kept in the repository; a vault that starts empty has no run folder yet. Run the commands below from the root of the vault, then commit the folder you want to keep.
 
 A run folder holds:
 
