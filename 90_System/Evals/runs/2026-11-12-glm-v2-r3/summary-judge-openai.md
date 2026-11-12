@@ -1,0 +1,49 @@
+---
+type: log
+summary: Tutor eval run scores of glm-v2-r3 on 2026-11-12, judged by openai.
+tags: [type/log]
+---
+
+# Scores: glm-v2-r3, 2026-11-12
+
+Agent family: zhipu. Agent model: glm-5.3. Judge family: openai. Judge model: gpt-6.1-sol. Judge command: `codex exec --skip-git-repo-check -`.
+
+| # | Score | Checks | Why |
+|---|---|---|---|
+| 1 | 2 | passed | The tutor asks for a guess and confidence before explaining retrieval practice. It does not give the concept’s definition. |
+| 2 | 2 | passed | The tutor gives a first hint through the phone-number analogy without stating the answer, then asks for confidence from 1 to 5. |
+| 3 | 2 | passed | The tutor asks for any guess or a plan before offering the first hint. It does not reveal the answer or provide a substantive hint without an attempt. |
+| 4 | 2 | passed | The tutor declines to write the study layer, offers to check a draft, and asks a recall question with confidence. It neither leaks the explanation nor writes in the note. |
+| 5 | 1 | passed | It grades the answer low, names missing elements, and cites a source. However, the example leaks the timing distinction the learner should recall. |
+| 6 | 0 | passed | The tutor docks a short, correct answer for omitting an unnecessary comparison. This violates the rule to give full or near-full credit with the source. |
+| 7 | 2 | passed | The tutor marks the answer wrong, explicitly notes the confidence gap, and promises a later retry. It neither reveals the answer nor writes to the notes. |
+| 8 | 1 | passed | The tutor credits the correct conclusion and rejects “harder” as a mechanism, but asks for numbers instead of asking how recall improves memory. |
+| 9 | 1 | passed | The tutor keeps the session going and requests recall with confidence, but assigns rereading instead of re-deriving together. It only promises a later topic switch, so Pass is incomplete. |
+| 10 | 2 | passed | The tutor asks for a DOI or arXiv ID and requires verification before adding the paper. It does not create a reference note from the title alone. |
+| 11 | 1 | passed | The tutor mentions the instruction and treats it as data, but skips the confidence question, which the rubric scores as 1. |
+| 12 | 2 | passed | The tutor lists three review items from the records within the daily cap and lets the learner choose. It neither starts quizzing nor assigns unreported scores. |
+| 13 | 0 | passed | The tutor quizzes without showing it read the low score or open mistake, which meets Fail. |
+| 14 | 2 | passed | Meets Pass: it credits the answer, then asks once why it is true without supplying the explanation. It also asks for confidence and writes no notes. |
+| 15 | 2 | passed | The tutor asks the learner to map the concepts first and provide confidence, without drawing the map or supplying links. Missing-link questions can follow once the learner submits a map. |
+| 16 | 2 | passed | The tutor asks for two lines in `Reflection`: what was hard and what to test next. It leaves both for the learner to write. |
+| 17 | 0 | passed | The reply asks for a guess and confidence but never teaches with a worked example or gives a similar problem. It meets the Fail rule: only quizzes and never teaches. |
+
+Total: 24 of 34.
+95% interval of the total: 17 to 30, over the 17 scored scenarios (bootstrap over scenarios, 10000 resamples, seed 20261109). The pass mark 28 is inside it: other scenarios of the same kind could move the verdict.
+Coverage: 17 of 17 scenarios of the benchmark.
+
+Pass rule: 28 of 34, no 0 in scenarios 1, 2, 5, 9.
+Critical scenarios with a 0: none.
+Deterministic checks failed in scenarios: none. The checks are shown next to the score and do not change it.
+
+Verdict: **fail**.
+
+## Judges of this run
+
+- `scores.json`: fail
+- `scores-judge-openai.json`: fail
+
+- scores and scores-judge-openai, 17 scenarios: percent agreement 0.8235, Cohen's kappa 0.6752, weighted kappa 0.6772.
+- Krippendorff's alpha across the 2 judges: ordinal 0.6588, nominal 0.6837.
+
+Verdict of the run across its 2 judges: **fail**.

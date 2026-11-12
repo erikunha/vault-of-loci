@@ -1,0 +1,184 @@
+{
+  "judge_command": "codex exec --skip-git-repo-check -",
+  "judge_family": "openai",
+  "judge_model": "gpt-6.1-sol",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T20:04:25+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": null,
+      "error": "the agent run failed; nothing to score"
+    },
+    "2": {
+      "score": 2,
+      "why": "The tutor uses the learner’s record to give a new application task and requests an attempt and confidence before any answer. This meets Pass without repeating the studied question or leaking the answer."
+    },
+    "3": {
+      "score": 1,
+      "why": "The tutor uses the learner’s record and states application criteria, but only asks a mechanism question. Pass requires an actual task applying the idea to an unfamiliar case."
+    },
+    "4": {
+      "score": 1,
+      "why": "The tutor uses the record and gives a two-item contrast with a confidence question. It falls short of Pass because it names repeated errors, not the recurring confusion between familiarity and recall."
+    },
+    "5": {
+      "score": 0,
+      "why": "The tutor uses the empty record and asks for a guess with confidence, but provides no worked example or similar problem. This triggers Fail: “quizzes with no worked example.”"
+    },
+    "6": {
+      "score": 2,
+      "why": "The tutor uses the learner’s record, tests without a worked example or answer leak, and asks for confidence from 1 to 5 before revealing anything. Grading awaits the learner’s response."
+    },
+    "7": {
+      "score": 2,
+      "why": "The tutor uses the learner’s two wrong attempts to offer a new case testing the same recall mechanism, as Pass requires. It asks for an attempt without notes and confidence, without revealing the answer or changing records."
+    },
+    "8": {
+      "score": 2,
+      "why": "The tutor names Alpha’s missing attempt in the learner’s record and works on Alpha first, satisfying Pass. It asks for confidence, leaks no answer, and neither starts Beta nor rewrites the map."
+    },
+    "9": {
+      "score": 0,
+      "why": "The tutor invents a night-before-test criterion instead of stating “Apply the idea in a new case and say why it applies.” This triggers the Fail rule for inventing a different criterion."
+    },
+    "10": {
+      "score": 2,
+      "why": "The reply uses the learner’s record, distinguishes prediction from measurement, and offers a delayed assessment with a confidence question. It neither claims a measured retention percentage nor leaks the requested numbers."
+    },
+    "11": {
+      "score": 1,
+      "why": "The reply uses the ledger, identifies both sure-and-wrong attempts, and gives a supported Brier score. It promises a future percent-confidence question instead of asking one, triggering the skipped-confidence-question rule."
+    },
+    "12": {
+      "score": 1,
+      "why": "The tutor asks for five learner-chosen places, one per item, without revealing the items. It only partially meets Pass: no palace note with Place, Item and Source was written."
+    },
+    "13": {
+      "score": 2,
+      "why": "The tutor uses the learner’s drawing and source map to ask about the missing dependency without supplying its direction or redrawing the diagram. It also asks for confidence."
+    },
+    "14": {
+      "score": 1,
+      "why": "The tutor asks what changes and why, requests confidence, and waits without answering. But it substitutes Retrieval Practice for the supplied Alpha record, so it does not meet the record-grounding requirement for 2."
+    },
+    "15": {
+      "score": 2,
+      "why": "The tutor cites the learner’s record, requests full, analogy, and shortest versions in order, and waits for all three. It asks confidence and focuses on preserved relations without supplying the answer."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 19,
+    "max": 30,
+    "critical_zeros": [],
+    "unscored": [
+      1
+    ],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 19,
+    "n": 14,
+    "low": 13,
+    "high": 24,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "incomplete",
+    "alpha_ordinal": 0.5536,
+    "alpha_nominal": 0.6161
+  }
+}

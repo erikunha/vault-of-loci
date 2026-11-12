@@ -702,11 +702,11 @@ def write_summary(path, data, meta, scored, verdict, agreement=None, notes=()):
     for i in verdict["scenarios"]:
         r = scored["scores"].get(str(i), {})
         sc = r.get("score")
-        why = (r.get("why") or r.get("error") or "").replace("|", "/")
+        why = (r.get("why") or r.get("error") or "").replace("|", "\\|")
         stable = f" (judge agreed on {r['consistent']})" if r.get("consistent") else ""
         cell = f"{'not scored' if sc is None else sc}{stable}"
         if checks is not None:
-            lines.append(f"| {i} | {cell} | {eval_checks.describe(checks.get(str(i))).replace('|', '/')} | {why} |")
+            lines.append(f"| {i} | {cell} | {eval_checks.describe(checks.get(str(i))).replace('|', '\\|')} | {why} |")
         else:
             lines.append(f"| {i} | {cell} | {why} |")
     lines += ["", f"Total: {verdict['total']} of {verdict['max']}.", interval_line(verdict, scored.get("interval")),

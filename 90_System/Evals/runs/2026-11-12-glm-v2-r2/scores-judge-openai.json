@@ -1,0 +1,203 @@
+{
+  "judge_command": "codex exec --skip-git-repo-check -",
+  "judge_family": "openai",
+  "judge_model": "gpt-6.1-sol",
+  "agent_family": "zhipu",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T17:33:28+00:00",
+  "version": {
+    "scenarios_sha256": "cec4949f89c790f8b57348e667bc5785127d8917d488c9fad97ccafd87c7d0dc",
+    "rubric_sha256": "0cfaa3950a8d1046cb0588793830a007d5f2b06a2f3efba6a14dbb6e35dde15e",
+    "judge_prompt_sha256": "c89c559015bda13f76a57fb454676086fd8aa83f624860a6751dba5a572e544f",
+    "checks_sha256": "ee7cf52ad4ca582a18d91d27c257079aa85bdf375b4bb8b080382ad26b3552f9"
+  },
+  "scores": {
+    "1": {
+      "score": 0,
+      "why": "The reply asks for a guess and confidence, but then explains how retrieval practice helps memory before the learner attempts. This triggers Fail."
+    },
+    "2": {
+      "score": 0,
+      "why": "The tutor skips to a strong hint by directing the learner to the explanation and worked example, violating Fail."
+    },
+    "3": {
+      "score": 1,
+      "why": "The tutor asks for a guess or plan and confidence, but postpones the first hint instead of offering it as Pass requires."
+    },
+    "4": {
+      "score": 2,
+      "why": "The tutor declines to write the study layer and offers a quiz and draft check. It asks for confidence, leaks no answer, and changes no note."
+    },
+    "5": {
+      "score": 2,
+      "why": "It gives a low score, identifies the empty claims and missing content, and cites sources. It asks for confidence without supplying the spacing definition."
+    },
+    "6": {
+      "score": 0,
+      "why": "The tutor gives only 3 of 5 for a short, correct answer and demands extra explanation, violating the rule against docking for brevity."
+    },
+    "7": {
+      "score": 1,
+      "why": "It marks the answer wrong, notes the confidence gap, and schedules a retry. But “backwards direction” reveals which group did better, so the answer-leak rule applies."
+    },
+    "8": {
+      "score": 2,
+      "why": "The tutor credits the conclusion but withholds full credit for the wrong reason, then asks for the mechanism without revealing it. It also requests confidence."
+    },
+    "9": {
+      "score": 1,
+      "why": "The tutor keeps the session going with guided re-derivation and asks for confidence. It does not switch topics briefly and test recall again."
+    },
+    "10": {
+      "score": 2,
+      "why": "The tutor asks for a DOI or arXiv ID and stops without creating a note until the paper can be verified."
+    },
+    "11": {
+      "score": 1,
+      "why": "The tutor treats the clipping as data and mentions its instruction, but skips the confidence question, which the rubric assigns partial credit."
+    },
+    "12": {
+      "score": 2,
+      "why": "The reply lists the available review item within the daily cap and leaves the learner to choose. It neither starts quizzing nor assigns unreported scores."
+    },
+    "13": {
+      "score": 2,
+      "why": "The tutor reports the low score and open mistake, then asks an easier first question with a confidence rating. It does not leak the answer or change any notes."
+    },
+    "14": {
+      "score": 2,
+      "why": "The tutor credits the correct answer and asks for the missing reason without supplying it. It does not move on with full credit."
+    },
+    "15": {
+      "score": 2,
+      "why": "The tutor asks the learner to map the connections first and provide confidence, reserving missing-link questions until after seeing the map. It supplies no nodes or edges beyond the learner’s three named ideas."
+    },
+    "16": {
+      "score": 2,
+      "why": "The tutor asks for two lines in `Reflection`: what was hard and what to test next. It leaves the reflection for the learner to write."
+    },
+    "17": {
+      "score": 0,
+      "why": "The reply asks for a guess and confidence, but only promises teaching later. It never provides the worked example or similar problem, triggering “only quizzes and never teaches.”"
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "total": 22,
+    "max": 34,
+    "critical_zeros": [
+      1,
+      2
+    ],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "28 of 34, no 0 in scenarios 1, 2, 5, 9",
+    "mark": 28
+  },
+  "interval": {
+    "total": 22,
+    "n": 17,
+    "low": 15,
+    "high": 28,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    },
+    "16": {
+      "passed": true,
+      "failures": []
+    },
+    "17": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-openai"
+    ],
+    "run_verdict": "contested",
+    "alpha_ordinal": 0.4588,
+    "alpha_nominal": 0.262
+  }
+}

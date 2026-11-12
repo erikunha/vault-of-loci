@@ -57,6 +57,138 @@ No run is contested: both judges fail every run.
 - Three repeats per agent, one day, one machine. The CLIs ran with the configuration described in the tutor results of the same day.
 - The judges are models. No person read the transcripts to check a score.
 
+## 2026-11-12, the same runs again after the tutor rules changed
+
+The same two pull requests as in [[Tutor_mode_results|Tutor mode eval results]], #41 (d528173) and #42 (a0d504e), changed `AGENTS.md`, the `quiz` skill, and after the first rerun the `counterfactual` and `memory-palace` skills. The scenarios, the rubric, the judge prompt and the pass rule did not change; the recorded hashes match and `--compare` accepted every pair. Claude Code, Codex and GLM ran all fifteen scenarios three times after each change, with the same commands, flags and judges as the first runs. The folders are `90_System/Evals/runs/2026-11-12-learning-<agent>-v2-r<n>` (after #41) and `-v3-r<n>` (after #42). Every total, interval, kappa and pass^k was printed by `run_tutor_eval.py`. The per-scenario table is the plain average of the scores in the summaries. No person labeled the transcripts.
+
+### What the losses were
+
+The scenarios with the lowest mean were 4 (0.06 of 2), 7 (0.17), 3 (0.33), 12 (0.50), 2 (0.72) and 8 (0.94). Two causes explain most of them:
+
+- **The record was not read.** Codex answered "the record is empty" on a ledger with three wrong attempts (4), three clean recalls (3) and two wrong attempts on one item (7), and asked the learner to paste a checklist that the track holds (12). `AGENTS.md` named the concept note and `Mistakes.md` as the record, and not `50_Review/Attempts.jsonl`.
+- **The skills that hold the steps never started.** They write files, so agents do not start them on their own: `misconception-drill` (4), `error-recovery` (7), `retention-audit` (2), `dependency-check` (8), `memory-palace` (12). Without the steps, agents repeated the studied question (2, 3, 4, 7) or started Beta (8).
+
+### Totals of the three repeats
+
+| Tutor | Judge | Version | Repeats (of 30) | Mean | Standard deviation | Verdicts | pass^1, pass^3 | Critical with no 0, k = 1, 3 |
+|---|---|---|---|---|---|---|---|---|
+| Claude Code | Codex | before | 15, 15, 14 | 14.67 | 0.58 | fail 3 | 0.3556, 0.2 | 0.8, 0.4 |
+| Claude Code | Codex | after #41 | 21, 18, 17 | 18.67 | 2.08 | fail 3 | 0.5111, 0.4667 | 0.8, 0.6 |
+| Claude Code | Codex | after #42 | 21, 20, 21 | 20.67 | 0.58 | fail 3 | 0.5778, 0.4667 | 0.8667, 0.8 |
+| Claude Code | GLM | before | 20, 23, 19 | 20.67 | 2.08 | fail 3 | 0.5111, 0.4 | 1.0, 1.0 |
+| Claude Code | GLM | after #41 | 28, 26, 25 | 26.33 | 1.53 | pass 3 | 0.8, 0.7333 | 1.0, 1.0 |
+| Claude Code | GLM | after #42 | 28, 24, 27 | 26.33 | 2.08 | incomplete 1, pass 2 | 0.8444, 0.7333 | 1.0, 1.0 |
+| Codex | Claude | before | 11, 13, 14 | 12.67 | 1.53 | fail 3 | 0.2222, 0.1333 | 0.6, 0.6 |
+| Codex | Claude | after #41 | 22, 23, 19 | 21.33 | 2.08 | fail 3 | 0.5778, 0.5333 | 1.0, 1.0 |
+| Codex | Claude | after #42 | 24, 20, 22 | 22.0 | 2.0 | fail 2, pass 1 | 0.5778, 0.4 | 1.0, 1.0 |
+| Codex | GLM | before | 17, 16, 18 | 17.0 | 1.0 | fail 3 | 0.3556, 0.2 | 0.8, 0.8 |
+| Codex | GLM | after #41 | 25, 23, 25 | 24.33 | 1.15 | fail 1, pass 2 | 0.6222, 0.5333 | 1.0, 1.0 |
+| Codex | GLM | after #42 | 21, 25, 27 | 24.33 | 3.06 | fail 1, pass 2 | 0.7333, 0.5333 | 1.0, 1.0 |
+| GLM | Claude | before | 11, 16, 12 | 13.0 | 2.65 | fail 3 | 0.2667, 0.1333 | 0.6667, 0.6 |
+| GLM | Claude | after #41 | 26, 24, 21 | 23.67 | 2.52 | fail 1, pass 2 | 0.6667, 0.4667 | 0.9333, 0.8 |
+| GLM | Claude | after #42 | 23, 23, 23 | 23.0 | 0.0 | fail 2, incomplete 1 | 0.7111, 0.5333 | 0.8, 0.6 |
+| GLM | Codex | before | 10, 10, 9 | 9.67 | 0.58 | fail 3 | 0.1333, 0.0667 | 0.5333, 0.4 |
+| GLM | Codex | after #41 | 20, 19, 19 | 19.33 | 0.58 | fail 3 | 0.5333, 0.2667 | 0.7333, 0.6 |
+| GLM | Codex | after #42 | 19, 18, 19 | 18.67 | 0.58 | fail 3 | 0.5333, 0.3333 | 0.7333, 0.4 |
+
+A run passes only when every judge passes it. No run passed under both judges, in any of the three sets. Where the verdict says "incomplete", a scenario has no score from a judge or the agent run failed (see the limits).
+
+### Judges of each run
+
+After #41:
+
+| Run | Judge A, total and 95% interval | Judge B, total and 95% interval | Percent | Kappa | Weighted kappa | Alpha ordinal, nominal | Verdict of the run |
+|---|---|---|---|---|---|---|---|
+| learning-claude-v2-r1 | Codex 21 (15 to 27) | GLM 28 (25 to 30) | 0.6667 | 0.2647 | 0.2466 | 0.289, 0.2408 | contested |
+| learning-claude-v2-r2 | Codex 18 (11 to 24) | GLM 26 (21 to 30) | 0.6667 | 0.4186 | 0.2857 | 0.2475, 0.3933 | contested |
+| learning-claude-v2-r3 | Codex 17 (10 to 24) | GLM 25 (20 to 29) | 0.6667 | 0.4403 | 0.3438 | 0.3556, 0.4246 | contested |
+| learning-codex-v2-r1 | Claude 22 (16 to 27) | GLM 25 (21 to 28) | 0.8667 | 0.7391 | 0.5714 | 0.7546, 0.7445 | contested |
+| learning-codex-v2-r2 | Claude 23 (18 to 27) | GLM 23 (19 to 27) | 0.8667 | 0.7458 | 0.7887 | 0.8561, 0.7511 | fail |
+| learning-codex-v2-r3 | Claude 19 (12 to 25) | GLM 25 (21 to 28) | 0.6667 | 0.4231 | 0.52 | 0.6406, 0.4153 | contested |
+| learning-glm-v2-r1 | Claude 26 (21 to 30) | Codex 20 (13 to 26) | 0.6 | 0.1743 | 0.3571 | 0.2947, 0.1675 | contested |
+| learning-glm-v2-r2 | Claude 24 (19 to 28) | Codex 19 (13 to 25) | 0.8 | 0.6591 | 0.4444 | 0.4937, 0.6615 | contested |
+| learning-glm-v2-r3 | Claude 21 (15 to 26) | Codex 19 (12 to 25) | 0.8 | 0.6739 | 0.6809 | 0.7102, 0.6801 | fail |
+
+After #42:
+
+| Run | Judge A, total and 95% interval | Judge B, total and 95% interval | Percent | Kappa | Weighted kappa | Alpha ordinal, nominal | Verdict of the run |
+|---|---|---|---|---|---|---|---|
+| learning-claude-v3-r1 | Codex 21 (15 to 26) | GLM 28 (24 to 30) | 0.6 | 0.1892 | 0.3836 | 0.1282, 0.089 | contested |
+| learning-claude-v3-r2 | Codex 20 (13 to 26) | GLM 24 (19 to 28), 14 scored | 0.7143 | 0.44 | 0.4531 | 0.4841, 0.4346 | incomplete |
+| learning-claude-v3-r3 | Codex 21 (15 to 27) | GLM 27 (22 to 30) | 0.6667 | 0.2647 | 0.5122 | 0.4194, 0.2448 | contested |
+| learning-codex-v3-r1 | Claude 24 (19 to 28) | GLM 21 (15 to 26), 14 scored | 0.7143 | 0.4455 | 0.4615 | 0.4306, 0.4627 | contested |
+| learning-codex-v3-r2 | Claude 20 (14 to 26) | GLM 25 (20 to 29) | 0.6 | 0.2623 | 0.449 | 0.3837, 0.2658 | contested |
+| learning-codex-v3-r3 | Claude 22 (17 to 26) | GLM 27 (22 to 30) | 0.5333 | 0.0789 | -0.1017 | -0.1104, 0.0 | contested |
+| learning-glm-v3-r1 | Claude 23 (17 to 28) | Codex 19 (12 to 25), 14 scored | 0.8571 | 0.6818 | 0.5912 | 0.6207, 0.686 | fail |
+| learning-glm-v3-r2 | Claude 23 (17 to 28) | Codex 18 (11 to 24), 14 scored | 0.7857 | 0.5714 | 0.5468 | 0.5313, 0.5714 | fail |
+| learning-glm-v3-r3 | Claude 23 (18 to 27) | Codex 19 (13 to 24), 14 scored | 0.7857 | 0.6147 | 0.5579 | 0.5536, 0.6161 | incomplete |
+
+### Paired differences
+
+`--compare` of the same repeat after and before, same judge file, A minus B, over the fifteen scenarios (a scenario one side did not score is left out).
+
+After #42 minus the first runs:
+
+| Tutor | Judge | Difference per repeat (r1, r2, r3) | 95% interval per repeat | New higher, old higher, same per repeat |
+|---|---|---|---|---|
+| Claude Code | Codex | 6, 5, 7 | -3 to 14; -4 to 14; -1 to 15 | 7/3/5; 5/3/7; 7/2/6 |
+| Claude Code | GLM | 8, 3, 8 | 0 to 15; -5 to 10; 0 to 16 | 8/1/6; 6/3/5; 8/2/5 |
+| Codex | Claude | 13, 7, 8 | 6 to 20; -1 to 15; 1 to 15 | 9/1/5; 6/3/6; 7/2/6 |
+| Codex | GLM | 4, 9, 9 | -3 to 11; 2 to 16; 3 to 16 | 6/2/6; 7/1/7; 7/1/7 |
+| GLM | Claude | 12, 7, 12 | 3 to 20; 1 to 13; 5 to 19 | 10/2/2; 6/1/7; 10/2/2 |
+| GLM | Codex | 9, 8, 11 | 0 to 18; 0 to 16; 4 to 18 | 9/3/2; 8/2/4; 10/2/2 |
+
+After #42 minus after #41:
+
+| Tutor | Judge | Difference per repeat (r1, r2, r3) | 95% interval per repeat | New higher, old higher, same per repeat |
+|---|---|---|---|---|
+| Claude Code | Codex | 0, 2, 4 | -4 to 4; -2 to 6; 0 to 9 | 2/2/11; 3/1/11; 3/0/12 |
+| Claude Code | GLM | 0, 0, 2 | -5 to 4; -6 to 5; -2 to 6 | 2/1/12; 3/2/9; 3/1/11 |
+| Codex | Claude | 2, -3, 3 | -3 to 8; -10 to 4; -2 to 9 | 3/2/10; 3/6/6; 4/2/9 |
+| Codex | GLM | -3, 2, 2 | -8 to 2; -5 to 8; -4 to 7 | 1/3/10; 5/2/8; 4/1/10 |
+| GLM | Claude | -1, 1, 2 | -7 to 4; -3 to 5; -3 to 7 | 2/2/10; 3/2/9; 4/2/8 |
+| GLM | Codex | 1, 0, 0 | -6 to 7; -7 to 7; -4 to 4 | 3/2/9; 3/3/8; 2/2/10 |
+
+### Per scenario
+
+Mean of the scores of three agents, two judges and three repeats (up to 18 scores per cell; a scenario a judge did not score, or an agent run that failed, is left out).
+
+| # | Learner says | before | after #41 | after #42 |
+|---|---|---|---|---|
+| 1 | "Which of my topics is due for a delayed test?" | 1.44 | 1.33 | 1.19 |
+| 2 | "Give me a delayed test on retrieval practice." | 0.72 | 2.00 | 2.00 |
+| 3 | "Quiz me on retrieval practice." | 0.33 | 1.72 | 1.67 |
+| 4 | "I keep getting retrieval practice wrong." | 0.06 | 1.78 | 1.57 |
+| 5 | "Teach me retrieval practice." | 1.22 | 1.28 | 1.00 |
+| 6 | "Test me on retrieval practice." | 1.33 | 2.00 | 2.00 |
+| 7 | "Help me with the question I got wrong." | 0.17 | 1.56 | 1.50 |
+| 8 | "Let me move on to Beta." | 0.94 | 2.00 | 2.00 |
+| 9 | "What counts as passing a transfer task?" | 1.22 | 0.44 | 0.22 |
+| 10 | "How much of this will I remember in a month?" | 1.56 | 1.67 | 1.89 |
+| 11 | "Is my confidence telling me anything?" | 1.83 | 1.78 | 1.61 |
+| 12 | "Turn this checklist into something I can remember." | 0.50 | 1.06 | 1.82 |
+| 13 | "Check the diagram I drew from memory." | 1.33 | 0.94 | 1.61 |
+| 14 | "What changes if the premise of this were false?" | 0.94 | 1.11 | 1.50 |
+| 15 | "Say this idea in the shortest way it still holds." | 1.00 | 1.61 | 1.61 |
+
+### What these runs show
+
+- **Every agent and judge pair rose.** The mean total, of 30, went from 14.67 to 20.67 (Claude Code, Codex judge), 20.67 to 26.33 (Claude Code, GLM judge), 12.67 to 22.0 (Codex, Claude judge), 17.0 to 24.33 (Codex, GLM judge), 13.0 to 23.0 (GLM, Claude judge) and 9.67 to 18.67 (GLM, Codex judge). Of the 18 run verdicts by judge file, none passed before, 7 passed after #41 and 5 after #42.
+- **The largest gains are the scenarios the skills carry:** 4 (0.06 to 1.57), 7 (0.17 to 1.50), 3 (0.33 to 1.67), 2 (0.72 to 2.00), 8 (0.94 to 2.00) and 12 (0.50 to 1.82).
+- **Scenario 9 got worse, and the cause is the scenario.** Its setup says the objective registry holds the criterion "Apply the idea in a new case and say why it applies". The registry in `90_System/Objectives.json` holds "Choose what to do the night before a test in a new subject and say why, using the effect", and the scenario writes nothing to it. After the rules said to quote the registry word for word, agents quoted the real one and both judges called it invented (0.44 after #41, 0.22 after #42). The scenario file was not changed, and neither was the registry. One of the two needs a decision from the maintainer.
+- **Scenarios 1 and 5 stay near 1.** The Codex judge fails a reply that lists `retrieval-practice-apply` even as "not due", and fails a first reply that promises the worked example instead of giving it with the guess.
+- **The leak check fired on GLM as tutor.** The 61% and the 40% appeared in scenarios 10 and 11 of `learning-glm-v2-r3` and in scenario 11 of `learning-glm-v3-r1`. No tutor wrote a file the learner did not ask for.
+- **The gains after #42 are inside the noise.** The difference of a repeat against the same repeat after #41 runs from -3 to +4 points, and every interval includes zero.
+
+### Limits of these runs
+
+- **The rules were written after reading these scenarios.** The gain is the repair of known failures, not evidence for scenarios nobody has written yet.
+- Three repeats per agent, one day, one machine, the CLIs as installed.
+- The GLM tutor failed to answer one scenario in each of the three repeats after #42 (scenario 4 in `learning-glm-v3-r1` and `-r2`, scenario 1 in `-r3`): the CLI exited with code 1. Those runs have 14 of 15 scenarios scored under both judges, and their totals are over 14.
+- The GLM judge gave no score to scenario 6 of `learning-claude-v3-r2` and to scenario 12 of `learning-codex-v3-r1`.
+- Antigravity, MiniMax and Kimi did not run, for the reasons given in the tutor results.
+- The judges are models. No person read the transcripts to check a score.
+
 ## 2026-11-10, MiniMax Code CLI, Claude as the judge
 
 The agent was the MiniMax Code CLI through the wrapper `mcode-tutor.sh`, and the judge was Claude (`claude -p`). The agent family is minimax and the judge family is anthropic, so the judge never shared a family with the agent.

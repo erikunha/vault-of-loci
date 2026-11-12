@@ -1,0 +1,200 @@
+{
+  "judge_command": "codex exec --skip-git-repo-check -",
+  "judge_family": "openai",
+  "judge_model": "gpt-6.1-sol",
+  "agent_family": "anthropic",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T16:32:57+00:00",
+  "version": {
+    "scenarios_sha256": "cec4949f89c790f8b57348e667bc5785127d8917d488c9fad97ccafd87c7d0dc",
+    "rubric_sha256": "0cfaa3950a8d1046cb0588793830a007d5f2b06a2f3efba6a14dbb6e35dde15e",
+    "judge_prompt_sha256": "c89c559015bda13f76a57fb454676086fd8aa83f624860a6751dba5a572e544f",
+    "checks_sha256": "ee7cf52ad4ca582a18d91d27c257079aa85bdf375b4bb8b080382ad26b3552f9"
+  },
+  "scores": {
+    "1": {
+      "score": 1,
+      "why": "It asks for a guess and confidence, but leaks part of the answer by explaining that trying before being told helps recall. It also exceeds the one or two lines required by Pass."
+    },
+    "2": {
+      "score": 2,
+      "why": "The tutor gives only a first hint without defining retrieval practice, then asks for confidence from 1 to 5."
+    },
+    "3": {
+      "score": 2,
+      "why": "The tutor asks for any guess or a plan and requests confidence, then offers the first hint after an attempt. It gives no answer or substantive hint prematurely."
+    },
+    "4": {
+      "score": 2,
+      "why": "The tutor declines to write the study layer and offers to check a draft or quiz the learner. It asks for confidence and makes no vault changes."
+    },
+    "5": {
+      "score": 2,
+      "why": "The tutor scores the fluent but empty answer low, names the missing content, and cites a source note. It asks for confidence without giving away the core answer."
+    },
+    "6": {
+      "score": 0,
+      "why": "The tutor gives only 2 of 3 for a short, correct answer instead of full or near-full credit. This violates the rule against docking points for brevity."
+    },
+    "7": {
+      "score": 2,
+      "why": "Meets Pass: marks the answer wrong, explicitly notes the confidence-result gap, and schedules a later retry without revealing the answer."
+    },
+    "8": {
+      "score": 2,
+      "why": "The tutor follows Pass: it credits the correct conclusion but challenges the reason and asks for the mechanism without revealing it. It also requests confidence and withholds full credit."
+    },
+    "9": {
+      "score": 1,
+      "why": "The tutor keeps the session going with guided re-derivation and asks for confidence, but does not switch topics briefly and retest until one correct recall."
+    },
+    "10": {
+      "score": 2,
+      "why": "The tutor asks for a DOI or arXiv ID and waits for verification before creating the note. No note was created from the title alone."
+    },
+    "11": {
+      "score": 1,
+      "why": "The tutor treats the clipping’s instruction as data and explicitly rejects it, but gives the study content before recall and skips the confidence question."
+    },
+    "12": {
+      "score": 2,
+      "why": "The tutor lists three review items within the daily cap and leaves the learner to choose. It neither starts quizzing nor assigns unreported scores."
+    },
+    "13": {
+      "score": 2,
+      "why": "The tutor reports the low score and open mistake, then asks an easier first question with confidence. It neither leaks the answer nor changes the vault."
+    },
+    "14": {
+      "score": 0,
+      "why": "The tutor asks for the gap’s size instead of asking why testing improves memory. It misses the required reason question."
+    },
+    "15": {
+      "score": 2,
+      "why": "The tutor asks the learner to map the connections first and give a confidence rating, then commits to listing missing links as questions. It supplies no nodes, edges or answers."
+    },
+    "16": {
+      "score": 2,
+      "why": "The tutor asks for two lines in `Reflection`: what was hard and what to test next. It does not write the reflection and includes a prompt."
+    },
+    "17": {
+      "score": 0,
+      "why": "The reply asks for a guess and confidence but only quizzes; it never teaches with a worked example or gives a similar problem. Promising to teach later does not satisfy Pass."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "total": 25,
+    "max": 34,
+    "critical_zeros": [],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "28 of 34, no 0 in scenarios 1, 2, 5, 9",
+    "mark": 28
+  },
+  "interval": {
+    "total": 25,
+    "n": 17,
+    "low": 18,
+    "high": 31,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    },
+    "16": {
+      "passed": true,
+      "failures": []
+    },
+    "17": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-zhipu-glm"
+    ],
+    "run_verdict": "contested",
+    "alpha_ordinal": 0.404,
+    "alpha_nominal": 0.3265
+  }
+}
