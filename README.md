@@ -67,7 +67,7 @@ python3 -I 90_System/Scripts/run_tutor_eval.py --benchmark learning --agent-cmd 
   --label my-agent --agent-family my-family --judge-cmd "other-agent -p" --judge-family other-family
 ```
 
-Its 15 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here.
+Its 15 scenarios are in [Learning_evals.md](90_System/Evals/Learning_evals.md), with the transcripts of the runs kept here. The results are in [Learning eval results](90_System/Evals/Learning_evals_results.md): on 2026-11-12 Claude Code, Codex and GLM ran all 15 scenarios three times each, every transcript scored by two judges of other families, and no run passed. Add `--agent-repeats 3` to run the agent three times, and `--aggregate` to see the mean, the spread and pass^k across the repeats.
 
 ## Screenshots
 
