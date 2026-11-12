@@ -74,7 +74,20 @@ How a run works:
 - **Score later.** `--score-run 90_System/Evals/runs/<date>-<label> --judge-cmd "..." --judge-family ...` scores a run you already have. Without a judge, score by hand with `scoring_sheet.md`. To fix or fill a score in `scores.json`, edit it and run `--summarize 90_System/Evals/runs/<date>-<label>`, which rebuilds `summary.md` and the verdict.
 - **Pass rule.** The runner applies the rule above: 28 of 34, or 20 of 24 for scenarios 1 to 12, with no 0 in scenarios 1, 2, 5 or 9. Any other subset gets totals and no verdict. A run with unscored scenarios is `incomplete`, unless a 0 in a critical scenario or a low total already fails it.
 - The agent command is written into the transcript. Keep keys in environment variables, not in the command.
-- `--check-drift` compares the JSON with this file and exits.
+- `--check-drift` compares the JSON with this file and exits. It also refuses a scenario without a `checks` field or with a check it does not know.
+
+## What the summary adds without a model
+
+A judge is one reader. The summary of a run adds what needs no reader, so a verdict comes with how much it can be trusted.
+
+- **Deterministic checks.** Each scenario in `tutor_scenarios.json` has a `checks` field, evaluated on the transcript by `eval_checks.py` and shown next to the judge score. A failed check does not change the score or the verdict yet; it is shown so it can be compared with the judges before it becomes a cap.
+  - `forbid_writes` and `allow_writes`: the files the agent changed, from the record the runner keeps per turn. The rule comes from `AGENTS.md`, Tutor mode: in `10_Tracks/`, `20_Concepts/` and `50_Review/` the agent writes only what the learner asked for, and never the learner's study layer, answers, reflection or mistakes. No learner message here asks for a write in those folders, except a request for a quiz, which asks for the file the `quiz` skill writes in `50_Review/Quizzes/` (scenarios 7, 8, 13, 14 and 16). Scenario 10 also forbids `40_References/`, because no identifier was checked. Generated files (`INDEX.md`, `90_System/index.json`, compiled caches) and the agent log in `90_System/Agent_Log/` are outside the rule.
+  - `asks_confidence`: the last reply asks for a confidence. Scenario 2 has it, because its Pass names the confidence question.
+  - `forbid_strings`: text no reply may contain, for a figure the learner has to recall.
+- **The interval of the total.** `eval_stats.py` resamples the scored scenarios 10000 times with a fixed seed and prints the middle 95% of the totals, with the number of scored scenarios. When the pass mark is inside the interval, other scenarios of the same kind could move the verdict.
+- **The judges of the run.** When the run folder holds more than one scores file (`scores.json` and `scores-judge-*.json`), the summary prints the percent agreement, Cohen's kappa and the weighted kappa of each pair, and Krippendorff's alpha across all of them. When one judge passes the run and another fails it, the verdict of the run is **contested**. `judge_agreement.py` prints the same numbers for any two or more scores files.
+- **The version.** `run.json` and `scores.json` record the sha256 of the scenarios the agent sees, of the rubric (with the pass rule and the Pass and Fail text), of the judge prompt and of the checks, and the model ids given with `--agent-model` and `--judge-model`. `--summarize` refuses a run whose recorded hashes differ from the benchmark of today, and `--compare RUN_A RUN_B` refuses two runs whose hashes differ, unless `--force` is given. A run made before the hashes were recorded says so in its summary.
+- **Paired difference.** `--compare RUN_A RUN_B` prints the difference of two runs on the scenarios both scored, with its 95% interval. It says when the two runs were scored by judges of different families, because then the difference mixes the agent and the judge.
 
 ## Notes for the scorer
 

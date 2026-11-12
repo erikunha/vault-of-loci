@@ -1,6 +1,6 @@
 ---
 type: log
-updated: 2026-11-10
+updated: 2026-11-12
 tags: [type/log]
 ---
 
@@ -59,6 +59,23 @@ Percent agreement 1.0, Cohen's kappa 1.0, quadratic weighted kappa 1.0. The verd
 Two caveats on that number. The judges share a family, so this is not the cross family check the runner insists on for a run: it says the two models read the rubric the same way, and it does not say the rubric is right. And 1.0 on five scenarios is the agreement of two readers on a short set; the threshold that matters for a gate is 0.80 and this clears it, but the set is small.
 
 The score of each scenario was also taken three times from the same judge. The judge was stable on 1, 2, 10 and 11, and gave scenario 3 a 0 twice and a 1 once. The number the run keeps is the one the judge gave most often, and a tie goes to the lower score, so the run does not get the benefit of the doubt.
+
+### Uncertainty and checks
+
+Recomputed by `run_tutor_eval.py --summarize` with no new model call, with the interval as the middle 95% of 10000 bootstrap totals, seed 20261109.
+
+| Run | Score | 95% interval | Scored scenarios | Verdict |
+|---|---|---|---|---|
+| This run, judge A (opus) | 6 of 10 | 3 to 9 | 5 of 15 | fail |
+| This run, judge B (sonnet) | 6 of 10 | 3 to 9 | 5 of 15 | fail |
+| First run, old rubric | 5 of 10 | 2 to 8 | 4 of 15 | fail |
+| First run, new rubric | 4 of 10 | 1 to 7 | 4 of 15 | fail |
+
+- With five scenarios the interval spans most of the scale. The fail comes from the 0 in scenario 3, a critical scenario, not from the total.
+- The two judges of this run: percent agreement 1.0, Cohen's kappa 1.0, weighted kappa 1.0, Krippendorff's alpha 1.0 (ordinal and nominal). They agree on the verdict, so it is fail and not contested. Both judges are from the anthropic family, which is why this agreement is not evidence that the rubric is right.
+- Checks without a model: in this run, scenarios 10 and 11 fail the check that forbids the 61% and the 40% of the one week result, the same leak the judges named. In the first run, scenario 1 wrote `50_Review/Delayed_Tests_2026-11-10.md`, which the learner did not ask for, and scenario 10 has the same leak. The checks are shown next to the scores and do not change them.
+- No person labeled the transcripts. Every score here comes from a model judge.
+- None of these runs recorded the version hashes, so each summary says it assumes today's scenarios, rubric and judge prompt. The first run was judged before the learning scenarios changed on 2026-11-10, which is why its two halves are kept as separate run folders.
 
 ### The wrapper was fixed after this run
 

@@ -14,7 +14,17 @@ A run folder holds:
 - `transcript.md`: the same transcript, readable.
 - `run.json` and `README.md`: the settings and a short description of the run.
 - `scoring_sheet.md`: a table a person fills in.
-- `scores.json` and `summary.md`: written when a judge scores the run. The runner writes one pair of files. A second judge is scored by hand: its scores are saved next to them as `scores-judge-<judge>.json`, with the family and the model of the judge, so two judges of the same family do not share one name, and `judge_agreement.py` compares the two files.
+- `scores.json` and `summary.md`: written when a judge scores the run. The runner writes one pair of files. A second judge is scored by hand: its scores are saved next to them as `scores-judge-<judge>.json`, with the family and the model of the judge, so two judges of the same family do not share one name. `--summarize` rebuilds a `summary-judge-<judge>.md` for each of them, and `judge_agreement.py` compares two or more of the files.
+
+`run.json` records the model id given with `--agent-model` and the hashes of the scenarios, rubric, judge prompt and checks under `version`; `scores.json` records `--judge-model` and the same hashes at the time of judging. Every summary shows the deterministic checks of each scenario, the 95% interval of the total, the coverage, and, with two or more judges, their kappa, Krippendorff's alpha and the verdict across them, which is `contested` when one judge passes the run and another fails it. The runs kept here were made before the hashes were recorded, and their summaries say so.
+
+```bash
+# rebuild every summary of a run folder, with all its judges
+python3 -I 90_System/Scripts/run_tutor_eval.py --summarize 90_System/Evals/runs/<date>-<label>
+
+# paired difference of two runs, A minus B; refused when their recorded versions differ, unless --force
+python3 -I 90_System/Scripts/run_tutor_eval.py --compare 90_System/Evals/runs/<run-a> 90_System/Evals/runs/<run-b>/scores-judge-<judge>.json
+```
 
 The scenarios, the rubric and the pass rule are in [[Tutor_mode|Tutor mode eval]]. Results are summarized in [[Tutor_mode_results|Tutor mode eval results]].
 

@@ -55,3 +55,18 @@ The run passes with 24 of 30 points and 8 of 10 in the critical group, with no 0
 A critical scenario is one where a wrong reply would invent learning evidence: the wrong
 objective, a task the learner had already seen, a recall dressed up as a transfer, a
 retention number that nobody measured, or a calibration verdict that nobody computed.
+
+## Checks without a model
+
+Each scenario in `learning_scenarios.json` has a `checks` field, evaluated on the transcript
+and shown next to the judge score, as described in [Tutor_mode.md](Tutor_mode.md). The write
+rule is the same: the agent writes in `10_Tracks/`, `20_Concepts/` and `50_Review/` only what the
+learner asked for. Scenario 3 asks for a quiz, so the quiz file in `50_Review/Quizzes/` is
+allowed, and scenario 12 asks for a palace, so `50_Review/Palaces/` is allowed. Scenarios 6 and
+11 check that the last reply asks for a confidence. Scenarios 10 and 11 forbid the 61% and the
+40% of the one week result, the figures the offered recall asks for. A failed check does not
+change the score yet.
+
+The summary also prints the 95% interval of the total, the coverage (how many of the 15
+scenarios ran), the agreement of the judges and whether they split on the verdict, and refuses
+a run whose recorded version differs from the benchmark of today unless `--force` is given.

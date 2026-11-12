@@ -1,28 +1,35 @@
-"""Compare the scores of two judges on the same run: how much do they agree?
+"""Compare the scores of two or more judges on the same run: how much do they agree?
 
 A judge is a model, and two models can read the same transcript and land on different numbers.
 When that happens, the number is not the measurement, it is the opinion of one reader. This
-script reads two scores files of the same run folder and says how far apart they are, so the
-run can say whether its verdict survives the change of judge.
+script reads two or more scores files of the same run folder and says how far apart they are, so
+the run can say whether its verdict survives the change of judge. When one judge passes the run
+and another fails it, the verdict of the run is "contested".
 
-The agreement is reported three ways:
+The agreement is reported four ways:
 
 - percent agreement, the share of scenarios both judges scored the same. It overstates
   reliability when the scores are lopsided, so it is never the headline number.
 - Cohen's kappa, the agreement corrected for what chance alone would produce.
 - quadratic weighted kappa, which counts a 0 against a 2 as worse than a 0 against a 1, which
   fits an ordered scale of 0, 1 and 2.
+- Krippendorff's alpha, ordinal and nominal, across all the judges at once, with a scenario that
+  one judge did not score left out of that judge's pairs (eval_stats.py).
 
-Reading the kappa, from the guidance on model judges and from how these runs are used here:
-0.80 or more is strong enough to gate a run, 0.70 to 0.80 is acceptable with a human audit,
-0.60 to 0.70 is a flag and not a gate, and below 0.60 the rubric is the problem, not the judge.
+Reading the kappa is a rule of thumb of this vault, not a published standard: 0.80 or more is
+strong enough to gate a run, 0.70 to 0.80 is acceptable with a human audit, 0.60 to 0.70 is a
+flag and not a gate, and below 0.60 the rubric is the problem, not the judge. With 17 scenarios
+or fewer a kappa moves a lot with one score, so the percent agreement is printed next to it.
 
-Usage: python3 -I 90_System/Scripts/judge_agreement.py SCORES_A.json SCORES_B.json [--json]
+Usage: python3 -I 90_System/Scripts/judge_agreement.py SCORES_A.json SCORES_B.json [SCORES_C.json ...] [--json]
 """
 import argparse
 import json
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import eval_stats  # noqa: E402
 
 CATEGORIES = (0, 1, 2)
 THRESHOLDS = ((0.80, "strong enough to gate a run"),
@@ -137,25 +144,66 @@ def compare(path_a, path_b):
     }
 
 
+def run_verdict(verdicts):
+    """The verdict of the run across its judges: contested when one passes it and one fails it."""
+    decided = {v for v in verdicts if v is not None}
+    if {"pass", "fail"} <= decided:
+        return "contested"
+    if len(decided) == 1 and None not in verdicts:
+        return decided.pop()
+    return "incomplete"
+
+
+def compare_many(paths):
+    """Every judge against every other, Krippendorff's alpha across all, and the run verdict."""
+    loaded = [read_scores(path) for path in paths]
+    ids = sorted({key for scores, _ in loaded for key in scores}, key=int)
+    units = [[scores.get(key) for scores, _ in loaded] for key in ids]
+    pairs = []
+    for a in range(len(paths)):
+        for b in range(a + 1, len(paths)):
+            pair = compare(paths[a], paths[b])
+            pairs.append({"a": str(paths[a]), "b": str(paths[b]),
+                          **{k: pair[k] for k in ("scenarios_compared", "percent_agreement", "cohen_kappa",
+                                                  "weighted_kappa")}})
+    verdicts = [(data.get("verdict") or {}).get("verdict") for _, data in loaded]
+    return {
+        "judges": [{"file": str(path), "family": data.get("judge_family"), "command": data.get("judge_command"),
+                    "verdict": verdict, "total": (data.get("verdict") or {}).get("total")}
+                   for path, (_, data), verdict in zip(paths, loaded, verdicts)],
+        "rows": [{"scenario": key, "scores": [scores.get(key) for scores, _ in loaded]} for key in ids],
+        "pairs": pairs,
+        "alpha_ordinal": eval_stats.krippendorff_alpha(units, "ordinal"),
+        "alpha_nominal": eval_stats.krippendorff_alpha(units, "nominal"),
+        "run_verdict": run_verdict(verdicts),
+    }
+
+
 def parse_args(argv):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("scores_a", type=Path, help="a scores.json file")
-    ap.add_argument("scores_b", type=Path, help="another scores file of the same run")
+    ap.add_argument("scores", type=Path, nargs="+", help="two or more scores files of the same run")
     ap.add_argument("--json", dest="as_json", action="store_true", help="print the comparison as JSON")
     return ap.parse_args(argv)
 
 
 def main(argv=None):
     args = parse_args(argv)
-    for path in (args.scores_a, args.scores_b):
+    if len(args.scores) < 2:
+        print("give two or more scores files", file=sys.stderr)
+        return 2
+    for path in args.scores:
         if not path.is_file():
             print(f"not a file: {path}", file=sys.stderr)
             return 2
     try:
-        result = compare(args.scores_a, args.scores_b)
+        many = compare_many(args.scores)
+        result = compare(args.scores[0], args.scores[1])
     except ValueError as error:
         print("refused:", error, file=sys.stderr)
         return 2
+    result.update({k: many[k] for k in ("alpha_ordinal", "alpha_nominal", "run_verdict")})
+    if len(args.scores) > 2:
+        return print_many(many, args.as_json)
     if args.as_json:
         print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
         return 0
@@ -180,6 +228,28 @@ def main(argv=None):
     print(reading(result["cohen_kappa"]))
     print(f"total A: {result['total_a']}   total B: {result['total_b']}")
     print(f"verdict A: {result['verdict_a']}   verdict B: {result['verdict_b']}")
+    print(f"Krippendorff's alpha: ordinal {result['alpha_ordinal']}, nominal {result['alpha_nominal']}")
+    print(f"run verdict across the judges: {result['run_verdict']}")
+    return 0
+
+
+def print_many(many, as_json):
+    if as_json:
+        print(json.dumps(many, ensure_ascii=False, indent=2, sort_keys=True))
+        return 0
+    for i, judge in enumerate(many["judges"], 1):
+        print(f"Judge {i}: {judge['family']} ({judge['file']}), total {judge['total']}, verdict {judge['verdict']}")
+    print()
+    print("| # | " + " | ".join(str(i) for i in range(1, len(many["judges"]) + 1)) + " |")
+    print("|---|" + "---|" * len(many["judges"]))
+    for row in many["rows"]:
+        print(f"| {row['scenario']} | " + " | ".join("-" if s is None else str(s) for s in row["scores"]) + " |")
+    print()
+    for pair in many["pairs"]:
+        print(f"{pair['a']} vs {pair['b']}: percent {pair['percent_agreement']}, kappa {pair['cohen_kappa']}, "
+              f"weighted kappa {pair['weighted_kappa']} ({pair['scenarios_compared']} scenarios)")
+    print(f"Krippendorff's alpha: ordinal {many['alpha_ordinal']}, nominal {many['alpha_nominal']}")
+    print(f"run verdict across the judges: {many['run_verdict']}")
     return 0
 
 

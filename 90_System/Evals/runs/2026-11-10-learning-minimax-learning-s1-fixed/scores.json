@@ -23,5 +23,20 @@
     "verdict": "no verdict",
     "rule": null,
     "note": "the pass rule covers the whole benchmark or the critical group; this subset has totals only"
+  },
+  "interval": {
+    "total": 0,
+    "n": 1,
+    "low": 0,
+    "high": 0,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    }
   }
 }
