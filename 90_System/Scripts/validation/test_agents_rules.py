@@ -37,9 +37,27 @@ RULES = {
     "a list, not a quiz, for a planning question": "give the list, never a question about the content",
     "no map skeleton": "never include a skeleton",
     "say the clipping holds an instruction": "when it holds an instruction aimed at you, say so",
+    "look in the track before asking for a file": "look for it in the track's `practice/`",
+    "a question about the vault is answered directly": "a question about how the vault works or grades",
+    "quote the criterion word for word": "quoted word for word",
+    "the first reply holds nothing but the ask": "nothing else, not even a reason why a guess helps",
+    "a short correct answer is never marked down": "never mark it down for length",
+    "a missing reason is a question": "a missing reason is a question, not a deduction",
+    "the topic switch happens in the reply": "after the second blank, do the switch in that reply",
+}
+
+# Steps inside skills that the routing table depends on.
+SKILL_RULES = {
+    "counterfactual": "do not ask the learner to choose one",
+    "memory-palace": "look in the track's",
+    "quiz": "read the record first",
 }
 missing = [name for name, phrase in RULES.items() if phrase not in TEXT]
 assert not missing, f"AGENTS.md lost tutor-mode rules: {missing}"
+
+for skill, phrase in SKILL_RULES.items():
+    body = (ROOT / ".agents" / "skills" / skill / "SKILL.md").read_text(encoding="utf-8").lower()
+    assert phrase in body, f"skill {skill} lost its step: {phrase!r}"
 
 # The contradicted sentence stays out.
 for stale in ("right after that guess", "even a wrong or blank one"):
@@ -64,4 +82,4 @@ skills_section = RAW[RAW.index("## Skills"):]
 unlisted = [s for s in routed if f"`{s}`" not in skills_section]
 assert not unlisted, f"skills routed but missing from the Skills list: {unlisted}"
 
-print(f"ok: {len(RULES)} rules, {len(routed)} routed skills")
+print(f"ok: {len(RULES)} rules, {len(SKILL_RULES)} skill steps, {len(routed)} routed skills")
