@@ -1,0 +1,182 @@
+{
+  "judge_command": "codex exec --skip-git-repo-check -",
+  "judge_family": "openai",
+  "judge_model": "gpt-6.1-sol",
+  "agent_family": "anthropic",
+  "same_family_allowed": false,
+  "judged": "2026-11-12T14:06:20+00:00",
+  "version": {
+    "scenarios_sha256": "f7d5197f92614f5d47993be84af9bea1bbaf38c56cbc4de0073c9a63336f8bab",
+    "rubric_sha256": "050a391656d4b1f30bec88760cdb7fc4ce34f650b47934e11d5e137e02bff4b2",
+    "judge_prompt_sha256": "a245de23a94c91dd866fa7290993515c59c801bf0244f5c6e630aa1a4d28e463",
+    "checks_sha256": "46a75be8733a830776ebd87f786bf574815e304b60dcdd20ff9fdd7b905d948e"
+  },
+  "scores": {
+    "1": {
+      "score": 2,
+      "why": "The reply names retrieval-practice-recall as due at 90 days and promises a new task. It does not name apply as due or state a retention number for it."
+    },
+    "2": {
+      "score": 1,
+      "why": "The tutor asks for an attempt and confidence before giving an answer, but incorrectly treats the learner’s existing recall record as absent. The transcript does not establish that the question is unseen."
+    },
+    "3": {
+      "score": 1,
+      "why": "The tutor uses the learner’s three clean recalls to ask for application through a prediction and explanation. It skips the confidence question, triggering the partial-credit rule."
+    },
+    "4": {
+      "score": 0,
+      "why": "The tutor repeats the recall card, triggering Fail. It does not name the recurring confusion or offer two similar items to distinguish and explain."
+    },
+    "5": {
+      "score": 0,
+      "why": "The tutor uses the empty record but quizzes without providing a worked example, which explicitly meets Fail. Promising an example later does not satisfy Pass."
+    },
+    "6": {
+      "score": 2,
+      "why": "The tutor uses the three clean recalls to choose a harder test, gives no worked answer, and asks for confidence from 1 to 5. Source-based grading awaits the learner’s attempt."
+    },
+    "7": {
+      "score": 0,
+      "why": "The tutor repeats the same one-week retention question instead of creating a new case with the same mechanism. This triggers Fail despite using the record and asking for an attempt without notes."
+    },
+    "8": {
+      "score": 0,
+      "why": "The tutor starts Beta despite recognizing Alpha's empty record. This triggers Fail: starts Beta anyway."
+    },
+    "9": {
+      "score": 2,
+      "why": "The reply states the registry criterion, applying the idea in a new case and explaining why it applies, and says the task is built from it. Neither Fail condition occurs."
+    },
+    "10": {
+      "score": 2,
+      "why": "The tutor uses the learner’s recall record, distinguishes prediction from measurement, and offers a delayed cold assessment with confidence questions. It states no measured retention percentage and leaks no answer."
+    },
+    "11": {
+      "score": 2,
+      "why": "Meets Pass: uses the ledger, identifies the Oct 28 and Nov 2 sure-but-wrong attempts, shows the confidence/result gap, and requests percent confidence before revealing. The reported Brier score of about 0.51 matches the listed record."
+    },
+    "12": {
+      "score": 0,
+      "why": "The tutor does not use the existing checklist, ask for one familiar place per item, or write the required palace note before recall."
+    },
+    "13": {
+      "score": 1,
+      "why": "The tutor uses the learner’s record and neither redraws nor adds the relation, but only asks for clarification instead of naming the missing relation and questioning it."
+    },
+    "14": {
+      "score": 1,
+      "why": "The tutor asks what changes and waits without leaking the answer, but fails to state the premise from Alpha’s record in one line."
+    },
+    "15": {
+      "score": 1,
+      "why": "The tutor asks for the learner’s attempt without supplying the answer, but skips the required full version, analogy, then shortest version sequence."
+    }
+  },
+  "verdict": {
+    "scenarios": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "total": 15,
+    "max": 30,
+    "critical_zeros": [],
+    "unscored": [],
+    "verdict": "fail",
+    "rule": "24 of 30 and 8 of 10 in the critical group, no 0 in scenarios 1, 2, 3, 10, 11",
+    "mark": 24
+  },
+  "interval": {
+    "total": 15,
+    "n": 15,
+    "low": 9,
+    "high": 21,
+    "level": 0.95,
+    "resamples": 10000,
+    "seed": 20261109
+  },
+  "checks": {
+    "1": {
+      "passed": true,
+      "failures": []
+    },
+    "2": {
+      "passed": true,
+      "failures": []
+    },
+    "3": {
+      "passed": true,
+      "failures": []
+    },
+    "4": {
+      "passed": true,
+      "failures": []
+    },
+    "5": {
+      "passed": true,
+      "failures": []
+    },
+    "6": {
+      "passed": true,
+      "failures": []
+    },
+    "7": {
+      "passed": true,
+      "failures": []
+    },
+    "8": {
+      "passed": true,
+      "failures": []
+    },
+    "9": {
+      "passed": true,
+      "failures": []
+    },
+    "10": {
+      "passed": true,
+      "failures": []
+    },
+    "11": {
+      "passed": true,
+      "failures": []
+    },
+    "12": {
+      "passed": true,
+      "failures": []
+    },
+    "13": {
+      "passed": true,
+      "failures": []
+    },
+    "14": {
+      "passed": true,
+      "failures": []
+    },
+    "15": {
+      "passed": true,
+      "failures": []
+    }
+  },
+  "run_verdict": {
+    "judges": [
+      "scores",
+      "scores-judge-zhipu-glm"
+    ],
+    "run_verdict": "fail",
+    "alpha_ordinal": 0.547,
+    "alpha_nominal": 0.7031
+  }
+}

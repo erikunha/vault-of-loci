@@ -6,9 +6,56 @@ tags: [type/log]
 
 # Learning eval results
 
-Each run follows [[Learning_evals|Learning eval]]: the agent answers a learner's question using the vault's own record, and a judge from another model family scores the reply from 0 to 2 against the rubric. The critical group is scenarios 1, 2, 3, 10 and 11, and the pass rule for that group is 8 of 10 with no 0 in any of them. The rule for a run of the whole benchmark asks for two things at once, 24 of 30 points and 8 of 10 in the critical group, and the runs here cover the critical group only, so the rule that applies to them is the 8 of 10.
+Each run follows [[Learning_evals|Learning eval]]: the agent answers a learner's question using the vault's own record, and a judge from another model family scores the reply from 0 to 2 against the rubric. The critical group is scenarios 1, 2, 3, 10 and 11, and the pass rule for that group is 8 of 10 with no 0 in any of them. The rule for a run of the whole benchmark asks for two things at once, 24 of 30 points and 8 of 10 in the critical group, The runs of 2026-11-10 cover the critical group only, so the rule that applies to them is the 8 of 10. The runs of 2026-11-12 cover all fifteen scenarios, so the full rule applies to them.
 
 These runs use the learning ledger as the fixture. Each scenario writes a ledger with dated events into a fresh copy of the vault, so the agent reads a record the scenario controls and the real `50_Review/Attempts.jsonl` is never touched.
+
+## 2026-11-12, all fifteen scenarios, three agents, three repeats each
+
+Each agent ran all fifteen scenarios three times with the runner, each repeat in its own folder, and two judges of other families scored every transcript. These are the first runs of the whole benchmark, so the rule that applies is the full one: 24 of 30 and 8 of 10 in the critical group, with no 0 in scenarios 1, 2, 3, 10 or 11. Every number below was printed by `run_tutor_eval.py --summarize` and `--aggregate`. No person labeled the transcripts: every score comes from a model judge.
+
+| Tutor (family, model) | Judges | Run folders |
+|---|---|---|
+| Claude Code (anthropic, claude-opus-5-5) | Codex (openai, gpt-6.1-sol) in `scores.json`; GLM (zhipu, glm-5.3) in `scores-judge-zhipu-glm.json` | `90_System/Evals/runs/2026-11-12-learning-claude-r1` to `-r3` |
+| Codex CLI (openai, gpt-6.1-sol) | Claude (anthropic, claude-opus-5-5) in `scores.json`; GLM (zhipu, glm-5.3) in `scores-judge-zhipu-glm.json` | `2026-11-12-learning-codex-r1` to `-r3` |
+| GLM through Claude Code (zhipu, glm-5.3) | Claude (anthropic, claude-opus-5-5) in `scores.json`; Codex (openai, gpt-6.1-sol) in `scores-judge-openai.json` | `2026-11-12-learning-glm-r1` to `-r3` |
+
+Antigravity and Kimi did not run: Antigravity refused for quota (the CLI answered RESOURCE_EXHAUSTED), and Kimi was skipped because its monthly quota was used up. MiniMax started three repeats of each benchmark and was stopped when its weekly quota ran out (the CLI answered "Token Plan usage limit reached"); its partial runs are not kept.
+
+| Tutor | Judge | Repeats (of 30) | Mean | Standard deviation | pass^1, pass^3 | Critical with no 0, k = 1, 3 | Verdicts |
+|---|---|---|---|---|---|---|---|
+| Claude Code | Codex | 15, 15, 14 | 14.67 | 0.58 | 0.3556, 0.2 | 0.8, 0.4 | fail 3 |
+| Claude Code | GLM | 20, 23, 19 | 20.67 | 2.08 | 0.5111, 0.4 | 1.0, 1.0 | fail 3 |
+| Codex | Claude | 11, 13, 14 | 12.67 | 1.53 | 0.2222, 0.1333 | 0.6, 0.6 | fail 3 |
+| Codex | GLM | 17, 16, 18 | 17.0 | 1.0 | 0.3556, 0.2 | 0.8, 0.8 | fail 3 |
+| GLM | Claude | 11, 16, 12 | 13.0 | 2.65 | 0.2667, 0.1333 | 0.6667, 0.6 | fail 3 |
+| GLM | Codex | 10, 10, 9 | 9.67 | 0.58 | 0.1333, 0.0667 | 0.5333, 0.4 | fail 3 |
+
+| Run | Judge A, total and 95% interval | Judge B, total and 95% interval | Percent | Kappa | Weighted kappa | Alpha ordinal, nominal |
+|---|---|---|---|---|---|---|
+| learning-claude-r1 | Codex 15 (9 to 21) | GLM 20 (15 to 25) | 0.8 | 0.7 | 0.5263 | 0.547, 0.7031 |
+| learning-claude-r2 | Codex 15 (8 to 22) | GLM 23 (18 to 27) | 0.6 | 0.4 | 0.4545 | 0.4788, 0.3808 |
+| learning-claude-r3 | Codex 14 (8 to 21) | GLM 19 (13 to 25) | 0.8 | 0.7039 | 0.582 | 0.5901, 0.7071 |
+| learning-codex-r1 | Claude 11 (6 to 16) | GLM 17 (11 to 22) | 0.6667 | 0.4932 | 0.5312 | 0.5152, 0.4948 |
+| learning-codex-r2 | Claude 13 (7 to 19) | GLM 16 (10 to 22) | 0.7333 | 0.6026 | 0.6367 | 0.646, 0.612 |
+| learning-codex-r3 | Claude 14 (8 to 20) | GLM 18 (12 to 24) | 0.6667 | 0.5 | 0.5652 | 0.5587, 0.5101 |
+| learning-glm-r1 | Claude 11 (5 to 17) | Codex 10 (5 to 15) | 0.8667 | 0.7857 | 0.6939 | 0.7067, 0.7921 |
+| learning-glm-r2 | Claude 16 (10 to 22) | Codex 10 (5 to 16) | 0.6667 | 0.513 | 0.3226 | 0.3155, 0.5101 |
+| learning-glm-r3 | Claude 12 (6 to 18) | Codex 9 (4 to 15) | 0.8667 | 0.7872 | 0.6988 | 0.7067, 0.7921 |
+
+No run is contested: both judges fail every run.
+
+### What these runs show
+
+- **No agent passes the learning benchmark.** The highest total is 23 of 30, by GLM judging a Claude Code repeat; the mark is 24. Every one of the eighteen judgements is a fail.
+- **The judge again moves the total more than the repeat.** Claude Code is 14 to 15 under Codex and 19 to 23 under GLM. The standard deviation across the repeats is at most 2.65 points.
+- **The judges agree more here than on the tutor benchmark.** Kappa runs from 0.4 to 0.7872, and no pair reaches 0.80.
+- **The leak check fired on GLM as tutor.** In repeats 1 and 2, the reply to scenario 10 handed over the 61% and the 40% of the one week result, the figures the offered recall asks for. No tutor wrote a file the learner did not ask for.
+
+### Limits of these runs
+
+- Three repeats per agent, one day, one machine. The CLIs ran with the configuration described in the tutor results of the same day.
+- The judges are models. No person read the transcripts to check a score.
 
 ## 2026-11-10, MiniMax Code CLI, Claude as the judge
 
@@ -94,4 +141,4 @@ The behaviour is locked by `90_System/Scripts/validation/test_mcode_tutor_wrappe
 - The first scoring of the first run was one judgement per scenario, and the re-scoring of the same transcripts is the mode of three. The two halves of the comparison are not judged the same number of times, so the 5 of 10 and the 4 of 10 differ by one point on one scenario, and the judge agreed on 1 on all three judgements of that scenario.
 - The two judges share a family, which weakens the independence of the agreement number.
 - The MiniMax Code CLI produced the reply and then kept running past it. The wrapper reads the reply from the session the CLI wrote and kills the CLI, so the run takes minutes per scenario instead of ending in a timeout.
-- Only the critical group ran. The other ten scenarios of the benchmark are untested here.
+- Only the critical group ran on 2026-11-10. The other ten scenarios ran for the first time on 2026-11-12, above.

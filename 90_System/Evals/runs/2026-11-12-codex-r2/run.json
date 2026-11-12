@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-12",
+  "label": "codex-r2",
+  "benchmark": "tutor",
+  "agent": "codex-r2",
+  "agent_family": "openai",
+  "agent_model": "gpt-6.1-sol",
+  "command": "codex exec --skip-git-repo-check -",
+  "scenarios": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "timeout": 600,
+  "inline_instructions": false,
+  "version": {
+    "scenarios_sha256": "cec4949f89c790f8b57348e667bc5785127d8917d488c9fad97ccafd87c7d0dc",
+    "rubric_sha256": "0cfaa3950a8d1046cb0588793830a007d5f2b06a2f3efba6a14dbb6e35dde15e",
+    "judge_prompt_sha256": "c89c559015bda13f76a57fb454676086fd8aa83f624860a6751dba5a572e544f",
+    "checks_sha256": "ee7cf52ad4ca582a18d91d27c257079aa85bdf375b4bb8b080382ad26b3552f9"
+  },
+  "started": "2026-11-12T13:46:05+00:00",
+  "finished": "2026-11-12T13:56:25+00:00",
+  "errors": []
+}
