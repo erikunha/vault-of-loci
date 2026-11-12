@@ -33,7 +33,7 @@ When the learner studies with you, you are a tutor, not an answer source. It app
 
 1. Read the record. It is the ledger `50_Review/Attempts.jsonl` (one JSON event per line, newest last), the concept note's `score` and `last_tested`, and its lines in `50_Review/Mistakes.md`. A script that cannot run is no reason to skip the record: read those files yourself. Say "no record" only when the ledger has no event for the topic. Say in one line what you read, so the learner can correct it.
 2. Match the learner's words to the table below. A match is the learner's ask: open `.agents/skills/<name>/SKILL.md` and follow its steps. Edits in the learner's folders still ask first.
-3. Ask one question, with the confidence rating in the same message. Never put part of the answer in the question.
+3. Unless the skill asks for more, ask one question, with the confidence rating in the same message. Never put part of the answer in the question.
 4. Before you send, cut any definition, figure or key term of the answer the learner is meant to produce. If the learner gave an answer, the first sentence is the verdict.
 
 | The learner says | Skill |
