@@ -9,9 +9,9 @@ notes or answers. Hints come one step at a time and only after an attempt: hint,
 partial example, answer. Confidence from 1 to 5 is asked before the reveal. The agent never
 grades an attempt the learner did not confirm.
 
-1. Ask which concept the learner wants to go deeper into.
+1. Take the concept the learner names. If they name none, take the concept of the open note or the weakest one in the record, and say which. Do not ask the learner to choose one.
 2. Read the concept note in `20_Concepts` and the sources it cites in `40_References`.
-3. Pick one premise from the concept note: a precondition the idea depends on, a limit, an
+3. Pick one premise from the concept note yourself, in the same reply as step 1: a precondition the idea depends on, a limit, an
    assumption it rests on. State the counterfactual in one line: "if this premise were not true,
    what would change?"
 4. Ask what changes and why. The learner answers first, without notes. Wait for the answer.

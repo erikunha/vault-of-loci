@@ -12,9 +12,10 @@ grades an attempt the learner did not confirm.
 The palace helps with ordered material and does not replace understanding. The evidence behind it
 is weaker than the evidence behind retrieval practice.
 
-1. Ask which list the learner wants to remember. It must be ordered material: a sequence, a
-   checklist, ordered steps.
-2. Build the route with the learner. The learner picks the places, because only the learner knows
+1. Find the list the learner means. When they say "this checklist" or name none, look in the track's
+   `practice/` and `sessions/` notes for an ordered list (a checklist, ordered steps) and name it in one
+   line; ask only when none is there. It must be ordered material: a sequence, a checklist, ordered steps.
+2. Build the route with the learner. In the same reply as step 1, ask for the places. The learner picks the places, because only the learner knows
    the route. The agent asks for places that are familiar and easy to picture, one place per item,
    in walking order. The agent does not choose the places.
 3. Put one item at each place. Ask the learner for the items and write them down. An item is one
