@@ -211,7 +211,7 @@
       "checks": {"forbid_writes": ["10_Tracks/", "20_Concepts/", "50_Review/"]},
       "table_message": "\"What counts as passing a transfer task?\"",
       "table_turn": 1,
-      "setup_description": "The objective registry holds retrieval-practice-apply with the criterion \"Apply the idea in a new case and say why it applies\".",
+      "setup_description": "The objective registry holds retrieval-practice-apply with the criterion \"Choose what to do the night before a test in a new subject and say why, using the effect.\"",
       "setup": [
         {
           "op": "write_file",

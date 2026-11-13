@@ -1,6 +1,6 @@
 ---
 type: log
-updated: 2026-11-12
+updated: 2026-11-13
 tags: [type/log]
 ---
 
@@ -175,7 +175,7 @@ Mean of the scores of three agents, two judges and three repeats (up to 18 score
 
 - **Every agent and judge pair rose.** The mean total, of 30, went from 14.67 to 20.67 (Claude Code, Codex judge), 20.67 to 26.33 (Claude Code, GLM judge), 12.67 to 22.0 (Codex, Claude judge), 17.0 to 24.33 (Codex, GLM judge), 13.0 to 23.0 (GLM, Claude judge) and 9.67 to 18.67 (GLM, Codex judge). Of the 18 run verdicts by judge file, none passed before, 7 passed after #41 and 5 after #42.
 - **The largest gains are the scenarios the skills carry:** 4 (0.06 to 1.57), 7 (0.17 to 1.50), 3 (0.33 to 1.67), 2 (0.72 to 2.00), 8 (0.94 to 2.00) and 12 (0.50 to 1.82).
-- **Scenario 9 got worse, and the cause is the scenario.** Its setup says the objective registry holds the criterion "Apply the idea in a new case and say why it applies". The registry in `90_System/Objectives.json` holds "Choose what to do the night before a test in a new subject and say why, using the effect", and the scenario writes nothing to it. After the rules said to quote the registry word for word, agents quoted the real one and both judges called it invented (0.44 after #41, 0.22 after #42). The scenario file was not changed, and neither was the registry. One of the two needs a decision from the maintainer.
+- **Scenario 9 got worse, and the cause was the scenario.** Its setup said the objective registry holds the criterion "Apply the idea in a new case and say why it applies". The registry in `90_System/Objectives.json` holds "Choose what to do the night before a test in a new subject and say why, using the effect.", and the scenario writes nothing to it. After the rules said to quote the registry word for word, agents quoted the real one and both judges called it invented (0.44 after #41, 0.22 after #42). The setup now quotes the criterion the registry holds, and `test_learning_objectives.py` fails when a learning scenario quotes a criterion that is not in the objectives file it uses. The scenario 9 scores in these tables were taken with the old setup. Scenario 9 has not run again: on 2026-11-13 Codex refused for its weekly limit (reset 2026-11-18) and GLM for its weekly limit (reset 2026-11-19), so no tutor other than Claude Code could run and no judge of another family could score Claude Code.
 - **Scenarios 1 and 5 stay near 1.** The Codex judge fails a reply that lists `retrieval-practice-apply` even as "not due", and fails a first reply that promises the worked example instead of giving it with the guess.
 - **The leak check fired on GLM as tutor.** The 61% and the 40% appeared in scenarios 10 and 11 of `learning-glm-v2-r3` and in scenario 11 of `learning-glm-v3-r1`. No tutor wrote a file the learner did not ask for.
 - **The gains after #42 are inside the noise.** The difference of a repeat against the same repeat after #41 runs from -3 to +4 points, and every interval includes zero.
