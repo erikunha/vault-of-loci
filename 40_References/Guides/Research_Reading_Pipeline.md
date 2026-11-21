@@ -43,6 +43,32 @@ The method fits the rest of this vault. The closed-book summary after the second
 5. **Survey.** For a research track, keep a `Synthesis_Matrix` in `practice/` (one row per paper, one column per question), filled from your passes, not from abstracts.
 6. **Export.** `export_bibtex.py` writes BibTeX and CSL JSON from the reference notes.
 
+## Where to find and validate papers
+
+One reference note per tool, checked 2026-11-21. Where the page did not open, the note says "not verified".
+
+| For | Tool | Note |
+|---|---|---|
+| Check a paper, its citations and the API | Semantic Scholar | [[Semantic_Scholar\|Semantic Scholar]] |
+| See the peer review of ML venues | OpenReview | [[OpenReview\|OpenReview]] |
+| Computer science bibliography (page not read) | DBLP | [[DBLP\|DBLP]] |
+| NLP papers in ACL venues | ACL Anthology | [[ACL_Anthology\|ACL Anthology]] |
+| Map of neighbouring papers (page not read) | Connected Papers | [[Connected_Papers\|Connected Papers]] |
+| Map of ideas from a seed paper | ResearchRabbit | [[ResearchRabbit\|ResearchRabbit]] |
+| Explore literature in maps | Litmaps | [[Litmaps\|Litmaps]] |
+| Recency: trending papers | Hugging Face Papers | [[Hugging_Face_Papers\|Hugging Face Papers]] |
+| The old Papers with Code: now redirects to Hugging Face | Papers with Code | [[Papers_with_Code\|Papers with Code]] |
+| Search by question, with sentence-level citations | Elicit | [[Elicit\|Elicit]] |
+| Evidence search (page not read) | Consensus | [[Consensus\|Consensus]] |
+
+Suggested flow:
+
+1. **Entry:** the arXiv ID stays the key of the paper in the vault.
+2. **Validate:** check the paper on [[Semantic_Scholar|Semantic Scholar]]. For ML, see whether there is a review on [[OpenReview|OpenReview]]. For the history of an author or a venue, use [[DBLP|DBLP]]. For NLP, the [[ACL_Anthology|ACL Anthology]].
+3. **Find gaps:** start from a validated paper and open [[Connected_Papers|Connected Papers]], [[ResearchRabbit|ResearchRabbit]] or [[Litmaps|Litmaps]]. Add the recent surveys of the topic.
+4. **Recency:** look at [[Hugging_Face_Papers|Hugging Face Papers]] to see what is trending.
+5. **Deep research:** [[Elicit]] and [[Consensus]] give leads. Open each citation and find the arXiv ID before you import.
+
 ## Flashcards
 
 Source: [F1] Keshav (2007), https://doi.org/10.1145/1273445.1273458
